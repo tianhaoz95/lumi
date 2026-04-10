@@ -10,11 +10,11 @@
 
 - [x] **1.1.1** Create a Flutter 3.x project with package name `com.lumi.app`.
 - [x] **1.1.2** Add a `rust/` workspace at the project root using Cargo. Create crate `lumi_core`. 
-- [ ] **1.1.3** Install and configure **flutter_rust_bridge v2** (FRB v2):
+- [x] **1.1.3** Install and configure **flutter_rust_bridge v2** (FRB v2):
   - Add `flutter_rust_bridge` to `pubspec.yaml`.
   - Add `flutter_rust_bridge` and `tokio` to `rust/Cargo.toml`.
   - Run `flutter_rust_bridge_codegen generate` and verify no errors.
-- [ ] **1.1.4** Add a `Makefile` (or `justfile`) with top-level commands: `make setup`, `make codegen`, `make run`, `make test`.
+- [x] **1.1.4** Add a `Makefile` (or `justfile`) with top-level commands: `make setup`, `make codegen`, `make run`, `make test`. 
 - [ ] **1.1.5** Add `.gitignore` entries for `rust/target/`, Flutter build artifacts, and `.env`.
 
 **Verifiable result:** `flutter run` launches without errors; `cargo build` in `rust/` succeeds.
