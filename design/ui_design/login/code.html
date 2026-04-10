@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumi - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#364a4d",
+                    "on-surface": "#171c1e",
+                    "outline-variant": "#bec8c9",
+                    "surface-tint": "#14696d",
+                    "surface-container-highest": "#dee3e5",
+                    "primary-container": "#006064",
+                    "on-primary-fixed-variant": "#004f53",
+                    "secondary": "#2d666d",
+                    "outline": "#6f7979",
+                    "on-secondary-container": "#326b71",
+                    "tertiary": "#2e4345",
+                    "on-primary-container": "#8fd8dc",
+                    "surface": "#f5fafc",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#3f4949",
+                    "secondary-fixed-dim": "#98d0d7",
+                    "on-secondary-fixed-variant": "#0d4e54",
+                    "on-background": "#171c1e",
+                    "background": "#f5fafc",
+                    "on-tertiary-container": "#bad0d3",
+                    "on-secondary-fixed": "#002023",
+                    "surface-dim": "#d6dbdd",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#ecf2f4",
+                    "secondary-fixed": "#b3ecf3",
+                    "primary-fixed": "#a6eff3",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#dee3e5",
+                    "on-tertiary-fixed": "#091f21",
+                    "on-primary-fixed": "#002021",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#455a5d",
+                    "inverse-surface": "#2c3133",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#eaeff1",
+                    "tertiary-fixed-dim": "#b4cbce",
+                    "surface-container-high": "#e4e9eb",
+                    "primary": "#00464a",
+                    "secondary-container": "#b1e9f0",
+                    "surface-bright": "#f5fafc",
+                    "tertiary-fixed": "#d0e7ea",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#eff4f6",
+                    "inverse-primary": "#8ad3d7",
+                    "primary-fixed-dim": "#8ad3d7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+    display: inline-block;
+    vertical-align: middle
+    }
+.bg-grain {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDbXluequNeGK97kZuk83L5aO_t24ZFVuualuSyn4DbZhiCEsgWYVaGmYgk7BdGwR-P8RkowSG9-NACyvB2KjWGXnWdAGF4fVqX5_uhJUVVJ7Qz6HD1jf5pRUD1khjQLvKXe8R9oaZBnq5sAdmaLtDOkCT4pY6g7FzNk2X23dMM1musNN71rdWzqb9BH63EPKsG9oSMuK2V-OwswuupyzvNHAmZDtVNtSkesb3eTB-bBDS2oS7yiVUc3QCsnBC90BJz3gD0SCUlOkqV)
+    }
+.frost-gradient {
+    background: linear-gradient(135deg, #f5fafc 0%, #e4e9eb 100%)
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface bg-surface min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<!-- Background Texture & Decorative Elements -->
+<div class="absolute inset-0 frost-gradient opacity-100 z-0"></div>
+<div class="absolute inset-0 bg-grain opacity-[0.03] z-10 pointer-events-none"></div>
+<!-- Atmospheric "Mist" Orbs -->
+<div class="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<main class="w-full max-w-md z-20">
+<!-- Logo Header -->
+<div class="flex flex-col items-center mb-10">
+<div class="w-16 h-16 bg-white/40 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 shadow-[0_8px_32px_rgba(0,70,74,0.04)]">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="ac_unit">ac_unit</span>
+</div>
+<h1 class="font-headline font-extrabold text-4xl tracking-tight text-primary">Lumi</h1>
+<p class="font-label text-sm text-outline mt-2 tracking-wide uppercase">The Glacial Sanctuary</p>
+</div>
+<!-- Login Card (Glassmorphism) -->
+<div class="bg-surface-container-lowest/70 backdrop-blur-2xl p-8 rounded-lg shadow-[0_20px_50px_rgba(23,28,30,0.05)] border border-white/40">
+<div class="mb-8">
+<h2 class="font-headline text-2xl font-bold text-on-surface">Welcome back</h2>
+<p class="text-on-surface-variant text-sm mt-1">Enter your sanctuary credentials.</p>
+</div>
+<form class="space-y-6">
+<!-- Email Field -->
+<div>
+<label class="block font-label text-[11px] font-semibold uppercase tracking-widest text-outline mb-2 ml-1" for="email">Email Address</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="alternate_email">alternate_email</span>
+</div>
+<input class="w-full bg-surface-container-high/50 border-none rounded-DEFAULT py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/60 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all duration-300" id="email" placeholder="name@lumi.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<div class="flex justify-between items-center mb-2 px-1">
+<label class="block font-label text-[11px] font-semibold uppercase tracking-widest text-outline" for="password">Password</label>
+<a class="text-[11px] font-semibold text-primary hover:text-primary-container transition-colors uppercase tracking-wider" href="#">Forgot?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="lock">lock</span>
+</div>
+<input class="w-full bg-surface-container-high/50 border-none rounded-DEFAULT py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/60 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all duration-300" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-full font-headline font-bold text-lg flex items-center justify-center gap-2 shadow-[0_12px_24px_rgba(0,70,74,0.15)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300" type="submit">
+                    Login
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8 pt-6 border-t border-outline-variant/15 flex flex-col items-center">
+<p class="text-on-surface-variant text-sm mb-4">New to the sanctuary?</p>
+<button class="w-full bg-surface-container-lowest/40 backdrop-blur-md border border-outline-variant/20 py-3 rounded-full font-label font-semibold text-on-surface hover:bg-white/60 transition-all duration-300">
+                    Create account
+                </button>
+</div>
+</div>
+<!-- Empty State / Footer Presence -->
+<div class="mt-12 flex items-center justify-center opacity-20 group cursor-default">
+<span class="material-symbols-outlined text-6xl text-primary" data-icon="nature">nature</span>
+</div>
+</main>
+<!-- Invisible Image Prompt Anchors for System Context -->
+<div class="hidden">
+<img data-alt="close-up of crystalline ice textures on a window with soft blue and white bokeh light in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH6eXUoHJAWixi5qGbmF0l2ggMwIAr0wSBkmznnVhXnTqUCKk07dDg4SlBRVqbvNMPIXrWjIaUtvL9qBeIMRtsdBGKMpkby0qnMxSVqPrs45WM0bQ0S6D5wlEyCisc2Hc_anZua3yitbIoPCsXeikiF77EPBbFYnokySIXghrBaghBVhSfix2VFU1ztu3yXl0iZ1l48iPsSigXfrnzqqFp4fp8m62cTGl0QHup6DkYecXudRQRvtVmq6WCbVc0VLDQA_RViNKyLeEp"/>
+<img data-alt="minimalist architectural shot of a modern scandinavian cabin in a snowy pine forest at twilight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1DUjKtCXyXMRYBn6jett2rYh3yGX04LVU2Q8kgWhd9hp5hNzCiiBa02gy3kVYuiei8QVBNKXXrmuFpN4MqvRLNJNJk5P5NzoSrz6aPulh0OPvyBNJKhZqUkHNCIXpWECJBMP3aaL8JUCa-Cverbj1x_OK1XJO7HEgXtppkXQgwPx3h_zY9Bjh6crT9ILM7jp8fpjQqffGRkm0UkVH_xmnrD3KYKCiIUCc_6r8NiaHHxcribRL8INnjFh5qRz3mM5hgYpV3XPJ3b6G"/>
+</div>
+</body></html>

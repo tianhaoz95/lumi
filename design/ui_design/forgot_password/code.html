@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumi | Reset Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#0d4e54",
+                    "on-secondary-fixed": "#002023",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#eaeff1",
+                    "on-primary-container": "#8fd8dc",
+                    "on-primary-fixed-variant": "#004f53",
+                    "on-tertiary-fixed-variant": "#364a4d",
+                    "surface-variant": "#dee3e5",
+                    "tertiary-container": "#455a5d",
+                    "surface-container-low": "#eff4f6",
+                    "surface-tint": "#14696d",
+                    "surface-container-high": "#e4e9eb",
+                    "on-background": "#171c1e",
+                    "primary-fixed-dim": "#8ad3d7",
+                    "tertiary-fixed": "#d0e7ea",
+                    "error": "#ba1a1a",
+                    "tertiary": "#2e4345",
+                    "primary": "#00464a",
+                    "on-secondary-container": "#326b71",
+                    "on-surface-variant": "#3f4949",
+                    "primary-container": "#006064",
+                    "background": "#f5fafc",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#171c1e",
+                    "surface-container-highest": "#dee3e5",
+                    "outline-variant": "#bec8c9",
+                    "outline": "#6f7979",
+                    "surface-dim": "#d6dbdd",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#98d0d7",
+                    "surface": "#f5fafc",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#b4cbce",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#bad0d3",
+                    "inverse-primary": "#8ad3d7",
+                    "on-primary-fixed": "#002021",
+                    "on-tertiary-fixed": "#091f21",
+                    "inverse-on-surface": "#ecf2f4",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#2d666d",
+                    "surface-bright": "#f5fafc",
+                    "inverse-surface": "#2c3133",
+                    "secondary-container": "#b1e9f0",
+                    "primary-fixed": "#a6eff3",
+                    "secondary-fixed": "#b3ecf3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.grain-overlay {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuD6xj-333Ne9OlAdH0FPJlH5FlkfD3PWRGq5OwNaqJMpeB_O8SBJ870bOYQMBKLUTPcqEjYI9o59qYHRgh7oUh5u7KLPjg7JPfkXq1hTCGroMmn01PbwXfjCo-PNtvPduvdRhz7I9SykVbI3b8KjQ7bcAX9NDBvEDe8WAS6jAovuQXHI26z6I-M-b6Gc6m3JbqB3thTDp8VAQZVLElSAufMmb4aUkF2yv93qsS394z_oIpIEH1xLeTXupJZWcAR6J0NE4UCLoEGJq8u);
+    opacity: 0.02;
+    pointer-events: none
+    }
+.frost-blur {
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px)
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Grain Texture Layer -->
+<div class="fixed inset-0 grain-overlay z-[100]"></div>
+<!-- Top App Bar (Suppressed Navigation for Transactional Screen) -->
+<header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl flex justify-between items-center px-6 py-4 shadow-[0_12px_40px_rgba(23,28,30,0.04)]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-cyan-900" data-icon="shield">shield</span>
+<span class="font-headline tracking-tight font-bold text-xl text-cyan-900">Lumi</span>
+</div>
+</header>
+<main class="relative min-h-screen flex items-center justify-center p-6 lg:p-12 overflow-hidden">
+<!-- Atmospheric Background Elements -->
+<div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-secondary-container/20 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-primary-container/10 rounded-full blur-[100px]"></div>
+<!-- Asymmetric Layout Container -->
+<div class="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Side: Editorial Content -->
+<div class="lg:col-span-6 space-y-8">
+<div class="space-y-4">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high text-secondary text-xs font-medium tracking-widest uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="ac_unit">ac_unit</span>
+                        The Glacial Sanctuary
+                    </div>
+<h1 class="font-headline text-5xl lg:text-7xl font-extrabold text-primary tracking-tight leading-[1.1]">
+                        Return to <br/><span class="text-secondary/60">the still.</span>
+</h1>
+<p class="text-on-surface-variant text-lg lg:text-xl max-w-md leading-relaxed">
+                        If you've lost your way to the cabin, provide your email. We'll send a lantern to guide you back.
+                    </p>
+</div>
+<!-- Kit the Fox Mascot Subtle Integration -->
+<div class="opacity-10 pointer-events-none select-none">
+<span class="material-symbols-outlined text-[120px]" data-icon="nest_farsight_sensor">nest_farsight_heat</span>
+</div>
+</div>
+<!-- Right Side: Focus Recovery Card -->
+<div class="lg:col-span-6">
+<div class="bg-surface-container-lowest/70 frost-blur p-8 lg:p-12 rounded-xl shadow-[0_12px_40px_rgba(23,28,30,0.06)] space-y-10">
+<div class="space-y-2">
+<h2 class="font-headline text-2xl font-bold text-on-surface">Forgot Password</h2>
+<div class="h-1 w-12 bg-primary rounded-full"></div>
+</div>
+<form action="#" class="space-y-8" method="POST">
+<div class="space-y-2">
+<label class="block text-xs font-medium text-outline uppercase tracking-widest px-1" for="email">Recovery Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="mail">mail</span>
+<input class="w-full pl-12 pr-6 py-4 bg-surface-container-high border-none rounded-DEFAULT focus:ring-2 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant transition-all duration-300" id="email" name="email" placeholder="Enter your email address" required="" type="email"/>
+</div>
+</div>
+<div class="space-y-4">
+<button class="w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-white font-headline font-bold rounded-full shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3" type="submit">
+<span>Reset Password</span>
+<span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<a class="block text-center text-sm font-medium text-secondary hover:text-primary transition-colors duration-300" href="#">
+                                Return to login
+                            </a>
+</div>
+</form>
+<!-- Decorative Footnote -->
+<div class="pt-8 border-t border-outline-variant/10 flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="lock_reset">lock_reset</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">
+                            Security is our nature. Your recovery link will expire in 24 hours for your sanctuary's protection.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Decorative "Snow" Element -->
+<div class="fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent pointer-events-none z-0"></div>
+<!-- Footer Branding -->
+<footer class="fixed bottom-8 left-12 hidden lg:flex items-center gap-4 z-20">
+<div class="flex flex-col">
+<span class="font-headline font-extrabold text-sm text-primary tracking-widest uppercase">Lumi sanctuary</span>
+<span class="text-[10px] text-outline font-medium tracking-widest uppercase">© 2024 Nordic Digital</span>
+</div>
+</footer>
+</body></html>

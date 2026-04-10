@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumi - Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .grain-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#8fd8dc",
+                        "on-background": "#171c1e",
+                        "on-primary-fixed-variant": "#004f53",
+                        "surface-container": "#eaeff1",
+                        "secondary-fixed-dim": "#98d0d7",
+                        "inverse-surface": "#2c3133",
+                        "surface-container-high": "#e4e9eb",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#2e4345",
+                        "primary-fixed-dim": "#8ad3d7",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#14696d",
+                        "on-surface": "#171c1e",
+                        "outline-variant": "#bec8c9",
+                        "surface-bright": "#f5fafc",
+                        "tertiary-fixed-dim": "#b4cbce",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#b3ecf3",
+                        "outline": "#6f7979",
+                        "on-error": "#ffffff",
+                        "background": "#f5fafc",
+                        "surface-container-highest": "#dee3e5",
+                        "surface": "#f5fafc",
+                        "on-tertiary-container": "#bad0d3",
+                        "inverse-primary": "#8ad3d7",
+                        "primary-fixed": "#a6eff3",
+                        "on-secondary-container": "#326b71",
+                        "on-primary-fixed": "#002021",
+                        "primary": "#00464a",
+                        "on-tertiary-fixed": "#091f21",
+                        "on-surface-variant": "#3f4949",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#ecf2f4",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#dee3e5",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#eff4f6",
+                        "surface-dim": "#d6dbdd",
+                        "primary-container": "#006064",
+                        "on-tertiary-fixed-variant": "#364a4d",
+                        "tertiary-fixed": "#d0e7ea",
+                        "tertiary-container": "#455a5d",
+                        "secondary": "#2d666d",
+                        "on-secondary-fixed-variant": "#0d4e54",
+                        "on-secondary-fixed": "#002023",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#b1e9f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-secondary-container selection:text-on-secondary-container relative overflow-x-hidden">
+<!-- Subtle Grain Texture Overlay -->
+<div class="fixed inset-0 grain-texture z-[100]"></div>
+<!-- Background Atmospheric Perspectives -->
+<div class="fixed top-[-10%] right-[-5%] w-[60%] h-[60%] rounded-full bg-secondary-container/20 blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-[-10%] left-[-5%] w-[50%] h-[50%] rounded-full bg-primary-fixed/20 blur-[100px] pointer-events-none"></div>
+<!-- Top Navigation (Shell Supressed for Transactional Flow, but Brand Anchor remains) -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="shield">shield</span>
+<span class="font-headline font-extrabold text-2xl tracking-tighter text-primary">Lumi</span>
+</div>
+<a class="text-sm font-label font-medium text-secondary hover:text-primary transition-colors flex items-center gap-2" href="#">
+            Sign In <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</nav>
+<main class="min-h-screen flex items-center justify-center px-6 py-20">
+<div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<!-- Branding/Editorial Column -->
+<div class="hidden md:flex flex-col space-y-8 pr-12">
+<div class="space-y-4">
+<h1 class="font-headline text-5xl font-extrabold text-on-surface leading-[1.1] tracking-tight">
+                        Enter the <br/><span class="text-primary">Glacial Sanctuary</span>
+</h1>
+<p class="text-body text-on-surface-variant leading-relaxed max-w-sm">
+                        Experience privacy and stillness in your digital workspace. Lumi is designed for clarity, crafted for calm.
+                    </p>
+</div>
+<div class="relative group h-64 w-full rounded-lg overflow-hidden bg-surface-container-high">
+<img alt="Snowy Nordic landscape" class="w-full h-full object-cover grayscale-[30%] opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="Minimalist Nordic mountain range covered in deep white snow with a soft blue morning mist and clean horizons" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3D1zdoZ0PXND-mlRhWJyMnJwgIo58OPXvaftb3KI_aprGwZL6DeG2EDTNpI1m1GxvCkUPx5NsjZdVtBjwzSbluQ88yid0ilGZN8uO-0tuZBvpcIlsk9pkHQqlakV90X_WSxBx1Ge1ozOIW846wR3n39xNqFRMMR4dhP8yr_yHqsKe6Fxg_J3dRlnwDGtwqF_8zdNGkofqcnIrvHOFwE0fHUWwjx0I361YSzmqOPpAFRBypCny5_d89wMN8Z9POxR0wIo4pH46vm1v"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<span class="text-white text-xs font-label uppercase tracking-widest bg-white/10 backdrop-blur-md px-3 py-1 rounded-full">Atmosphere: Frost</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center opacity-30">
+<span class="material-symbols-outlined text-on-surface" data-icon="ac_unit">ac_unit</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center opacity-30">
+<span class="material-symbols-outlined text-on-surface" data-icon="forest">forest</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center opacity-30">
+<span class="material-symbols-outlined text-on-surface" data-icon="cloud">cloud</span>
+</div>
+</div>
+</div>
+<!-- Sign Up Form Column -->
+<div class="w-full max-w-md mx-auto">
+<div class="bg-surface-container-lowest/70 backdrop-blur-3xl rounded-lg p-10 shadow-[0_12px_40px_rgba(23,28,30,0.04)] border border-white/40">
+<div class="mb-10">
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Create Account</h2>
+<p class="text-on-surface-variant font-body">Join the quiet movement.</p>
+</div>
+<form class="space-y-6">
+<!-- Full Name -->
+<div class="space-y-2">
+<label class="text-xs font-label font-bold uppercase tracking-widest text-outline ml-1">Full Name</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="person">person</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-high rounded-DEFAULT border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant font-body" placeholder="Erik Nord" type="text"/>
+</div>
+</div>
+<!-- Email Address -->
+<div class="space-y-2">
+<label class="text-xs font-label font-bold uppercase tracking-widest text-outline ml-1">Email Address</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="mail">mail</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-high rounded-DEFAULT border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant font-body" placeholder="erik@lumi.com" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-2">
+<label class="text-xs font-label font-bold uppercase tracking-widest text-outline ml-1">Secure Password</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-high rounded-DEFAULT border-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-outline-variant font-body" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="flex items-center space-x-3 py-2">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container" id="terms" type="checkbox"/>
+<label class="text-sm text-on-surface-variant leading-tight" for="terms">
+                                I agree to the <a class="text-primary hover:underline underline-offset-4" href="#">Privacy Standards</a> &amp; <a class="text-primary hover:underline underline-offset-4" href="#">Terms</a>.
+                            </label>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-5 rounded-full font-label font-semibold text-base shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all duration-300">
+                            Create Account
+                        </button>
+</form>
+<!-- Secondary Actions -->
+<div class="flex flex-col mt-8">
+<p class="text-center text-sm font-body text-on-surface-variant">
+                            Already part of the sanctuary? <a class="text-primary font-bold hover:underline underline-offset-4" href="#">Login here</a>
+</p>
+</div>
+</div>
+<!-- Footer Mascot Subtle Hint -->
+<div class="mt-12 flex justify-center opacity-10 grayscale">
+<span class="material-symbols-outlined text-6xl" data-icon="pets">pets</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Aesthetic Accents -->
+<div class="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-fixed-dim/30 to-transparent"></div>
+</body></html>

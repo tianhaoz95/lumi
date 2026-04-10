@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumi AI - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#14696d",
+                    "on-surface": "#171c1e",
+                    "on-secondary-fixed-variant": "#0d4e54",
+                    "inverse-surface": "#2c3133",
+                    "surface-container-high": "#e4e9eb",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#3f4949",
+                    "primary": "#00464a",
+                    "on-secondary-container": "#326b71",
+                    "surface": "#f5fafc",
+                    "primary-container": "#006064",
+                    "on-background": "#171c1e",
+                    "on-tertiary-container": "#bad0d3",
+                    "surface-container-low": "#eff4f6",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#2d666d",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#004f53",
+                    "tertiary": "#2e4345",
+                    "tertiary-fixed-dim": "#b4cbce",
+                    "secondary-container": "#b1e9f0",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#dee3e5",
+                    "surface-bright": "#f5fafc",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#002021",
+                    "inverse-on-surface": "#ecf2f4",
+                    "tertiary-fixed": "#d0e7ea",
+                    "on-secondary-fixed": "#002023",
+                    "on-primary-container": "#8fd8dc",
+                    "secondary-fixed": "#b3ecf3",
+                    "background": "#f5fafc",
+                    "surface-variant": "#dee3e5",
+                    "surface-container": "#eaeff1",
+                    "outline": "#6f7979",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#8ad3d7",
+                    "secondary-fixed-dim": "#98d0d7",
+                    "on-tertiary-fixed-variant": "#364a4d",
+                    "on-tertiary-fixed": "#091f21",
+                    "primary-fixed": "#a6eff3",
+                    "primary-fixed-dim": "#8ad3d7",
+                    "tertiary-container": "#455a5d",
+                    "surface-dim": "#d6dbdd",
+                    "outline-variant": "#bec8c9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col selection:bg-secondary-container/30">
+<div class="fixed inset-0 bg-grain z-0"></div>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-cyan-50/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_12px_40px_rgba(23,28,30,0.04)]">
+<div class="flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-cyan-900 dark:text-cyan-100" data-icon="bubble_chart">bubble_chart</span>
+<span class="text-cyan-950 dark:text-white font-extrabold font-manrope tracking-tight text-xl">Lumi AI</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-cyan-700/60 hover:bg-white/40 transition-all duration-500 active:scale-95 rounded-full">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+<button class="p-2 text-cyan-700/60 hover:bg-white/40 transition-all duration-500 active:scale-95 rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-24 px-6 max-w-2xl mx-auto w-full flex flex-col gap-8 relative z-10 pb-32">
+<!-- Fox Mascot Intro -->
+<div class="flex flex-col items-center justify-center text-center py-8 opacity-40">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-4xl" data-icon="pets" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<h2 class="text-sm font-headline font-bold uppercase tracking-[0.2em] text-on-surface-variant">Lumi Glacial Intelligence</h2>
+</div>
+<!-- Chat Bubbles -->
+<div class="flex flex-col gap-6">
+<!-- Kit's Message -->
+<div class="flex flex-col gap-2 max-w-[85%] self-start">
+<div class="flex items-center gap-2 mb-1 px-1">
+<span class="text-[10px] font-bold tracking-widest uppercase text-primary/60">Kit the Fox</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl rounded-tl-none shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-outline-variant/10">
+<p class="text-on-surface leading-relaxed font-body">Hello there. I've been reviewing your sanctuary's ecosystem. I noticed you spent about 12% more on utilities this month compared to the last frost. Would you like me to look for ways to optimize your heat usage?</p>
+</div>
+</div>
+<!-- User Response Placeholder (Visual Only) -->
+<div class="flex flex-col gap-2 max-w-[80%] self-end">
+<div class="bg-primary text-white p-5 rounded-xl rounded-tr-none shadow-lg shadow-primary/10">
+<p class="text-sm font-medium leading-relaxed">Yes, please. Can you also check if any of that was due to the smart thermostat settings?</p>
+</div>
+</div>
+<!-- Insight Card (Asymmetric Layout) -->
+</div>
+<!-- Chat Input Bar (Floating) -->
+<div class="fixed left-6 right-6 max-w-2xl mx-auto z-40 bottom-8">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/5 blur-xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+<div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-full p-2 flex items-center gap-3 border border-outline-variant/10 shadow-xl shadow-black/5 pl-2"><button class="p-2 text-outline/60 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]" data-icon="add">add</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline/50 font-body py-3" placeholder="Whisper to Lumi..." type="text"/>
+<button class="w-12 h-12 bg-primary text-on-primary rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<!-- Background Decoration -->
+<div class="fixed top-0 right-0 -z-10 w-full h-full pointer-events-none overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary-container/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary-container/10 rounded-full blur-[100px]"></div>
+</div>
+</body></html>
