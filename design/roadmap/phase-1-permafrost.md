@@ -34,10 +34,10 @@
       widgets/      # Shared UI components
       bridge/       # FRB-generated Dart bindings
   ```
-- [ ] **1.2.2** Add dependencies to `pubspec.yaml`:
+- [x] **1.2.2** Add dependencies to `pubspec.yaml`:
   - `go_router` — navigation
   - `appwrite` — Appwrite Flutter SDK
-  - `flutter_riverpod` or `bloc` — state management (pick one and document choice)
+  - `flutter_riverpod` — state management (chosen: Riverpod)
   - `google_fonts` — Manrope + Inter
   - `material_symbols_icons` — Material Symbols icon set
 
@@ -49,14 +49,14 @@
 
 ### 2.1 Theme & Tokens
 
-- [ ] **2.1.1** Create `lib/core/theme.dart` with `ThemeData` implementing all color tokens from the design system:
+- [x] **2.1.1** Create `lib/core/theme.dart` with `ThemeData` implementing all color tokens from the design system:
   - `primary: Color(0xFF00464A)`
   - `surface: Color(0xFFF5FAFC)`
   - `onSurface: Color(0xFF171C1E)`
   - Full token list from `design/ui_design/design/DESIGN.md`
-- [ ] **2.1.2** Configure `TextTheme` with Manrope for display/headline styles and Inter for body/label styles with correct `letterSpacing` and `height` values.
-- [ ] **2.1.3** Create a `LumiColors` constant class to provide named access to all design tokens.
-- [ ] **2.1.4** Create a `LumiRadius` constant class: `defaultRadius = 16`, `fullRadius = 9999`.
+- [x] **2.1.2** Configure `TextTheme` with Manrope for display/headline styles and Inter for body/label styles with correct `letterSpacing` and `height` values.
+- [x] **2.1.3** Create a `LumiColors` constant class to provide named access to all design tokens.
+- [x] **2.1.4** Create a `LumiRadius` constant class: `defaultRadius = 16`, `fullRadius = 9999`.
 
 **Verifiable result:** A `ThemeShowcase` screen (dev-only route) renders all token colors and text styles correctly against the DESIGN.md reference.
 
