@@ -16,6 +16,7 @@ log() { echo "[autopilot] $*"; }
 
 # Returns true if any unchecked task ( "- [ ]" ) remains across all roadmap files.
 has_pending_tasks() {
+  echo "Checking for pending tasks in $ROADMAP_DIR..."
   grep -rl -- "- \[ \]" "$ROADMAP_DIR" --include="*.md" | grep -q .
 }
 
