@@ -8,8 +8,8 @@
 
 ### 1.1 Repository & Toolchain Setup
 
-- [ ] **1.1.1** Create a Flutter 3.x project with package name `com.lumi.app`.
-- [ ] **1.1.2** Add a `rust/` workspace at the project root using Cargo. Create crate `lumi_core`.
+- [x] **1.1.1** Create a Flutter 3.x project with package name `com.lumi.app`.
+- [x] **1.1.2** Add a `rust/` workspace at the project root using Cargo. Create crate `lumi_core`. 
 - [ ] **1.1.3** Install and configure **flutter_rust_bridge v2** (FRB v2):
   - Add `flutter_rust_bridge` to `pubspec.yaml`.
   - Add `flutter_rust_bridge` and `tokio` to `rust/Cargo.toml`.

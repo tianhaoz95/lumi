@@ -1,0 +1,11 @@
+[package]
+name = "lumi_core"
+version = "0.1.0"
+edition = "2021"
+description = "Lumi Rust core crate"
+
+[lib]
+name = "lumi_core"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]

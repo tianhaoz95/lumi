@@ -1,0 +1,4 @@
+[workspace]
+members = ["rust/lumi_core"]
+
+# Root workspace for Lumi Rust crates
