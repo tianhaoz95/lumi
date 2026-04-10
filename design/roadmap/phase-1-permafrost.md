@@ -64,7 +64,7 @@
 
 - [x] **2.2.1** `LumiCard` — glassmorphism card (`BackdropFilter`, `BoxDecoration` with `surface-container-lowest` at 70% opacity, `boxShadow` at 4–6% opacity).
 - [x] **2.2.2** `LumiButton` — primary CTA: full-pill shape, `gradient` from `primary` to `primary-container` at 135°, `InkWell` with scale animation (hover 1.02×, press 0.98×).
-- [ ] **2.2.3** `LumiTextField` — `surface-container-high` fill, 2px ghost-border focus ring (`primary` at 40% opacity), leading icon slot.
+- [x] **2.2.3** `LumiTextField` — `surface-container-high` fill, 2px ghost-border focus ring (`primary` at 40% opacity), leading icon slot.
 - [ ] **2.2.4** `KitGhost` — Kit the Fox mascot ghost widget: Material Symbol `pets` icon at configurable opacity (default 7%), `grayscale` color filter.
 - [ ] **2.2.5** `AtmosphericBackground` — fixed positioned blurred orbs + grain texture overlay (SVG noise filter at 2–3% opacity).
 - [ ] **2.2.6** `FloatingNavBar` — glassmorphism pill nav bar that does not span full width.
