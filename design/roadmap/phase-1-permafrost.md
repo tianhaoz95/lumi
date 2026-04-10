@@ -15,13 +15,13 @@
   - Add `flutter_rust_bridge` and `tokio` to `rust/Cargo.toml`.
   - Run `flutter_rust_bridge_codegen generate` and verify no errors.
 - [x] **1.1.4** Add a `Makefile` (or `justfile`) with top-level commands: `make setup`, `make codegen`, `make run`, `make test`. 
-- [ ] **1.1.5** Add `.gitignore` entries for `rust/target/`, Flutter build artifacts, and `.env`.
+- [x] **1.1.5** Add `.gitignore` entries for `rust/target/`, Flutter build artifacts, and `.env`.
 
 **Verifiable result:** `flutter run` launches without errors; `cargo build` in `rust/` succeeds.
 
 ### 1.2 Flutter Project Structure
 
-- [ ] **1.2.1** Create the folder structure:
+- [x] **1.2.1** Create the folder structure:
   ```
   lib/
     core/           # App-level config, theme, router
