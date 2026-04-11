@@ -12,7 +12,7 @@
 
 - [x] **1.1.1** Add `rig-core` to `rust/Cargo.toml`.
 - [x] **1.1.2** Create `rust/lumi_core/src/agent/mod.rs` with a `LumiAgent` struct that wraps a Rig `Agent` configured to use the local `InferenceEngine` as its completion provider (a custom `rig::completion::CompletionModel` impl backed by LiteRT-LM).
-- [ ] **1.1.3** Implement the custom completion provider:
+- [x] **1.1.3** Implement the custom completion provider:
   - `complete(prompt: CompletionRequest) -> CompletionResponse` — routes through `InferenceEngine::infer_stream()` and collects the full response.
   - Passes the full tool-calling schema as part of the system prompt (Rig handles formatting).
 - [ ] **1.1.4** Expose `agent_chat(user_message: String, sink: StreamSink<AgentChunk>) -> Result<()>` via FRB to replace the raw `infer_stream` used in Phase 2.

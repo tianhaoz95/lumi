@@ -1,5 +1,6 @@
 use crate::inference::{self, ModelTier, StreamSink, InferenceChunk};
 use tokio::time::{timeout, Duration};
+use async_trait::async_trait;
 
 /// LumiAgent is a thin wrapper that will later integrate with Rig's Agent.
 /// For Phase 3 scaffold it initializes the rig-core and provides a simple
@@ -10,11 +11,16 @@ pub struct LumiAgent {
 }
 
 impl LumiAgent {
-    /// Construct a new LumiAgent. Currently calls into the simple `rig-core`
-    /// initialization helper and stores the returned id string.
+    /// Construct a new LumiAgent. Register this agent as the rig-core
+    /// CompletionProvider so higher-level code can call into Rig to obtain
+    /// completions that are routed through LiteRT-LM.
     pub fn new() -> Self {
         let id = rig_core::init_agent();
-        LumiAgent { id }
+        let agent = LumiAgent { id };
+        // Register agent as the global completion provider. Ignore failure if
+        // something has already registered a provider.
+        let _ = rig_core::set_completion_provider(Box::new(agent.clone()));
+        agent
     }
 
     /// Asynchronously request a completion for `prompt` using the provided
@@ -57,6 +63,16 @@ impl LumiAgent {
     }
 }
 
+#[async_trait]
+impl rig_core::CompletionProvider for LumiAgent {
+    async fn complete(&self, prompt: String) -> Result<String, String> {
+        // Route through Sentinel tier by default for short prompts. The real
+        // ModelRouter will pick between tiers; keeping Sentinel here is a
+        // conservative default.
+        self.complete(prompt, crate::inference::ModelTier::Sentinel).await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -77,5 +93,16 @@ mod tests {
         // Since inference tokenization splits on whitespace, ensure expected words present
         assert!(text.contains("hello"));
         assert!(text.contains("lumi"));
+    }
+
+    #[tokio::test]
+    async fn rig_core_can_call_registered_provider() {
+        let _ = env_logger::builder().is_test(true).try_init();
+        let agent = LumiAgent::new();
+        // Call via rig-core API which should invoke the provider registered in new().
+        let res = rig_core::call_complete("testing via rig-core".to_string()).await;
+        assert!(res.is_ok());
+        let out = res.unwrap();
+        assert!(!out.is_empty());
     }
 }

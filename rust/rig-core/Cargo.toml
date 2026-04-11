@@ -8,4 +8,8 @@ name = "rig_core"
 path = "src/lib.rs"
 
 [dependencies]
-tokio = { version = "1", features = ["macros"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+once_cell = "1"
+async-trait = "0.1"
+
+# The rig-core crate exposes lightweight agent interfaces used by lumi_core.
