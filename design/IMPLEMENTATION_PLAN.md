@@ -252,16 +252,23 @@ final projectId = const String.fromEnvironment('APPWRITE_PROJECT_ID');
 
 ### Running Integration Tests
 
-```bash
-# Full suite on a connected device
-flutter test integration_test/ \
-  --dart-define-from-file=.env.test \
-  -d <device-id>
+Lumi integration tests prefer physical Android devices over the Linux host to ensure compatibility with on-device acceleration (Phase 2+).
 
-# Single file
-flutter test integration_test/auth/login_test.dart \
-  --dart-define-from-file=.env.test \
-  -d <device-id>
+#### Preferred: Physical Android Device
+1. Find your device ID:
+   ```bash
+   flutter devices
+   ```
+2. Run all integration tests:
+   ```bash
+   make test-integration DEVICE=<DEVICE_ID>
+   ```
+
+#### Fallback: Desktop (Linux)
+If no physical device is connected, you can run tests on the Linux host:
+```bash
+make test-integration DEVICE=linux
+```
 
 # Headless web (layout/navigation tests only — no camera/geofence)
 flutter test integration_test/ \

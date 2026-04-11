@@ -121,20 +121,23 @@ Integration tests require a locally running Appwrite instance. Follow these step
 
 Integration tests require a valid `.env.test` file and a running Appwrite service (see setup above).
 
-### On Desktop (Linux)
-```bash
-make test-integration
-```
+Lumi integration tests prefer physical Android devices over the Linux host to ensure compatibility with on-device acceleration (Phase 2+).
 
-### On a Specific Device (e.g., Android)
+### Preferred: Physical Android Device
 1. Find your device ID:
    ```bash
    flutter devices
    ```
-2. Run the test:
+2. Run all integration tests:
    ```bash
-   flutter test integration_test/auth/login_test.dart -d <DEVICE_ID> --dart-define-from-file=.env.test
+   make test-integration DEVICE=<DEVICE_ID>
    ```
+
+### Fallback: Desktop (Linux)
+If no physical device is connected, you can run tests on the Linux host:
+```bash
+make test-integration DEVICE=linux
+```
 
 ---
 
