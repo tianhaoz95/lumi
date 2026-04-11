@@ -142,7 +142,7 @@
       pub line_items: Vec<LineItem>,
   }
   ```
-- [ ] **3.2.3** Return `ReceiptData` to Flutter. Display a `TransactionCard` GenUI widget (Phase 3) for user verification. For now, show raw JSON in a dev preview card.
+- [x] **3.2.3** Return `ReceiptData` to Flutter. Display a `TransactionCard` GenUI widget (Phase 3) for user verification. For now, show raw JSON in a dev preview card.
 
 **Tests:**
 - Rust unit test: parse a known JSON string into `ReceiptData` correctly.
