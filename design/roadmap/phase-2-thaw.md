@@ -132,7 +132,7 @@
   - line_items: [{description, amount}]
   Respond only in valid JSON.
   ```
-- [ ] **3.2.2** Parse the model's JSON output into a `ReceiptData` struct:
+- [x] **3.2.2** Parse the model's JSON output into a `ReceiptData` struct:
   ```rust
   pub struct ReceiptData {
       pub vendor_name: String,
