@@ -127,7 +127,7 @@
 - [x] **3.4.1** Implement `ForgotPasswordScreen` matching `ui_design/forgot_password/code.html`:
   - Asymmetric layout (editorial left, recovery card right).
   - Calls `AppwriteService.sendPasswordReset(email)`.
-- [ ] **3.4.2** Show success state ("Check your inbox") after submission.
+- [x] **3.4.2** Show success state ("Check your inbox") after submission.
 
 **Tests:**
 - Widget test: success message shown after form submit.
