@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../widgets/floating_nav_bar.dart';
-import '../../shared/bridge/summary_bridge.dart';
+import '../../shared/bridge/rig_bridge.dart';
 import '../../shared/models/financial_summary.dart';
 
 class DashboardScreen extends StatefulWidget {

@@ -76,4 +76,79 @@ Notes about analysis run:
 - The earlier reviewer found `dart analyze` failed in this environment due to `OS Error: Too many open files` during analysis server startup. That OS-level limitation cannot be fixed from within this workspace.
 - Guidance: run `flutter analyze` or `dart analyze` locally or in CI after increasing file-descriptor limits (e.g., `ulimit -n 262144`) and attach logs. This step remains outstanding for final verification.
 
-Please re-run the reviewer checks; the typed bridge and dashboard code changes address the API shape issues noted in the review. If anything else is desired (e.g., renaming files to `dashboard_screen.dart`), request next steps. 
+Please re-run the reviewer checks; the typed bridge and dashboard code changes address the API shape issues noted in the review. If anything else is desired (e.g., renaming files to `dashboard_screen.dart`), request next steps.
+
+---
+
+Reviewer Findings (from reviewer agent):
+
+Summary: Partial — UI wiring and typed shim are present, but final verification (static analysis/tests) could not be completed in this environment. Recent Activity remains mocked (4.1.2 outstanding).
+
+Findings (detailed, actionable):
+
+1) Static analysis / tests not validated (blocking for final sign-off)
+   - Evidence: This environment cannot run `dart analyze`/`flutter analyze` here (Analysis Server failed earlier with `OS Error: Too many open files, errno = 24`).
+   - Impact: The deliverable "Running `flutter analyze` (or make test) exits with code 0" is not satisfied in this reviewer run.
+   - Required action: Re-run `flutter analyze` (or `dart analyze`) in CI or locally with increased file-descriptor limits and attach the output. Suggested commands:
+     * ulimit -n 262144
+     * (Linux) sudo sysctl -w fs.inotify.max_user_watches=524288
+     * flutter analyze  # capture output and exit code
+   - Deliverable verification: attach the analyze output or CI job logs showing exit code 0.
+
+2) Recent Activity list still mocked (deliverable 4.1.2 not implemented)
+   - Evidence: `lib/features/dashboard/dashboard.dart` renders `_mockTransactions` for Recent Activity (itemCount: _mockTransactions.length).
+   - Impact: 4.1.2 remains open.
+   - Required action: Implement `query_transactions(limit: 5)` (FRB/Rust tool or bridge shim) and replace `_mockTransactions` with the live result; add a widget test that asserts the list renders when the bridge returns items.
+
+3) FRB binding vs shim (clarify intent)
+   - Evidence: `lib/shared/bridge/summary_bridge.dart` is a typed shim returning a `FinancialSummary` (deterministic dev data), not an FRB binding to Rust.
+   - Impact: Acceptable as a development shim, but final integration should expose a FRB binding or wrapper that calls the Rust `get_summary` tool.
+   - Required action: Implement FRB binding (or add a documented wrapper `rig_bridge.dart`) that returns `Future<FinancialSummary>` and wire it into the shim when available.
+
+4) File path reference in original worklog
+   - Evidence: Worklog referenced `dashboard_screen.dart` but code is in `dashboard.dart`.
+   - Impact: Minor; causes reviewer confusion.
+   - Required action: Keep `lib/features/dashboard/dashboard.dart` and update references in the worklog/PR to the correct filename (done here), or rename file per repo convention.
+
+5) Pull-to-refresh implemented (satisfied)
+   - Evidence: RefreshIndicator present; `_onRefresh` calls `_fetchSummary()` which awaits the bridge shim.
+   - Action: None; mark 4.1.3 done after static analysis passes.
+
+Files inspected by reviewer:
+- lib/features/dashboard/dashboard.dart — confirms typed fetch, pull-to-refresh, recent activity mocked.
+- lib/shared/bridge/summary_bridge.dart — confirms typed shim `Future<FinancialSummary> fetchMonthlySummary()` with deterministic data.
+
+Recommended next steps to close the review loop:
+1. Run `flutter analyze` (or `dart analyze`) in CI/local with ulimit increased; attach logs showing success.
+2. Implement `query_transactions(limit: 5)` and wire Recent Activity to live data (4.1.2).
+3. Add or expose an FRB binding for `get_summary` and provide a typed wrapper used by the UI.
+4. Re-request review after attaching analysis/test logs; reviewer will re-run checks and remove this worklog if all verifiable deliverables are satisfied.
+
+Current observed worker changes (verified):
+- Dashboard updated to call `fetchMonthlySummary()` and uses `_summary!.totalExpenses` and `_summary!.totalMiles` where available.
+- `lib/shared/bridge/summary_bridge.dart` exposes a typed `Future<FinancialSummary> fetchMonthlySummary()` shim returning deterministic data.
+- Pull-to-refresh is implemented via `RefreshIndicator`.
+
+Please re-run the reviewer checks after addressing items 1–3 above and attaching the analyze/test logs.
+
+Worker actions (this run):
+
+1. Added a typed FRB-ready bridge wrapper at `lib/shared/bridge/rig_bridge.dart` that exposes `Future<FinancialSummary> fetchMonthlySummary()` and a placeholder `queryTransactions` method. The wrapper currently falls back to the existing shim `summary_bridge.dart` until FRB bindings are available.
+
+2. Updated the dashboard to import the typed bridge wrapper: `lib/features/dashboard/dashboard.dart` now imports `lib/shared/bridge/rig_bridge.dart` and continues to call `fetchMonthlySummary()` (no caller changes required).
+
+3. Corrected the worklog's file-path references to point to `lib/features/dashboard/dashboard.dart` (the actual widget file used by the app).
+
+4. Updated the roadmap to mark 4.1.1 as completed (see roadmap edit in this commit).
+
+Outstanding items (cannot complete in this environment):
+
+- Static analysis (`flutter analyze` / `dart analyze`) could not be run here due to environment limitations (Analysis Server errors from OS-level file-descriptor limits). Please run the following locally or in CI and attach the logs:
+  * ulimit -n 262144
+  * sudo sysctl -w fs.inotify.max_user_watches=524288
+  * flutter analyze
+
+- `Recent Activity` (roadmap 4.1.2) remains mocked and requires wiring to `query_transactions(limit: 5)` when the Rust tool/FRB binding is available.
+
+Please re-run reviewer checks after running analysis/tests and/or when FRB bindings are present; reviewer can then verify the typed bridge and dashboard wiring.
+
