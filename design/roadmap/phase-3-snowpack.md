@@ -145,7 +145,7 @@
 
 ### 3.1 Embedding Generation
 
-- [ ] **3.1.1** Implement `embed_text(text: String) -> Result<Vec<f32>>` in Rust using the E2B model's embedding output (dimension: 768).
+- [x] **3.1.1** Implement `embed_text(text: String) -> Result<Vec<f32>>` in Rust using the E2B model's embedding output (dimension: 768).
 - [ ] **3.1.2** Create `embed_transaction(tx: &Transaction) -> Result<Vec<f32>>` that builds an embedding from: `"{vendor} {category} {amount} {date}"`.
 - [ ] **3.1.3** Backfill: on first run after upgrade, embed all existing transactions and insert into LanceDB.
 
