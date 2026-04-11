@@ -1,8 +1,0 @@
-{
-  "active": true,
-  "current_iteration": 1,
-  "max_iterations": 5,
-  "completion_promise": "",
-  "original_prompt": "I see error Fatal error: Uncaught PDOException: SQLSTATE[42S01]: Base table or view already exists: 1050 Table '__metadata' already exists... you need to check the log for the lumi-appwrite container to observe error instead of just waiting",
-  "started_at": "2026-04-11T06:16:02Z"
-}

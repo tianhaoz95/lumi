@@ -11,5 +11,6 @@ Client buildTestClient() {
 
   return Client()
     ..setEndpoint(endpoint)
-    ..setProject(projectId);
+    ..setProject(projectId)
+    ..setSelfSigned(status: true);
 }

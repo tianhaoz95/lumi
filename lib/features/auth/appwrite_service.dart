@@ -28,7 +28,8 @@ class AppwriteService {
     if (createClient) {
       _client = Client()
           .setEndpoint(_endpoint)
-          .setProject(_projectId);
+          .setProject(_projectId)
+          .setSelfSigned(status: true);
 
       // Note: Appwrite Dart SDK's client does not expose a setKey() method in
       // the Flutter/browser client. Server-side API keys are not required for the

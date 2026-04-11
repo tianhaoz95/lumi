@@ -14,6 +14,7 @@ dependencies:
   flutter_riverpod: ^2.0.0
   google_fonts: ^4.0.3
   material_symbols_icons: ^4.2928.1
+  path_provider: ^2.1.0
 
 flutter:
   uses-material-design: true
