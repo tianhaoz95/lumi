@@ -39,6 +39,9 @@ pub use agent_frb::agent_chat;
 mod receipt;
 pub use receipt::{ReceiptData, process_receipt_image};
 
+mod embeddings;
+// embeddings::embed_transaction is intentionally not re-exported publicly
+
 mod tools;
 pub use tools::{log_transaction, log_transaction_with_pool};
 

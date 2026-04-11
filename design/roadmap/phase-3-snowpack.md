@@ -34,7 +34,7 @@
   ) -> Result<String>
   ```
 - [x] **1.2.2** Implementation: insert a row into the `transactions` SQLite table, compute SHA-256 hash of the transaction JSON, store hash in `sha256_hash` column, return the new row ID.
-- [ ] **1.2.3** Embed the new transaction into LanceDB (`embed_transaction` helper, see §3).
+- [x] **1.2.3** Embed the new transaction into LanceDB (`embed_transaction` helper, see §3).
 
 **Tests:**
 - Rust unit test: `log_transaction` with valid inputs inserts a row and returns an ID.

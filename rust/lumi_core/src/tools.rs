@@ -98,6 +98,35 @@ pub async fn log_transaction(
     let id = log_transaction_with_pool(&pool, &vendor, amount, &currency, &category, &date, receipt_path.as_deref()).await
         .map_err(|e| anyhow!("insert failed: {}", e))?;
 
+    // Attempt to embed and upsert into the vector DB (best-effort, non-fatal for the tool)
+    let vector_db_path = std::env::var("LUMI_VECTOR_DB_PATH").unwrap_or_else(|_| "./vector_db".to_string());
+    // initialize vector DB directory
+    if let Err(e) = crate::vector_db::vector_db_init(&vector_db_path) {
+        // Log to stderr but do not fail the main operation
+        eprintln!("vector_db_init failed: {}", e);
+    } else {
+        // Build metadata same as the sha source
+        let meta = serde_json::json!({
+            "vendor": vendor,
+            "amount": amount,
+            "currency": currency,
+            "category": category,
+            "date": date,
+            "receipt_path": receipt_path,
+        });
+        let meta_str = meta.to_string();
+        match crate::embeddings::embed_transaction(&vendor, &category, amount, &date) {
+            Ok(embedding) => {
+                if let Err(e) = crate::vector_db::upsert_embedding(&vector_db_path, &id, &embedding, &meta_str) {
+                    eprintln!("upsert_embedding failed: {}", e);
+                }
+            }
+            Err(e) => {
+                eprintln!("embed_transaction failed: {}", e);
+            }
+        }
+    }
+
     Ok(id)
 }
 
@@ -166,6 +195,12 @@ mod tests {
         let db_url = format!("sqlite:{}", tmp_path.to_string_lossy());
         std::env::set_var("LUMI_DB_URL", &db_url);
 
+        // Prepare a temp vector DB dir
+        let vec_dir = std::env::temp_dir().join(format!("lumi_vector_db_test_{}", Uuid::new_v4()));
+        if vec_dir.exists() { fs::remove_dir_all(&vec_dir)?; }
+        let vec_dir_str = vec_dir.to_string_lossy().to_string();
+        std::env::set_var("LUMI_VECTOR_DB_PATH", &vec_dir_str);
+
         // Call the public tool wrapper
         let id = log_transaction("Tool Vendor".to_string(), 5.50, "USD".to_string(), "meals".to_string(), "2026-03-04T12:00:00Z".to_string(), None).await?;
 
@@ -177,8 +212,14 @@ mod tests {
             .await?;
         assert_eq!(row.0, id);
 
+        // Verify embedding exists in the vector DB
+        let (embedding, metadata) = crate::vector_db::get_embedding(&vec_dir_str, &id)?;
+        assert_eq!(embedding.len(), 768);
+        assert!(metadata.contains("Tool Vendor"));
+
         // Cleanup
         let _ = fs::remove_file(&tmp_path);
+        let _ = fs::remove_dir_all(&vec_dir);
         Ok(())
     }
 }
