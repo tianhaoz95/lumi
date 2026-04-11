@@ -114,7 +114,7 @@
   - Two-column layout (editorial left column hidden on mobile, form right column).
   - Fields: Full Name, Email, Password, Terms checkbox.
   - Calls `AppwriteService.createAccount(name, email, password)`.
-- [ ] **3.3.2** On success: auto-login and navigate to `HomeScreen`.
+- [x] **3.3.2** On success: auto-login and navigate to `HomeScreen`.
 - [ ] **3.3.3** Validate: email format, password min 8 chars, terms must be checked.
 
 **Tests:**

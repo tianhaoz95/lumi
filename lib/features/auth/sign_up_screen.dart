@@ -99,6 +99,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           rethrow;
         }
 
+        // After account creation, attempt to auto-login so the new user is immediately authenticated.
+        try {
+          await AppwriteService.instance.login(email, password);
+        } catch (e) {
+          // If login fails, surface a snackbar but still navigate so the user can continue and manually login.
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Account created but auto-login failed: ${e.toString()}')));
+        }
+
         if (mounted) Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e?.toString() ?? 'Sign up failed')));
