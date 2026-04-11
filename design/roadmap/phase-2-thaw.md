@@ -122,7 +122,7 @@
 
 ### 3.2 Structured Receipt Extraction
 
-- [ ] **3.2.1** Design the OCR prompt template in `rust/lumi_core/src/prompts/receipt_ocr.txt`:
+- [x] **3.2.1** Design the OCR prompt template in `rust/lumi_core/src/prompts/receipt_ocr.txt`:
   ```
   You are a receipt parser. Extract from this image:
   - vendor_name
