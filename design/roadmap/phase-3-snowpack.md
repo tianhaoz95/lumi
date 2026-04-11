@@ -89,7 +89,7 @@
       top_k: Option<u32>,
   ) -> Result<Vec<TransactionSummary>>
   ```
-- [ ] **1.5.2** Implementation: embed the query string using the E2B model's embedding layer, query LanceDB for the top-k nearest neighbours, join results with SQLite for full transaction data.
+- [x] **1.5.2** Implementation: embed the query string using the E2B model's embedding layer, query LanceDB for the top-k nearest neighbours, join results with SQLite for full transaction data.
 
 **Tests:**
 - Rust integration test: after seeding 20 transactions, `semantic_search("heating bills")` returns the correct utility transactions in the top 3.
