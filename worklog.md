@@ -1,25 +1,23 @@
-Task: Implement 1.4.1 — Define `log_mileage` tool in Rust
+Task: Implement semantic_search tool (phase-3, item 1.5.1)
 
-Reviewer Findings: RESOLVED
-- Roadmap updated: tasks 1.4.1 and 1.4.2 marked complete in design/roadmap/phase-3-snowpack.md.
-- Unit tests executed: `cargo test -q --manifest-path rust/lumi_core/Cargo.toml` passed (all tests green).
-- Worklog cleaned: previous reviewer findings have been addressed and are marked resolved.
-
-Resolved Findings from previous iteration:
-- **Missing Unit Tests:** Resolved. Unit tests are present in `tools.rs`.
-- **Unused Parameters:** Resolved. All parameters are persisted in `mileage_logs`.
-- **Compiler Warnings:** Resolved for tools.rs; unrelated warnings exist elsewhere but do not affect this task.
-
-Original Plan (step-by-step):
-1. Inspect existing Rust tool implementations in rust/lumi_core/src/tools.rs to match style and patterns used for `log_transaction` and `query_transactions`.
-2. Add a new `MileageLogResult` struct and implement `log_mileage_with_pool(...)` that: parses the date, computes IRS deduction at $0.67/mile, inserts a row into `mileage_logs`, and returns the id + deduction.
-3. Add an FRB-facing wrapper `log_mileage(...)` annotated with `#[rig_macros::tool(...)]` matching the roadmap signature.
-4. Add unit tests that assert the deduction calculation (10.0 miles → 6.70) and that the row is persisted.
-5. Run `cargo test` for the lumi_core crate and iterate until all tests pass.
-6. Mark the roadmap task 1.4.1 done.
+Planned steps:
+1. Add an embed_text(text: &str) helper that produces deterministic placeholder embeddings (768-d) so tests run without model dependencies.
+2. Implement vector_search(db_path, query_vector, top_k) in the on-disk vector DB (transaction_embeddings) using cosine similarity.
+3. Add a Rig-exposed tool `semantic_search(query: String, top_k: Option<u32>)` in `rust/lumi_core/src/tools.rs` that:
+   - embeds the query via embed_text,
+   - queries the vector DB for top-k matches,
+   - looks up matching transaction rows in SQLite and returns TransactionSummary list.
+4. Add unit tests for embed_text, vector_search, and an integration-flow test exercising semantic_search via in-process call.
+5. Run `cargo test` for the lumi_core crate and fix any compile/test issues.
+6. Mark the roadmap task 1.5.1 as done when all tests pass.
 
 Verifiable deliverables:
-- The file `rust/lumi_core/src/tools.rs` contains a `MileageLogResult` struct, `log_mileage_with_pool` and `log_mileage` functions.
-- Running `cargo test -q --manifest-path rust/lumi_core/Cargo.toml` exits with code 0 and all tests pass.
-- The database schema file `rust/lumi_core/src/db.rs` contains a `mileage_logs` table definition (already present).
-- `design/roadmap/phase-3-snowpack.md` shows the task `1.4.1` as completed (`- [x]`).
+- File `rust/lumi_core/src/embeddings.rs` contains function `embed_text(&str) -> Result<Vec<f32>>`.
+- File `rust/lumi_core/src/vector_db.rs` contains function `vector_search(db_path: &str, query_vector: &[f32], top_k: u32) -> Result<Vec<(String, f32, String)>, Box<dyn Error>>`.
+- File `rust/lumi_core/src/tools.rs` contains a Rig tool `semantic_search(query: String, top_k: Option<u32>) -> anyhow::Result<Vec<TransactionSummary>>`.
+- Running `cd rust/lumi_core && cargo test --lib` exits with code 0 (all tests pass).
+- `design/roadmap/phase-3-snowpack.md` line for 1.5.1 is updated from `- [ ]` to `- [x]`.
+
+Notes:
+- This work uses deterministic placeholder embeddings (sha-based) so CI and unit tests do not require real model binaries.
+- Do not remove or delete this worklog; reviewers will verify the listed deliverables and the test results.

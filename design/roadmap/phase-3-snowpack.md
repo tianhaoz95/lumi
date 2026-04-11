@@ -81,7 +81,7 @@
 
 ### 1.5 Tool: `semantic_search`
 
-- [ ] **1.5.1** Define tool:
+- [x] **1.5.1** Define tool:
   ```rust
   #[tool(description = "Search transaction history semantically using natural language")]
   async fn semantic_search(

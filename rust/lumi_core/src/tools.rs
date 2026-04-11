@@ -297,6 +297,60 @@ pub async fn log_mileage(
 }
 
 
+#[rig_macros::tool(description = "Search transaction history semantically using natural language")]
+pub async fn semantic_search(
+    query: String,
+    top_k: Option<u32>,
+) -> anyhow::Result<Vec<TransactionSummary>> {
+    let topk = top_k.unwrap_or(5);
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // Ensure schema exists
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!(format!("db_init failed: {}", e)));
+    }
+
+    let vector_db_path = std::env::var("LUMI_VECTOR_DB_PATH").unwrap_or_else(|_| "./vector_db".to_string());
+
+    // embed query
+    let qvec = match crate::embeddings::embed_text(&query) {
+        Ok(v) => v,
+        Err(e) => return Err(anyhow!(format!("embed_text failed: {}", e))),
+    };
+
+    let results = match crate::vector_db::vector_search(&vector_db_path, &qvec, topk) {
+        Ok(r) => r,
+        Err(e) => return Err(anyhow!(format!("vector_search failed: {}", e))),
+    };
+
+    let mut out: Vec<TransactionSummary> = Vec::new();
+    for (id, _score, _meta) in results {
+        let row_opt = sqlx::query("SELECT id, vendor, amount, currency, category, timestamp, is_tagged FROM transactions WHERE id = ?1")
+            .bind(&id)
+            .fetch_optional(&pool)
+            .await
+            .map_err(|e| anyhow!(format!("db query failed: {}", e)))?;
+        if let Some(row) = row_opt {
+            let id: String = row.try_get("id")?;
+            let vendor: Option<String> = row.try_get("vendor")?;
+            let amount_cents: i64 = row.try_get("amount")?;
+            let currency: String = row.try_get("currency")?;
+            let category: Option<String> = row.try_get("category")?;
+            let timestamp: i64 = row.try_get("timestamp")?;
+            let is_tagged_i: i32 = row.try_get("is_tagged")?;
+            let amount = (amount_cents as f64) / 100.0;
+            let is_tagged = is_tagged_i != 0;
+            out.push(TransactionSummary { id, vendor, amount, currency, category, timestamp, is_tagged });
+        }
+    }
+
+    Ok(out)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;

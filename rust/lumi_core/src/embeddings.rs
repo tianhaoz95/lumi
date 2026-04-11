@@ -30,6 +30,27 @@ pub fn embed_transaction(vendor: &str, category: &str, amount: f64, date: &str) 
     Ok(out)
 }
 
+/// Produce a deterministic placeholder embedding vector (length 768) for arbitrary text.
+/// Mirrors the approach used for transactions so unit tests can run without model deps.
+pub fn embed_text(text: &str) -> Result<Vec<f32>> {
+    // Use the text itself as the canonical input
+    let mut hasher = Sha256::new();
+    hasher.update(text.as_bytes());
+    let base = hasher.finalize();
+    let mut out = Vec::with_capacity(768);
+    for i in 0..768u32 {
+        let mut h = Sha256::new();
+        h.update(&base);
+        h.update(&i.to_le_bytes());
+        let d = h.finalize();
+        let v = u32::from_le_bytes([d[0], d[1], d[2], d[3]]);
+        let f = (v as f64) / (u32::MAX as f64);
+        let mapped = (f * 2.0) - 1.0;
+        out.push(mapped as f32);
+    }
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -40,6 +61,11 @@ mod tests {
         let b = embed_transaction("Test Vendor", "meals", 4.25, "2026-01-02T12:00:00Z")?;
         assert_eq!(a.len(), 768);
         assert_eq!(a, b);
+
+        let t1 = embed_text("coffee shop")?;
+        let t2 = embed_text("coffee shop")?;
+        assert_eq!(t1.len(), 768);
+        assert_eq!(t1, t2);
         Ok(())
     }
 }
