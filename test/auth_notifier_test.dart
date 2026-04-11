@@ -3,14 +3,14 @@ import 'package:lumi/features/auth/appwrite_service.dart';
 import 'package:lumi/features/auth/auth_notifier.dart';
 
 class FakeAccountSuccess {
-  Future<void> createSession({required String email, required String password}) async {
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
     // simulate network latency
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
 }
 
 class FakeAccountFailure {
-  Future<void> createSession({required String email, required String password}) async {
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
     await Future<void>.delayed(const Duration(milliseconds: 10));
     throw Exception('Invalid credentials');
   }

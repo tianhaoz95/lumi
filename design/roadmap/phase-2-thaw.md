@@ -87,7 +87,7 @@
   - Show a "breathing" animation (pulsing dot) while streaming is in progress.
   - Freeze and finalize bubble when `is_final == true`.
 - [x] **2.2.2** Display the live `tokens_per_second` metric in a dev-mode overlay (`kDebugMode` only).
-- [ ] **2.2.3** Disable the send button while a response is streaming; re-enable on completion or error.
+- [x] **2.2.3** Disable the send button while a response is streaming; re-enable on completion or error.
 
 **Tests:**
 - Widget test: send button disables while `ChatService` stream is active.
