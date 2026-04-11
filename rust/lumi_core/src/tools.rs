@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use sqlx::SqlitePool;
 use sqlx::Row;
 use serde_json::json;
@@ -325,14 +326,6 @@ mod tests {
         db::db_init_with_pool(&pool).await?;
 
         let _id1 = log_transaction_with_pool(&pool, "Vendor A", 10.0, "USD", "supplies", "2026-02-03T09:00:00Z", None).await?;
-        // Fetch sha stored
-        let cents_first = (10.0f64 * 100.0f64).round() as i64;
-        let sha1: (Option<String>,) = sqlx::query_as("SELECT sha256_hash FROM transactions WHERE vendor = ?1 AND amount = ?2 LIMIT 1")
-            .bind("Vendor A")
-            .bind(cents_first)
-            .fetch_one(&pool)
-            .await?;
-
         // Insert same logical transaction again; should return existing ID (idempotent)
         let id2 = log_transaction_with_pool(&pool, "Vendor A", 10.0, "USD", "supplies", "2026-02-03T09:00:00Z", None).await?;
         let cents = (10.0f64 * 100.0f64).round() as i64;
