@@ -383,7 +383,7 @@
   - Test "submit reset@lumi.com → success state shown".
   - Test "password reset email delivered to Mailhog" — calls `waitForEmail('reset@lumi.com')`, asserts non-empty body.
 
-- [ ] **6.6.4** `integration_test/auth/auth_guard_test.dart`:
+- [x] **6.6.4** `integration_test/auth/auth_guard_test.dart`: 
   - Test "unauthenticated cold start → redirected to LoginScreen".
   - Test "authenticated cold start → HomeScreen rendered".
 
