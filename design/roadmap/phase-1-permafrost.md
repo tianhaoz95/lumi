@@ -195,7 +195,7 @@
 
 ### 5.1 Rust Core Scaffold
 
-- [ ] **5.1.1** In `rust/lumi_core/src/lib.rs`, define and expose a `ping()` function via FRB:
+- [x] **5.1.1** In `rust/lumi_core/src/lib.rs`, define and expose a `ping()` function via FRB:
   ```rust
   pub fn ping() -> String { "pong".to_string() }
   ```
