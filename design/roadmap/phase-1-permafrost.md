@@ -312,7 +312,7 @@
 
 ### 6.4 CI Bootstrap Script (REST, no MCP)
 
-- [ ] **6.4.1** Create `scripts/ci-appwrite-bootstrap.sh` for use in GitHub Actions (no MCP runtime available):
+- [x] **6.4.1** Create `scripts/ci-appwrite-bootstrap.sh` for use in GitHub Actions (no MCP runtime available):
   ```bash
   #!/usr/bin/env bash
   set -euo pipefail
@@ -347,7 +347,7 @@
 
 ### 6.5 Integration Test Helpers
 
-- [ ] **6.5.1** Create `integration_test/helpers/appwrite_test_client.dart`:
+- [x] **6.5.1** Create `integration_test/helpers/appwrite_test_client.dart`:
   ```dart
   import 'package:appwrite/appwrite.dart';
 
