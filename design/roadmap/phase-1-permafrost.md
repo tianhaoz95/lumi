@@ -220,9 +220,9 @@
 
 ### 5.3 LanceDB Initialization
 
-- [ ] **5.3.1** Add `lancedb` to `rust/Cargo.toml`.
-- [ ] **5.3.2** Create a `vector_db_init(db_path: String)` function exposed via FRB that opens/creates a LanceDB at the app's data directory.
-- [ ] **5.3.3** Define the `transaction_embeddings` table schema: `id` (string), `embedding` (vector float32[768]), `metadata` (string/JSON).
+- [x] **5.3.1** Add `lancedb` to `rust/Cargo.toml`.
+- [x] **5.3.2** Create a `vector_db_init(db_path: String)` function exposed via FRB that opens/creates a LanceDB at the app's data directory.
+- [x] **5.3.3** Define the `transaction_embeddings` table schema: `id` (string), `embedding` (vector float32[768]), `metadata` (string/JSON).
 
 **Tests:**
 - Rust unit test: `vector_db_init()` creates the database file without error.
@@ -234,7 +234,7 @@
 
 ### 6.1 Docker Compose for Appwrite
 
-- [ ] **6.1.1** Create `docker-compose.appwrite.yml` at the project root with:
+- [x] **6.1.1** Create `docker-compose.appwrite.yml` at the project root with:
   - `appwrite` service (latest image), mapped to port 80.
   - `appwrite-realtime`, `appwrite-worker-usage`, `appwrite-worker-audits`, `appwrite-worker-mails` worker services.
   - `mariadb:10.7` with a named volume `appwrite-mariadb`.
