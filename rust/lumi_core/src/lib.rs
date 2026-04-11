@@ -19,7 +19,7 @@ pub use validators::{validate_email, validate_password, validate_terms};
 mod db;
 mod vector_db;
 pub use db::{db_init, db_init_with_pool};
-pub use vector_db::vector_db_init;
+pub use vector_db::{vector_db_init, upsert_embedding, get_embedding};
 
 mod model_registry;
 pub use model_registry::{check_model_ready, compute_sha256, get_download_progress, frb_check_model_ready, frb_get_download_progress};
@@ -40,10 +40,10 @@ mod receipt;
 pub use receipt::{ReceiptData, process_receipt_image};
 
 mod embeddings;
-// embeddings::embed_transaction is intentionally not re-exported publicly
+pub use embeddings::{embed_transaction, embed_transaction_from_summary, embed_text};
 
 mod tools;
-pub use tools::{log_transaction, log_transaction_with_pool, get_summary};
+pub use tools::{log_transaction, log_transaction_with_pool, get_summary, query_transactions_with_pool};
 
 #[cfg(test)]
 mod tests {

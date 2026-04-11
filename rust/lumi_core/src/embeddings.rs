@@ -1,5 +1,6 @@
 use sha2::{Sha256, Digest};
 use anyhow::Result;
+use chrono::{TimeZone, Utc};
 
 /// Produce a deterministic placeholder embedding vector (length 768) for a transaction.
 /// This is a temporary, deterministic embedding generator used until the real
@@ -30,6 +31,19 @@ pub fn embed_transaction(vendor: &str, category: &str, amount: f64, date: &str) 
     Ok(out)
 }
 
+/// Convenience wrapper: embed from a TransactionSummary struct.
+/// Builds the canonical string "{vendor} {category} {amount} {date}" where date is RFC3339.
+pub fn embed_transaction_from_summary(tx: &crate::tools::TransactionSummary) -> Result<Vec<f32>> {
+    let vendor = tx.vendor.as_deref().unwrap_or("");
+    let category = tx.category.as_deref().unwrap_or("");
+    let amount = tx.amount;
+    let date = Utc.timestamp_opt(tx.timestamp, 0)
+        .single()
+        .map(|d| d.format("%Y-%m-%dT%H:%M:%SZ").to_string())
+        .unwrap_or_else(|| "".to_string());
+    embed_transaction(vendor, category, amount, &date)
+}
+
 /// Produce a deterministic placeholder embedding vector (length 768) for arbitrary text.
 /// Mirrors the approach used for transactions so unit tests can run without model deps.
 pub fn embed_text(text: &str) -> Result<Vec<f32>> {
@@ -54,6 +68,8 @@ pub fn embed_text(text: &str) -> Result<Vec<f32>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tools::TransactionSummary;
+    use chrono::DateTime;
 
     #[test]
     fn embedding_length_and_determinism() -> Result<(), Box<dyn std::error::Error>> {
@@ -66,6 +82,23 @@ mod tests {
         let t2 = embed_text("coffee shop")?;
         assert_eq!(t1.len(), 768);
         assert_eq!(t1, t2);
+
+        // Test wrapper that consumes TransactionSummary
+        let ts = DateTime::parse_from_rfc3339("2026-01-02T12:00:00Z")?;
+        let summary = TransactionSummary {
+            id: "id".to_string(),
+            vendor: Some("Test Vendor".to_string()),
+            amount: 4.25,
+            currency: "USD".to_string(),
+            category: Some("meals".to_string()),
+            timestamp: ts.timestamp(),
+            is_tagged: false,
+        };
+
+        let e1 = embed_transaction_from_summary(&summary)?;
+        let e2 = embed_transaction("Test Vendor", "meals", 4.25, "2026-01-02T12:00:00Z")?;
+        assert_eq!(e1, e2);
+
         Ok(())
     }
 }
