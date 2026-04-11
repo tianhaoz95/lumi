@@ -22,7 +22,7 @@
 ### 1.2 Model File Management
 
 - [x] **1.2.1** Download Gemma 4 E2B (quantized, `.task` / `.bin` format for LiteRT) and Gemma 4 E4B.
-- [ ] **1.2.2** Store model files outside the Flutter asset bundle (too large). Define a `ModelRegistry` in Rust that resolves model paths from the platform's application support directory.
+- [x] **1.2.2** Store model files outside the Flutter asset bundle (too large). Define a `ModelRegistry` in Rust that resolves model paths from the platform's application support directory.
 - [ ] **1.2.3** Implement `ModelDownloadService` exposed via FRB:
   - `check_model_ready(model_id: String) -> bool` — checks if model file exists and passes SHA-256 integrity check.
   - `get_download_progress() -> f32` — returns 0.0–1.0.
