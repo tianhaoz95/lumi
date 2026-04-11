@@ -175,7 +175,7 @@
 ### 3.4 RAG Accuracy Evaluation
 
 - [x] **3.4.1** Create `rust/lumi_core/tests/rag_eval.rs` with 20 (query → expected transaction IDs) pairs from a seeded dataset.
-- [ ] **3.4.2** Assert that the expected transaction appears in the top-5 results for ≥ 19/20 queries (≥ 95% recall@5).
+- [x] **3.4.2** Assert that the expected transaction appears in the top-5 results for ≥ 19/20 queries (≥ 95% recall@5).
 
 **Verifiable result:** `cargo test rag_eval` reports ≥ 95% recall.
 
@@ -185,7 +185,7 @@
 
 ### 4.1 Dashboard — Real Metrics
 
-- [ ] **4.1.1** Replace hardcoded mock values in `DashboardScreen` with data from `agent_chat` or direct FRB calls to `get_summary("this_month")`:
+- [x] **4.1.1** Replace hardcoded mock values in `DashboardScreen` with data from `agent_chat` or direct FRB calls to `get_summary("this_month")`:
   - **Current Expenses**: `FinancialSummary.total_expenses`
   - **Working Hours**: future placeholder (not yet tracked; show `--`)
   - **Mileage Tracking**: `FinancialSummary.total_miles` + `estimated_deduction`

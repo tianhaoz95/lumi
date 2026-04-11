@@ -73,6 +73,23 @@ pub async fn log_transaction_with_pool(
     .execute(pool)
     .await?;
 
+    // Best-effort: embed transaction and upsert into vector DB. Non-fatal for insertion.
+    let vector_db_path = std::env::var("LUMI_VECTOR_DB_PATH").unwrap_or_else(|_| "./vector_db".to_string());
+    if let Err(e) = crate::vector_db::vector_db_init(&vector_db_path) {
+        eprintln!("vector_db_init failed: {}", e);
+    } else {
+        match crate::embeddings::embed_transaction(vendor, category, amount, date) {
+            Ok(embedding) => {
+                if let Err(e) = crate::vector_db::upsert_embedding(&vector_db_path, &id, &embedding, &meta_str) {
+                    eprintln!("upsert_embedding failed: {}", e);
+                }
+            }
+            Err(e) => {
+                eprintln!("embed_transaction failed: {}", e);
+            }
+        }
+    }
+
     Ok(id)
 }
 

@@ -1,11 +1,47 @@
-// Dashboard implementation for Phase 1
+// Dashboard implementation for Phase 1 (upgraded to use live summary shim)
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../widgets/floating_nav_bar.dart';
+import '../../shared/bridge/summary_bridge.dart';
+import '../../shared/models/financial_summary.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  FinancialSummary? _summary;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSummary();
+  }
+
+  Future<void> _fetchSummary() async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      final map = await fetchMonthlySummary();
+      setState(() {
+        _summary = FinancialSummary.fromJson(map);
+      });
+    } catch (e) {
+      // swallow — UI will show placeholders
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _onRefresh() => _fetchSummary();
 
   @override
   Widget build(BuildContext context) {
@@ -16,48 +52,53 @@ class DashboardScreen extends StatelessWidget {
         elevation: 0,
       ),
       backgroundColor: LumiColors.surface,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final isWide = width >= 800;
-          final crossAxisCount = isWide ? 3 : 1;
-
-          return Padding(
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Bento grid
-                GridView(
-                  key: const Key('bento_grid'),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: isWide ? 3 : 3,
-                  ),
-                  children: [
-                    _MetricCard(
-                      key: const Key('metric_current_expenses'),
-                      title: 'Current Expenses',
-                      value: '\$1,234.56',
-                      subtitle: '+4.2% this month',
-                    ),
-                    _MetricCard(
-                      key: const Key('metric_working_hours'),
-                      title: 'Working Hours',
-                      value: '38h',
-                      subtitle: 'This week',
-                    ),
-                    _MetricCard(
-                      key: const Key('metric_mileage'),
-                      title: 'Mileage Tracking',
-                      value: '120 mi',
-                      subtitle: 'Est. \$80.40',
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final width = constraints.maxWidth;
+                    final isWide = width >= 800;
+                    final crossAxisCount = isWide ? 3 : 1;
+                    return GridView(
+                      key: const Key('bento_grid'),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: isWide ? 3 : 3,
+                      ),
+                      children: [
+                        _MetricCard(
+                          key: const Key('metric_current_expenses'),
+                          title: 'Current Expenses',
+                          value: _summary != null ? '\$${_summary!.totalExpenses.toStringAsFixed(2)}' : '--',
+                          subtitle: _summary != null ? '' : (_loading ? 'Loading...' : ''),
+                        ),
+                        _MetricCard(
+                          key: const Key('metric_working_hours'),
+                          title: 'Working Hours',
+                          value: '--',
+                          subtitle: 'This week',
+                        ),
+                        _MetricCard(
+                          key: const Key('metric_mileage'),
+                          title: 'Mileage Tracking',
+                          value: _summary != null ? '${_summary!.totalMiles.toStringAsFixed(0)} mi' : '--',
+                          subtitle: _summary != null ? 'Est. \$${_summary!.estimatedDeduction.toStringAsFixed(2)}' : '',
+                        ),
+                      ],
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 18),
@@ -65,42 +106,42 @@ class DashboardScreen extends StatelessWidget {
                 const Text('Recent Activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
 
-                // Recent activity list
-                Expanded(
-                  child: ListView.separated(
-                    key: const Key('recent_activity_list'),
-                    itemCount: _mockTransactions.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final t = _mockTransactions[index];
-                      return LumiCard(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(child: Icon(t.icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                    Text(t.subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Text(t.amount, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                // Recent activity list (shrink-wrapped so the parent scroll view handles scrolling)
+                ListView.separated(
+                  key: const Key('recent_activity_list'),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _mockTransactions.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final t = _mockTransactions[index];
+                    return LumiCard(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(child: Icon(t.icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                  Text(t.subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(t.amount, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 12.0),
