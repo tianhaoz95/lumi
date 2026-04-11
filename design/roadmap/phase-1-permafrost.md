@@ -306,7 +306,7 @@
      TEST_RESET_EMAIL=reset@lumi.com
      MAILHOG_URL=http://localhost:8025
   ```
-- [ ] **6.3.2** After bootstrap, copy the generated API key into `.vscode/mcp.json` (replacing the template placeholder).
+- [x] **6.3.2** After bootstrap, copy the generated API key into `.vscode/mcp.json` (replacing the template placeholder).
 
 **Verifiable result:** After running the bootstrap prompt, `.env.test` exists and `curl http://localhost/v1/projects/lumi-test` returns 200.
 
