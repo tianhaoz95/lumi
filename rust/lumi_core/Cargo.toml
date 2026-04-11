@@ -19,3 +19,11 @@ regex = "1"
 sea-orm = { version = "0.11", features = ["sqlx-sqlite"] }
 # sqlx for SQLite support used by sea-orm (enable macros for compile-time checks)
 sqlx = { version = "0.6", features = ["sqlite", "runtime-tokio-rustls", "macros"] }
+
+# LanceDB (vector / RAG store) - fetch from official lance-rs repository
+# Using a git dependency to avoid pinning to a specific crates.io version here.
+lance = { git = "https://github.com/lancedb/lance-rs", branch = "main" }
+
+[features]
+# Opt-in feature to enable vector DB integration
+vector-db = ["lance"]
