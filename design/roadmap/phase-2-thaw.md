@@ -96,7 +96,7 @@
 
 ### 2.3 Model Selector Logic
 
-- [ ] **2.3.1** Implement `ModelRouter` in Dart:
+- [x] **2.3.1** Implement `ModelRouter` in Dart:
   - Default to `E2B` (Sentinel) for all chat messages.
   - Upgrade to `E4B` (Auditor) when the prompt contains keywords: `receipt`, `audit`, `analyze`, `deduction`, or the message length > 300 characters.
 - [ ] **2.3.2** Display a subtle indicator in the chat UI when `E4B` is active (a small "Auditor" badge next to Kit's avatar).
