@@ -4,6 +4,7 @@
 // initialized.
 
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:appwrite/appwrite.dart';
 
@@ -103,6 +104,36 @@ class AppwriteService {
       }
     } catch (_) {
       // ignore
+    }
+  }
+
+  /// Send a password reset email using Appwrite Account API.
+  /// Tests can inject a fake account that implements `createRecovery` or similar.
+  Future<void> sendPasswordReset(String email) async {
+    if (_account == null) throw StateError('AppwriteService not initialized.');
+    try {
+      // Prefer SDK methods if available.
+      if (_account.createRecovery != null) {
+        await _account.createRecovery(email: email, url: 'http://localhost/reset');
+        return;
+      }
+      if (_account.createPasswordRecovery != null) {
+        await _account.createPasswordRecovery(email: email, url: 'http://localhost/reset');
+        return;
+      }
+      // Fallback: attempt simple HTTP POST to the Appwrite recovery endpoint.
+      final uri = Uri.parse('$_endpoint/account/recovery');
+      final httpClient = HttpClient();
+      final request = await httpClient.postUrl(uri);
+      request.headers.set('Content-Type', 'application/json');
+      request.add(utf8.encode(jsonEncode({'email': email})));
+      final response = await request.close();
+      httpClient.close();
+      if (response.statusCode >= 400) {
+        throw Exception('Password reset request failed (status: ${response.statusCode})');
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }
