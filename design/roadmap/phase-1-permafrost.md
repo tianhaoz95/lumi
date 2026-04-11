@@ -67,7 +67,7 @@
 - [x] **2.2.3** `LumiTextField` — `surface-container-high` fill, 2px ghost-border focus ring (`primary` at 40% opacity), leading icon slot.
 - [x] **2.2.4** `KitGhost` — Kit the Fox mascot ghost widget: Material Symbol `pets` icon at configurable opacity (default 7%), `grayscale` color filter.
 - [x] **2.2.5** `AtmosphericBackground` — fixed positioned blurred orbs + grain texture overlay (SVG noise filter at 2–3% opacity).
-- [ ] **2.2.6** `FloatingNavBar` — glassmorphism pill nav bar that does not span full width.
+- [x] **2.2.6** `FloatingNavBar` — glassmorphism pill nav bar that does not span full width.
 
 **Verifiable result:** Each widget has a corresponding widget test that renders it and matches a golden image.
 

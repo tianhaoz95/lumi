@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lumi/lib/shared/widgets/lumi_text_field.dart';
-import 'package:lumi/lib/core/theme.dart';
+import 'package:lumi/shared/widgets/lumi_text_field.dart';
+import 'package:lumi/core/theme.dart';
 
 void main() {
   testWidgets('LumiTextField builds and shows hint + leading icon', (WidgetTester tester) async {

@@ -35,7 +35,21 @@ __pycache__/
 *.pyc
 
 # Rust build (if using Rust projects)
+# keep generic target (covers workspace and top-level)
 target/
+# Also ignore nested Rust targets
+rust/target/
+
+# Flutter build artifacts
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Environment files
+.env
+.env.test
 
 # IDE files
 .vscode/

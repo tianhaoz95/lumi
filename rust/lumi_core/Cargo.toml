@@ -9,3 +9,7 @@ name = "lumi_core"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+# Tokio for async runtimes used by FRB and other async Rust code
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+# flutter_rust_bridge crate (left permissive) - used by FRB codegen and bindings
+flutter_rust_bridge = "*"
