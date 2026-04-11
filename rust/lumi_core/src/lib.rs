@@ -28,6 +28,10 @@ pub use model_registry::{check_model_ready, compute_sha256, get_download_progres
 mod inference;
 pub use inference::{InferenceEngine, frb_load_model};
 
+// Receipt processing (multimodal OCR pipeline stub)
+mod receipt;
+pub use receipt::{ReceiptData, process_receipt_image};
+
 #[cfg(test)]
 mod tests {
     use super::*;
