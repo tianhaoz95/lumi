@@ -366,7 +366,7 @@
 
 ### 6.6 Integration Test Files — Auth Suite
 
-- [ ] **6.6.1** `integration_test/auth/login_test.dart`:
+- [x] **6.6.1** `integration_test/auth/login_test.dart`: 
   - `setUp`: clear test sessions.
   - Test "valid credentials → navigates to HomeScreen".
   - Test "invalid password → shows inline error, stays on LoginScreen".
