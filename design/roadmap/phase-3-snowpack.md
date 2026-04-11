@@ -73,7 +73,7 @@
       purpose: String,
   ) -> Result<MileageLogResult>
   ```
-- [ ] **1.4.2** Implementation: calculate deduction at IRS 2026 rate ($0.67/mile), insert into `mileage_logs`, return a `MileageLogResult` with `deduction_amount`.
+- [x] **1.4.2** Implementation: calculate deduction at IRS 2026 rate ($0.67/mile), insert into `mileage_logs`, return a `MileageLogResult` with `deduction_amount`.
 
 **Tests:**
 - Rust unit test: `log_mileage(10.0, ...)` returns `deduction_amount == 6.70`.
