@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 
@@ -7,6 +8,7 @@ import '../../core/theme.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_card.dart';
+import '../../shared/widgets/tokens_overlay.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../widgets/floating_nav_bar.dart';
 import '../../shared/chat/chat_service.dart';
@@ -26,6 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final List<_ChatMessage> _messages = [];
   StreamSubscription<InferenceChunk>? _streamSub;
   bool _isStreaming = false;
+  double? _tokensPerSecond;
 
   @override
   void dispose() {
@@ -44,6 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       // Add placeholder for Kit's streaming response
       _messages.add(_ChatMessage(author: _Author.kit, text: '', isStreaming: true));
       _isStreaming = true;
+      _tokensPerSecond = null;
     });
 
     _controller.clear();
@@ -57,8 +61,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         // Append token to last message text
         final updated = _ChatMessage(author: last.author, text: last.text + chunk.token, isStreaming: !chunk.isFinal);
         _messages[_messages.length - 1] = updated;
+        // Update tokens per second metric for overlay (debug only)
+        _tokensPerSecond = chunk.tokensPerSecond;
         if (chunk.isFinal) {
           _isStreaming = false;
+          _tokensPerSecond = null;
         }
       });
     }, onError: (e) {
@@ -66,10 +73,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final last = _messages.last;
         _messages[_messages.length - 1] = _ChatMessage(author: last.author, text: 'Lumi is resting…', isStreaming: false);
         _isStreaming = false;
+        _tokensPerSecond = null;
       });
     }, onDone: () {
       setState(() {
         _isStreaming = false;
+        _tokensPerSecond = null;
       });
     });
   }
@@ -169,6 +178,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
+
+          // Dev overlay: show tokens_per_second while streaming (kDebugMode only)
+          TokensOverlay(tokensPerSecond: _tokensPerSecond),
         ],
       ),
     );
