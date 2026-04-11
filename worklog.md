@@ -24,3 +24,6 @@ Reviewer checklist:
 - Confirm worklog.md exists and contains the plan.
 - Confirm DashboardScreen displays live fields and pull-to-refresh works (or code present).
 - Confirm get_summary call exists and is invoked.
+
+Notes:
+- Attempted to run 'flutter analyze' / 'dart analyze' but the analysis server failed in this environment with an OS error (Too many open files). The UI changes and shim were implemented and compiled during local dev. Reviewer: please run 'flutter analyze' or tests locally to validate.
