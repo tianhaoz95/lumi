@@ -83,7 +83,7 @@
   - Add Flutter platform with bundle ID `com.lumi.app`.
   - Enable Email/Password authentication.
   - Configure an SMTP provider (e.g., Mailhog in Docker) for password-reset emails.
-- [ ] **3.1.3** Create `lib/core/env.dart` (git-ignored) with:
+- [x] **3.1.3** Create `lib/core/env.dart` (git-ignored) with:
   ```dart
   const appwriteEndpoint = 'http://localhost/v1';
   const appwriteProjectId = 'lumi-dev';

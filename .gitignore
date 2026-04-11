@@ -50,6 +50,8 @@ build/
 # Environment files
 .env
 .env.test
+# Local dev overrides (not committed)
+lib/core/env.dart
 
 # IDE files
 .vscode/
