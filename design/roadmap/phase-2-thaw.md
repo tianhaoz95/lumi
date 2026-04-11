@@ -47,7 +47,7 @@
   - Fall back to GPU → CPU if hardware delegate unavailable.
   - Measure and log load time.
 - [x] **1.3.3** Expose `load_model(model_id: String) -> Result<()>` via FRB. Call at app startup after `db_init()`.
-- [ ] **1.3.4** Create a `ModelTier` enum (`Sentinel = E2B`, `Auditor = E4B`) with a selection function based on task complexity hints passed from Dart.
+- [x] **1.3.4** Create a `ModelTier` enum (`Sentinel = E2B`, `Auditor = E4B`) with a selection function based on task complexity hints passed from Dart.
 
 **Tests:**
 - Integration test: `load_model("e2b")` completes in < 3 s on a reference device (documented in test annotations).
@@ -59,7 +59,7 @@
 
 ### 2.1 Streaming API Design
 
-- [ ] **2.1.1** Define the FRB streaming interface in Rust:
+- [x] **2.1.1** Define the FRB streaming interface in Rust:
   ```rust
   pub fn infer_stream(
       prompt: String,

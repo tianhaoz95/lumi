@@ -1051,6 +1051,7 @@ dependencies = [
  "flutter_rust_bridge",
  "hex",
  "litert-lm",
+ "once_cell",
  "regex",
  "sea-orm",
  "serde",

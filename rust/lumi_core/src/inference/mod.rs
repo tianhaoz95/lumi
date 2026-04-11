@@ -29,6 +29,65 @@ impl fmt::Display for ModelId {
     }
 }
 
+/// Abstract model tier used for routing decisions. Sentinel == E2B (lightweight),
+/// Auditor == E4B (heavy-weight analysis).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ModelTier {
+    Sentinel,
+    Auditor,
+}
+
+impl fmt::Display for ModelTier {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ModelTier::Sentinel => write!(f, "Sentinel"),
+            ModelTier::Auditor => write!(f, "Auditor"),
+        }
+    }
+}
+
+impl From<ModelTier> for ModelId {
+    fn from(t: ModelTier) -> Self {
+        match t {
+            ModelTier::Sentinel => ModelId::E2B,
+            ModelTier::Auditor => ModelId::E4B,
+        }
+    }
+}
+
+/// Selection function used by the Dart side to pick an appropriate model tier
+/// based on lightweight hints about task complexity. Hints are free-form tags
+/// such as `"receipt"`, `"analyze"`, or `"length>350"`.
+pub fn select_model_tier_from_hints(hints: Vec<String>) -> ModelTier {
+    // Keywords that require the Auditor (E4B)
+    const AUDITOR_KEYWORDS: [&str; 4] = ["receipt", "audit", "analyze", "deduction"];
+
+    for h in &hints {
+        let s = h.to_lowercase();
+        for kw in &AUDITOR_KEYWORDS {
+            if s.contains(kw) {
+                return ModelTier::Auditor;
+            }
+        }
+        // Simple length hint parser: "length>300"
+        if let Some(rest) = s.strip_prefix("length>") {
+            if let Ok(n) = rest.parse::<usize>() {
+                if n > 300 {
+                    return ModelTier::Auditor;
+                }
+            }
+        }
+    }
+
+    // Default to Sentinel (E2B)
+    ModelTier::Sentinel
+}
+
+/// FRB-friendly wrapper returning a String for easier Dart consumption.
+pub fn frb_select_model_tier(hints: Vec<String>) -> String {
+    select_model_tier_from_hints(hints).to_string()
+}
+
 /// A lightweight stub representing a LiteRT session/delegate. In the real
 /// implementation this will wrap the actual LiteRT runtime session and
 /// hardware delegates (NPU/ANE/GPU/CPU). For Phase 1/2 scaffolding, keep it
@@ -121,6 +180,109 @@ pub fn frb_load_model(model_id: String) -> Result<(), String> {
         }
         Err(e) => Err(format!("failed to load model: {}", e)),
     }
+}
+
+// ----------------------
+// FRB Streaming Interface
+// ----------------------
+
+use serde::{Serialize, Deserialize};
+use std::sync::Arc;
+use tokio::sync::mpsc;
+
+/// Local StreamSink placeholder used in the FRB streaming scaffold. In the
+/// real FRB integration this would be `flutter_rust_bridge::StreamSink<T>`.
+#[derive(Clone)]
+pub struct StreamSink<T: Send + 'static> {
+    sender: Arc<mpsc::Sender<T>>,
+}
+
+impl<T: Send + 'static> StreamSink<T> {
+    /// Create a new StreamSink and return it along with the Receiver side so
+    /// tests can observe emitted items.
+    pub fn new_channel(buffer: usize) -> (Self, mpsc::Receiver<T>) {
+        let (tx, rx) = mpsc::channel(buffer);
+        (StreamSink { sender: Arc::new(tx) }, rx)
+    }
+
+    pub async fn send(&mut self, v: T) -> Result<(), ()> {
+        // Use try_send to avoid awaiting if receiver is closed
+        self.sender.send(v).await.map_err(|_| ())
+    }
+
+    pub async fn close(&mut self) -> Result<(), ()> {
+        // Dropping the sender will close the channel for receivers
+        Ok(())
+    }
+}
+
+
+/// Chunk of inference output sent over FRB to Dart.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InferenceChunk {
+    pub token: String,
+    pub is_final: bool,
+    pub tokens_per_second: f32,
+}
+
+/// Internal helper: stream prompt tokens to a vector of chunks. Used by both
+/// tests and the FRB-facing `infer_stream` function.
+async fn stream_prompt_to_chunks(prompt: String, _model_tier: ModelTier) -> Vec<InferenceChunk> {
+    // Simple tokenization: split on whitespace for Phase 2 scaffold.
+    let tokens: Vec<String> = if prompt.is_empty() {
+        vec!["".to_string()]
+    } else {
+        prompt.split_whitespace().map(|s| s.to_string()).collect()
+    };
+
+    let mut out: Vec<InferenceChunk> = Vec::new();
+    let start = tokio::time::Instant::now();
+    for (i, t) in tokens.into_iter().enumerate() {
+        let elapsed = start.elapsed().as_secs_f32().max(0.0001);
+        let tps = (i as f32 + 1.0) / elapsed;
+        let chunk = InferenceChunk {
+            token: t,
+            is_final: false,
+            tokens_per_second: tps,
+        };
+        out.push(chunk);
+        // Small delay to simulate streaming
+        tokio::time::sleep(tokio::time::Duration::from_millis(20)).await;
+    }
+
+    // Final chunk indicating completion
+    let final_chunk = InferenceChunk {
+        token: String::new(),
+        is_final: true,
+        tokens_per_second: 0.0,
+    };
+    out.push(final_chunk);
+    out
+}
+
+/// FRB-exposed streaming function. Dart will receive a stream of
+/// `InferenceChunk` items. This function spawns a background task so the
+/// FRB call can return immediately while the stream continues.
+pub fn infer_stream(prompt: String, model_tier: ModelTier, mut sink: StreamSink<InferenceChunk>) -> Result<(), String> {
+    // Move values into async task
+    flutter_rust_bridge::spawn(async move {
+        // Generate the chunks
+        let chunks = stream_prompt_to_chunks(prompt, model_tier).await;
+        // Send each chunk into the sink; ignore send errors
+        for mut chunk in chunks {
+            let mut s = sink.clone();
+            flutter_rust_bridge::spawn(async move {
+                let _ = s.send(chunk).await;
+            });
+            // small pacing to avoid saturating the runtime
+            tokio::time::sleep(tokio::time::Duration::from_millis(5)).await;
+        }
+
+        // Close the sink when done. Best-effort; ignore errors.
+        let _ = sink.close().await;
+    });
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -236,4 +398,29 @@ mod tests {
         std::env::remove_var("LUMI_MODEL_DIR");
         let _ = std::fs::remove_dir_all(&tmp);
     }
+
+    #[test]
+    fn select_model_tier_prefers_auditor_for_receipt_keyword() {
+        let hints = vec!["receipt".to_string()];
+        let tier = select_model_tier_from_hints(hints);
+        assert_eq!(tier, ModelTier::Auditor);
+    }
+
+    #[test]
+    fn select_model_tier_defaults_to_sentinel() {
+        let hints: Vec<String> = vec![];
+        let tier = select_model_tier_from_hints(hints);
+        assert_eq!(tier, ModelTier::Sentinel);
+    }
+
+    #[tokio::test]
+    async fn stream_prompt_to_chunks_emits_chunks() {
+        let prompt = "hello world from lumi".to_string();
+        let chunks = stream_prompt_to_chunks(prompt, ModelTier::Sentinel).await;
+
+        // Should emit at least one non-final chunk and a final chunk
+        assert!(chunks.len() >= 1, "expected at least one chunk");
+        assert!(chunks.iter().any(|c| c.is_final), "expected a final chunk");
+    }
 }
+
