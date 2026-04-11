@@ -10,8 +10,8 @@
 
 ### 1.1 Dependency Setup
 
-- [ ] **1.1.1** Add `litert-lm` (Rust bindings) to `rust/Cargo.toml`. Pin to the version documented in the project wiki.
-- [ ] **1.1.2** Add build script (`build.rs`) to link the LiteRT native libraries for each platform target:
+- [x] **1.1.1** Add `litert-lm` (Rust bindings) to `rust/Cargo.toml`. Pin to the version documented in the project wiki.
+- [x] **1.1.2** Add build script (`build.rs`) to link the LiteRT native libraries for each platform target:
   - `aarch64-linux-android` (Android, NPU path)
   - `aarch64-apple-ios` (iOS, ANE path)
   - `x86_64-unknown-linux-gnu` (host, CPU fallback for CI)

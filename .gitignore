@@ -55,6 +55,7 @@ lib/core/env.dart
 
 # IDE files
 .vscode/
+.vscode/mcp.json
 .idea/
 *.swp
 *.swo

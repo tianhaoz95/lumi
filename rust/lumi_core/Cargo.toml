@@ -15,15 +15,21 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 flutter_rust_bridge = "*"
 # Regex for input validation
 regex = "1"
-# sea-orm with sqlx sqlite backend for relational DB (SQLite)
+# sea-orm with sqlx sqlite backend and sqlx for compile-time checks
 sea-orm = { version = "0.11", features = ["sqlx-sqlite"] }
-# sqlx for SQLite support used by sea-orm (enable macros for compile-time checks)
 sqlx = { version = "0.6", features = ["sqlite", "runtime-tokio-rustls", "macros"] }
+# Serde for JSON serialization used by the vector DB placeholder
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# LiteRT-LM bindings (local stub during development)
+litert-lm = { path = "../litert-lm" }
 
 # LanceDB (vector / RAG store) - fetch from official lance-rs repository
 # Using a git dependency to avoid pinning to a specific crates.io version here.
-lance = { git = "https://github.com/lancedb/lance-rs", branch = "main" }
+# lance vector DB dependency removed for local test environment (optional in real builds)
+# lance = { git = "https://github.com/lancedb/lance-rs", branch = "main", optional = true }
 
 [features]
 # Opt-in feature to enable vector DB integration
-vector-db = ["lance"]
+vector-db = []

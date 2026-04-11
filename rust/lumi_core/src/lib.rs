@@ -12,6 +12,15 @@ pub fn crate_version() -> &'static str {
 mod validators;
 pub use validators::{validate_email, validate_password, validate_terms};
 
+mod db;
+mod vector_db;
+pub use db::{db_init, db_init_with_pool};
+pub use vector_db::vector_db_init;
+
+// Inference module (LiteRT-LM bindings)
+mod inference;
+pub use inference::InferenceEngine;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -37,6 +46,7 @@ mod tests {
         assert!(s.contains("rust/target/") || s.contains("rust/target"), ".gitignore missing rust/target entry");
         assert!(s.contains("build/"), ".gitignore missing build/ entry");
         assert!(s.contains(".env"), ".gitignore missing .env entry");
+        assert!(s.contains(".vscode/mcp.json"), ".gitignore missing .vscode/mcp.json entry");
     }
 
     #[test]
@@ -66,6 +76,22 @@ mod tests {
         let pool = sqlx::SqlitePool::connect(":memory:").await?;
         let row: (i64,) = sqlx::query_as("SELECT 1 as value").fetch_one(&pool).await?;
         assert_eq!(row.0, 1);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn db_init_creates_tables_with_pool() -> Result<(), sqlx::Error> {
+        // Use a single pool and call the migration helper that operates on a pool.
+        let pool = sqlx::SqlitePool::connect(":memory:").await?;
+        // run the initializer
+        db_init_with_pool(&pool).await?;
+        // query sqlite_master for table existence
+        let rows = sqlx::query(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('transactions','mileage_logs','users');"
+        )
+        .fetch_all(&pool)
+        .await?;
+        assert_eq!(rows.len(), 3, "Expected 3 tables to be created");
         Ok(())
     }
 }

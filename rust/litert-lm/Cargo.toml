@@ -1,0 +1,11 @@
+[package]
+name = "litert-lm"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "litert_lm"
+crate-type = ["rlib"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
