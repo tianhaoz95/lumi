@@ -26,8 +26,13 @@ void main() {
     // The top-level Container should be present
     expect(find.byType(Container), findsWidgets);
 
-    // Verify that the ConstrainedBox obeys maxWidth
-    final constrained = tester.widget<ConstrainedBox>(find.byType(ConstrainedBox));
+    // Verify that the ConstrainedBox inside FloatingNavBar obeys maxWidth
+    final cbFinder = find.descendant(
+      of: find.byType(FloatingNavBar),
+      matching: find.byType(ConstrainedBox),
+    );
+    expect(cbFinder, findsOneWidget);
+    final constrained = tester.widget<ConstrainedBox>(cbFinder);
     expect(constrained.constraints.maxWidth, equals(600));
   });
 }
