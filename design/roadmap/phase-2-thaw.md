@@ -113,7 +113,7 @@
 ### 3.1 Image Capture Pipeline
 
 - [x] **3.1.1** Add `image_picker` and `camera` packages to `pubspec.yaml`.
-- [ ] **3.1.2** In the chat input bar's `add` button, add a bottom sheet with options: "Camera", "Photo Library".
+- [x] **3.1.2** In the chat input bar's `add` button, add a bottom sheet with options: "Camera", "Photo Library".
 - [ ] **3.1.3** On image selection, pass the raw bytes to a Rust function via FRB:
   ```rust
   pub fn process_receipt_image(image_bytes: Vec<u8>) -> Result<ReceiptData>

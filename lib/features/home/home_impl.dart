@@ -38,6 +38,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
+  // Shows the add bottom sheet with Camera / Photo Library options.
+  void _showAddSheet() async {
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Camera'),
+              onTap: () => Navigator.of(context).pop('camera'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Photo Library'),
+              onTap: () => Navigator.of(context).pop('gallery'),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Cancel'),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (choice == null) return;
+
+    // Placeholder handlers: integration with image picker / camera will be
+    // implemented in subsequent roadmap items (3.1.3 / 3.1.4).
+    if (choice == 'camera') {
+      // TODO: open camera and pass bytes to Rust via FRB
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Camera selected (not yet implemented)')));
+    } else if (choice == 'gallery') {
+      // TODO: open gallery and pass bytes to Rust via FRB
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Photo Library selected (not yet implemented)')));
+    }
+  }
+
   void _send() {
     final prompt = _controller.text.trim();
     if (prompt.isEmpty || _isStreaming) return;
@@ -147,7 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 child: Row(
                   children: [
-                    IconButton(icon: const Icon(Icons.add), onPressed: () {}, tooltip: 'Add'),
+                    IconButton(icon: const Icon(Icons.add), onPressed: _showAddSheet, tooltip: 'Add'),
                     Expanded(
                       child: LumiTextField(
                         key: const Key('chat_input'),
