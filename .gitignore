@@ -62,3 +62,6 @@ lib/core/env.dart
 
 # Ralph backup directories (created by migration)
 .ralph_backup_*
+
+# Python
+.venv
