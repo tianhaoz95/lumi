@@ -199,8 +199,8 @@
   ```rust
   pub fn ping() -> String { "pong".to_string() }
   ```
-- [ ] **5.1.2** Run `flutter_rust_bridge_codegen generate` and confirm Dart bindings appear in `lib/shared/bridge/`.
-- [ ] **5.1.3** Call `ping()` from Dart and display the result in a dev-only diagnostics screen.
+- [x] **5.1.2** Run `flutter_rust_bridge_codegen generate` and confirm Dart bindings appear in `lib/shared/bridge/`.
+- [x] **5.1.3** Call `ping()` from Dart and display the result in a dev-only diagnostics screen.
 
 **Verifiable result (latency test):**
 - Integration test calls `ping()` in a loop of 1000 iterations, asserts p99 round-trip < 2 ms.

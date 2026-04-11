@@ -50,4 +50,12 @@ mod tests {
         assert!(s.contains("google_fonts:"), "pubspec missing google_fonts");
         assert!(s.contains("material_symbols_icons:"), "pubspec missing material_symbols_icons");
     }
+
+    #[test]
+    fn generated_bindings_exist() {
+        use std::path::Path;
+        let manifest_dir = env!("CARGO_MANIFEST_DIR");
+        let binding_path = Path::new(manifest_dir).join("../../lib/shared/bridge/lumi_core_bridge.dart");
+        assert!(binding_path.exists(), "Expected generated Dart binding at {}", binding_path.display());
+    }
 }
