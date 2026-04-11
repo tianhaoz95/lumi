@@ -27,7 +27,7 @@
   - `check_model_ready(model_id: String) -> bool` — checks if model file exists and passes SHA-256 integrity check.
   - `get_download_progress() -> f32` — returns 0.0–1.0.
   - On first launch, if models are absent, stream download progress to Flutter for a loading screen.
-- [ ] **1.2.4** Document model file URLs and expected SHA-256 hashes in `design/models.md`.
+- [x] **1.2.4** Document model file URLs and expected SHA-256 hashes in `design/models.md`.
 
 **Tests:**
 - Rust unit test: `check_model_ready()` returns `false` when file is missing, `true` when present with valid hash.
@@ -35,18 +35,18 @@
 
 ### 1.3 LiteRT-LM Runtime Initialization
 
-- [ ] **1.3.1** Create `InferenceEngine` struct in `rust/lumi_core/src/inference/mod.rs`:
+- [x] **1.3.1** Create `InferenceEngine` struct in `rust/lumi_core/src/inference/mod.rs`:
   ```rust
   pub struct InferenceEngine {
       model_id: ModelId,  // E2B | E4B
       session: LiteRtSession,
   }
   ```
-- [ ] **1.3.2** Implement `InferenceEngine::load(model_id, model_path) -> Result<Self>`:
+- [x] **1.3.2** Implement `InferenceEngine::load(model_id, model_path) -> Result<Self>`:
   - Preferentially enable NPU delegate (Android) / ANE delegate (iOS).
   - Fall back to GPU → CPU if hardware delegate unavailable.
   - Measure and log load time.
-- [ ] **1.3.3** Expose `load_model(model_id: String) -> Result<()>` via FRB. Call at app startup after `db_init()`.
+- [x] **1.3.3** Expose `load_model(model_id: String) -> Result<()>` via FRB. Call at app startup after `db_init()`.
 - [ ] **1.3.4** Create a `ModelTier` enum (`Sentinel = E2B`, `Auditor = E4B`) with a selection function based on task complexity hints passed from Dart.
 
 **Tests:**

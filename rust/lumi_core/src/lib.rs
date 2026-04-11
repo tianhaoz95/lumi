@@ -25,7 +25,7 @@ pub use model_registry::{check_model_ready, compute_sha256, get_download_progres
 
 // Inference module (LiteRT-LM bindings)
 mod inference;
-pub use inference::InferenceEngine;
+pub use inference::{InferenceEngine, frb_load_model};
 
 #[cfg(test)]
 mod tests {
