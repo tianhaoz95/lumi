@@ -115,12 +115,12 @@
 
 ### 2.1 Prompt Engineering
 
-- [ ] **2.1.1** Write the Rig system prompt in `rust/lumi_core/src/prompts/system.txt`:
+- [x] **2.1.1** Write the Rig system prompt in `rust/lumi_core/src/prompts/system.txt`:
   - Establishes Kit the Fox persona.
   - Lists all tools with clear descriptions.
   - Instructs to always prefer a tool call over a guessed answer when financial data is involved.
   - Instructs to ask clarifying questions if tool parameters are ambiguous.
-- [ ] **2.1.2** Add few-shot examples to the system prompt for each tool.
+- [x] **2.1.2** Add few-shot examples to the system prompt for each tool.
 - [ ] **2.1.3** Set a maximum of 5 tool-call iterations per conversation turn to prevent infinite loops.
 
 ### 2.2 Tool-Choice Evaluation Suite
