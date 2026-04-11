@@ -361,20 +361,10 @@ pub struct FinancialSummary {
     pub working_hours: Option<f64>,
 }
 
-#[rig_macros::tool(description = "Return a financial summary for a given period")]
-pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
-    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
-    let pool = SqlitePool::connect(&db_url)
-        .await
-        .map_err(|e| anyhow!(format!("failed to connect to db: {}", e)))?;
-
-    // Ensure schema exists
-    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
-        return Err(anyhow!(format!("db_init failed: {}", e)));
-    }
-
+#[doc(hidden)]
+pub async fn get_summary_with_pool(pool: &SqlitePool, period: &str) -> anyhow::Result<FinancialSummary> {
     let now = Utc::now();
-    let (start_ts, end_ts) = match period.as_str() {
+    let (start_ts, end_ts) = match period {
         "this_month" => {
             let start = Utc.ymd(now.year(), now.month(), 1).and_hms(0,0,0);
             (start.timestamp(), now.timestamp())
@@ -400,7 +390,7 @@ pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
     let total_cents: Option<i64> = sqlx::query_scalar("SELECT SUM(amount) FROM transactions WHERE timestamp >= ?1 AND timestamp <= ?2")
         .bind(start_ts)
         .bind(end_ts)
-        .fetch_one(&pool)
+        .fetch_one(pool)
         .await
         .map_err(|e| anyhow!(format!("total query failed: {}", e)))?;
     let total_expenses = total_cents.unwrap_or(0) as f64 / 100.0;
@@ -409,7 +399,7 @@ pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
     let rows = sqlx::query("SELECT category, SUM(amount) as total FROM transactions WHERE timestamp >= ?1 AND timestamp <= ?2 GROUP BY category ORDER BY total DESC LIMIT 5")
         .bind(start_ts)
         .bind(end_ts)
-        .fetch_all(&pool)
+        .fetch_all(pool)
         .await
         .map_err(|e| anyhow!(format!("top categories query failed: {}", e)))?;
     let mut top_categories: Vec<(String, f64)> = Vec::new();
@@ -425,7 +415,7 @@ pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
     let total_miles_opt: Option<f64> = sqlx::query_scalar("SELECT SUM(distance_miles) FROM mileage_logs WHERE timestamp >= ?1 AND timestamp <= ?2")
         .bind(start_ts)
         .bind(end_ts)
-        .fetch_one(&pool)
+        .fetch_one(pool)
         .await
         .map_err(|e| anyhow!(format!("miles query failed: {}", e)))?;
     let total_miles = total_miles_opt.unwrap_or(0.0);
@@ -433,7 +423,7 @@ pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
     let total_deduction_opt: Option<f64> = sqlx::query_scalar("SELECT SUM(deduction_amount) FROM mileage_logs WHERE timestamp >= ?1 AND timestamp <= ?2")
         .bind(start_ts)
         .bind(end_ts)
-        .fetch_one(&pool)
+        .fetch_one(pool)
         .await
         .map_err(|e| anyhow!(format!("deduction query failed: {}", e)))?;
     let estimated_deduction = total_deduction_opt.unwrap_or(0.0);
@@ -442,13 +432,28 @@ pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
     let working_hours = None;
 
     Ok(FinancialSummary {
-        period,
+        period: period.to_string(),
         total_expenses,
         top_categories,
         total_miles,
         estimated_deduction,
         working_hours,
     })
+}
+
+#[rig_macros::tool(description = "Return a financial summary for a given period")]
+pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // Ensure schema exists
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!(format!("db_init failed: {}", e)));
+    }
+
+    get_summary_with_pool(&pool, &period).await
 }
 
 #[cfg(test)]
@@ -749,6 +754,67 @@ mod tests {
         if let Some(v) = prev_db { std::env::set_var("LUMI_DB_URL", v); } else { std::env::remove_var("LUMI_DB_URL"); }
         if let Some(v) = prev_vec { std::env::set_var("LUMI_VECTOR_DB_PATH", v); } else { std::env::remove_var("LUMI_VECTOR_DB_PATH"); }
 
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn get_summary_this_month_returns_correct_totals() -> Result<(), Box<dyn std::error::Error>> {
+        use uuid::Uuid;
+        // prepare temp sqlite db file so multiple connections share data
+        let tmp_db = std::env::temp_dir().join(format!("lumi_summary_test_{}.db", Uuid::new_v4()));
+        let _f = std::fs::File::create(&tmp_db)?;
+        let db_url = format!("sqlite:{}", tmp_db.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        // init sqlite schema
+        let pool = SqlitePool::connect(&db_url).await?;
+        crate::db::db_init_with_pool(&pool).await?;
+
+        // insert two transactions in this month
+        let now = Utc::now();
+        let date_str = now.to_rfc3339();
+        let _ = log_transaction_with_pool(&pool, "Vendor A", 10.0, "USD", "utilities", &date_str, None).await?;
+        let _ = log_transaction_with_pool(&pool, "Vendor B", 5.50, "USD", "meals", &date_str, None).await?;
+
+        // insert mileage log
+        let _ = log_mileage_with_pool(&pool, 10.0, "Start", "End", &date_str, "test").await?;
+
+        // call get_summary via pool-backed helper
+        let summary = get_summary_with_pool(&pool, "this_month").await?;
+        // Verify totals
+        assert!((summary.total_expenses - 15.50).abs() < 1e-6, "unexpected total_expenses: {}", summary.total_expenses);
+        assert!((summary.total_miles - 10.0).abs() < 1e-6, "unexpected total_miles: {}", summary.total_miles);
+        assert!((summary.estimated_deduction - 6.70).abs() < 1e-6, "unexpected estimated_deduction: {}", summary.estimated_deduction);
+        // top categories should include utilities and meals
+        let cats: Vec<String> = summary.top_categories.iter().map(|(c, _)| c.clone()).collect();
+        assert!(cats.contains(&"utilities".to_string()));
+        assert!(cats.contains(&"meals".to_string()));
+
+        // cleanup
+        let _ = fs::remove_file(&tmp_db);
+        // unset env
+        std::env::remove_var("LUMI_DB_URL");
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn get_summary_unknown_period_returns_error() -> Result<(), Box<dyn std::error::Error>> {
+        // prepare temp sqlite db file
+        let tmp_db = std::env::temp_dir().join(format!("lumi_summary_test_{}.db", Uuid::new_v4()));
+        let _f = std::fs::File::create(&tmp_db)?;
+        let db_url = format!("sqlite:{}", tmp_db.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        let pool = SqlitePool::connect(&db_url).await?;
+        crate::db::db_init_with_pool(&pool).await?;
+
+        let res = get_summary_with_pool(&pool, "not-a-period").await;
+        assert!(res.is_err());
+
+        let _ = fs::remove_file(&tmp_db);
+        std::env::remove_var("LUMI_DB_URL");
         Ok(())
     }
 }

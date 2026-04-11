@@ -103,7 +103,7 @@
   async fn get_summary(period: String) -> Result<FinancialSummary>
   ```
   where `period` is e.g. `"this_month"`, `"last_month"`, `"ytd"`.
-- [ ] **1.6.2** Implementation: aggregate SQLite queries for total expenses, top categories, mileage deduction, and working hours logged.
+- [x] **1.6.2** Implementation: aggregate SQLite queries for total expenses, top categories, mileage deduction, and working hours logged.
 
 **Tests:**
 - Rust unit test: `get_summary("this_month")` returns correct totals for a seeded dataset.
