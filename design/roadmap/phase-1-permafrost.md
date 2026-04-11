@@ -110,7 +110,7 @@
 
 ### 3.3 Auth Screens — Sign Up
 
-- [ ] **3.3.1** Implement `SignUpScreen` matching `ui_design/sign_up/code.html`:
+- [x] **3.3.1** Implement `SignUpScreen` matching `ui_design/sign_up/code.html`:
   - Two-column layout (editorial left column hidden on mobile, form right column).
   - Fields: Full Name, Email, Password, Terms checkbox.
   - Calls `AppwriteService.createAccount(name, email, password)`.
