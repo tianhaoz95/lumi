@@ -389,7 +389,7 @@
 
 ### 6.7 Makefile
 
-- [ ] **6.7.1** Create `Makefile` at the project root:
+- [x] **6.7.1** Create `Makefile` at the project root:
   ```makefile
   DEVICE ?= emulator-5554
 
