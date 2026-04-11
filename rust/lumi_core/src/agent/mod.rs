@@ -1,6 +1,7 @@
 use crate::inference::{self, ModelTier, StreamSink, InferenceChunk};
 use tokio::time::{timeout, Duration};
 use async_trait::async_trait;
+use serde::{Serialize, Deserialize};
 
 /// LumiAgent is a thin wrapper that will later integrate with Rig's Agent.
 /// For Phase 3 scaffold it initializes the rig-core and provides a simple
@@ -61,6 +62,13 @@ impl LumiAgent {
 
         Ok(out)
     }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentChunk {
+    pub token: String,
+    pub is_final: bool,
+    pub tokens_per_second: f32,
 }
 
 #[async_trait]

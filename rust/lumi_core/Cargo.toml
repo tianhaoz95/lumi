@@ -45,3 +45,6 @@ chrono = "0.4.44"
 [features]
 # Opt-in feature to enable vector DB integration
 vector-db = []
+
+[dev-dependencies]
+env_logger = "0.10"

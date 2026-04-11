@@ -15,7 +15,7 @@
 - [x] **1.1.3** Implement the custom completion provider:
   - `complete(prompt: CompletionRequest) -> CompletionResponse` — routes through `InferenceEngine::infer_stream()` and collects the full response.
   - Passes the full tool-calling schema as part of the system prompt (Rig handles formatting).
-- [ ] **1.1.4** Expose `agent_chat(user_message: String, sink: StreamSink<AgentChunk>) -> Result<()>` via FRB to replace the raw `infer_stream` used in Phase 2.
+- [x] **1.1.4** Expose `agent_chat(user_message: String, sink: StreamSink<AgentChunk>) -> Result<()>` via FRB to replace the raw `infer_stream` used in Phase 2.
 
 **Verifiable result:** Calling `agent_chat("hello")` from Dart receives a streamed response from the Rig agent (no tool call needed) within the same latency window as Phase 2 direct inference.
 

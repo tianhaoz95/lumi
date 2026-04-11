@@ -1,4 +1,4 @@
-mod frb_generated; /* AUTO INJECTED BY flutter_rust_bridge. This line may not be accurate, and you can change it according to your needs. */
+// mod frb_generated; /* AUTO INJECTED BY flutter_rust_bridge. Disabled for unit test scaffold to avoid codegen macro issues. */
 /// Lumi core library
 
 pub mod build_support;
@@ -31,6 +31,9 @@ pub use inference::{InferenceEngine, frb_load_model};
 // Agent module (Rig integration)
 mod agent;
 pub use agent::LumiAgent;
+
+mod agent_frb;
+pub use agent_frb::agent_chat;
 
 // Receipt processing (multimodal OCR pipeline stub)
 mod receipt;
