@@ -13,3 +13,5 @@ crate-type = ["rlib", "cdylib"]
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 # flutter_rust_bridge crate (left permissive) - used by FRB codegen and bindings
 flutter_rust_bridge = "*"
+# Regex for input validation
+regex = "1"

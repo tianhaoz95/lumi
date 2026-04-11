@@ -9,6 +9,9 @@ pub fn crate_version() -> &'static str {
     "0.1.0"
 }
 
+mod validators;
+pub use validators::{validate_email, validate_password, validate_terms};
+
 #[cfg(test)]
 mod tests {
     use super::*;
