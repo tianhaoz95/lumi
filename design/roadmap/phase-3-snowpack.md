@@ -43,7 +43,7 @@
 
 ### 1.3 Tool: `query_transactions`
 
-- [ ] **1.3.1** Define tool:
+- [x] **1.3.1** Define tool:
   ```rust
   #[tool(description = "Query past transactions with optional filters")]
   async fn query_transactions(

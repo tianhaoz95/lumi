@@ -1,10 +1,12 @@
 use sqlx::SqlitePool;
+use sqlx::Row;
 use serde_json::json;
 use sha2::{Sha256, Digest};
 use hex;
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 use anyhow::anyhow;
+use serde::{Serialize, Deserialize};
 
 /// Insert a transaction into the provided SQLite pool.
 /// Returns the inserted (or existing) row id on success.
@@ -130,6 +132,96 @@ pub async fn log_transaction(
     Ok(id)
 }
 
+
+/// A compact summary of a transaction returned to callers.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TransactionSummary {
+    pub id: String,
+    pub vendor: Option<String>,
+    pub amount: f64,
+    pub currency: String,
+    pub category: Option<String>,
+    pub timestamp: i64,
+    pub is_tagged: bool,
+}
+
+/// Query transactions with optional filters. Returns a vector of TransactionSummary.
+pub async fn query_transactions_with_pool(
+    pool: &SqlitePool,
+    category: Option<&str>,
+    date_from: Option<&str>,
+    date_to: Option<&str>,
+    limit: Option<u32>,
+) -> Result<Vec<TransactionSummary>, sqlx::Error> {
+    // Convert dates to timestamps if provided
+    let date_from_ts: Option<i64> = date_from
+        .and_then(|s| DateTime::parse_from_rfc3339(s).ok())
+        .map(|dt| dt.timestamp());
+    let date_to_ts: Option<i64> = date_to
+        .and_then(|s| DateTime::parse_from_rfc3339(s).ok())
+        .map(|dt| dt.timestamp());
+
+    let limit_val: i64 = limit.unwrap_or(50) as i64;
+
+    let sql = "SELECT id, vendor, amount, currency, category, timestamp, is_tagged FROM transactions
+        WHERE (?1 IS NULL OR category = ?1)
+        AND (?2 IS NULL OR timestamp >= ?2)
+        AND (?3 IS NULL OR timestamp <= ?3)
+        ORDER BY timestamp DESC
+        LIMIT ?4";
+
+    let rows = sqlx::query(&sql)
+        .bind(category)
+        .bind(date_from_ts)
+        .bind(date_to_ts)
+        .bind(limit_val)
+        .fetch_all(pool)
+        .await?;
+
+    let mut out = Vec::with_capacity(rows.len());
+    for row in rows {
+        let id: String = row.try_get("id")?;
+        let vendor: Option<String> = row.try_get("vendor")?;
+        let amount_cents: i64 = row.try_get("amount")?;
+        let currency: String = row.try_get("currency")?;
+        let category: Option<String> = row.try_get("category")?;
+        let timestamp: i64 = row.try_get("timestamp")?;
+        let is_tagged_i: i32 = row.try_get("is_tagged")?;
+
+        let amount = (amount_cents as f64) / 100.0;
+        let is_tagged = is_tagged_i != 0;
+
+        out.push(TransactionSummary { id, vendor, amount, currency, category, timestamp, is_tagged });
+    }
+
+    Ok(out)
+}
+
+/// FRB/Tool wrapper for querying transactions.
+#[rig_macros::tool(description = "Query past transactions with optional filters")]
+pub async fn query_transactions(
+    category: Option<String>,
+    date_from: Option<String>,
+    date_to: Option<String>,
+    limit: Option<u32>,
+) -> anyhow::Result<Vec<TransactionSummary>> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!("failed to connect to db: {}", e))?;
+
+    // Ensure schema exists
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!("db_init failed: {}", e));
+    }
+
+    let res = query_transactions_with_pool(&pool, category.as_deref(), date_from.as_deref(), date_to.as_deref(), limit)
+        .await
+        .map_err(|e| anyhow!("query failed: {}", e))?;
+
+    Ok(res)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -220,6 +312,33 @@ mod tests {
         // Cleanup
         let _ = fs::remove_file(&tmp_path);
         let _ = fs::remove_dir_all(&vec_dir);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn query_transactions_returns_all_rows() -> Result<(), Box<dyn std::error::Error>> {
+        let pool = SqlitePool::connect(":memory:").await?;
+        db::db_init_with_pool(&pool).await?;
+
+        let _id1 = log_transaction_with_pool(&pool, "Vendor X", 3.00, "USD", "utilities", "2026-01-01T00:00:00Z", None).await?;
+        let _id2 = log_transaction_with_pool(&pool, "Vendor Y", 5.00, "USD", "meals", "2026-01-02T00:00:00Z", None).await?;
+
+        let res = query_transactions_with_pool(&pool, None, None, None, None).await?;
+        assert!(res.len() >= 2);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn query_transactions_category_filter() -> Result<(), Box<dyn std::error::Error>> {
+        let pool = SqlitePool::connect(":memory:").await?;
+        db::db_init_with_pool(&pool).await?;
+
+        let _ = log_transaction_with_pool(&pool, "Shell", 20.0, "USD", "fuel", "2026-02-01T00:00:00Z", None).await?;
+        let _ = log_transaction_with_pool(&pool, "Cafe", 4.0, "USD", "meals", "2026-02-02T00:00:00Z", None).await?;
+
+        let res = query_transactions_with_pool(&pool, Some("fuel"), None, None, None).await?;
+        assert_eq!(res.len(), 1);
+        assert_eq!(res[0].category.as_deref(), Some("fuel"));
         Ok(())
     }
 }
