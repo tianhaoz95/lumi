@@ -8,6 +8,8 @@
 import 'package:flutter/foundation.dart';
 import '../models/financial_summary.dart';
 import 'summary_bridge.dart' as shim;
+import '../models/transaction_summary.dart';
+import 'transactions_bridge.dart' as txshim;
 
 /// Attempts to call the Rust FRB binding. If not available, falls back to
 /// the shimbed `fetchMonthlySummary` implementation.
@@ -18,9 +20,15 @@ Future<FinancialSummary> fetchMonthlySummary() async {
   return shim.fetchMonthlySummary();
 }
 
-/// Placeholder for future query_transactions binding. Returns empty list
-/// until FRB/Rust implementation is available.
-Future<List<Map<String, dynamic>>> queryTransactions({int limit = 5}) async {
-  // TODO: wire to Rust `query_transactions` tool via FRB.
-  return <Map<String, dynamic>>[];
+/// Query recent transactions (typed). In production this should call into
+/// the Rust `query_transactions` tool via FRB. For now it delegates to the
+/// transactions shim so the UI can be tested end-to-end.
+Future<List<TransactionSummary>> queryTransactions({int limit = 5}) async {
+  try {
+    return await txshim.fetchRecentTransactions(limit: limit);
+  } catch (e) {
+    // On error, return empty list to avoid crashing the UI.
+    return <TransactionSummary>[];
+  }
 }
+

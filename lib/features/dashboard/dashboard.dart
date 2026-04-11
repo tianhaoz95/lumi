@@ -5,6 +5,7 @@ import '../../shared/widgets/lumi_card.dart';
 import '../../widgets/floating_nav_bar.dart';
 import '../../shared/bridge/rig_bridge.dart';
 import '../../shared/models/financial_summary.dart';
+import '../../shared/models/transaction_summary.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   FinancialSummary? _summary;
   bool _loading = false;
+  List<TransactionSummary>? _recentTransactions;
 
   @override
   void initState() {
@@ -29,11 +31,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
     try {
       final summary = await fetchMonthlySummary();
+      final txs = await queryTransactions(limit: 5);
       setState(() {
         _summary = summary;
+        _recentTransactions = txs;
       });
     } catch (e) {
       // swallow — UI will show placeholders
+      setState(() {
+        _recentTransactions = _recentTransactions ?? <TransactionSummary>[];
+      });
     } finally {
       setState(() {
         _loading = false;
@@ -107,37 +114,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 8),
 
                 // Recent activity list (shrink-wrapped so the parent scroll view handles scrolling)
-                ListView.separated(
-                  key: const Key('recent_activity_list'),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _mockTransactions.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final t = _mockTransactions[index];
-                    return LumiCard(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(child: Icon(t.icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(t.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                  Text(t.subtitle, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Text(t.amount, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                if (_loading && _recentTransactions == null)
+                  const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: CircularProgressIndicator()))
+                else if ((_recentTransactions ?? []).isEmpty)
+                  LumiCard(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('No transactions yet', style: Theme.of(context).textTheme.bodyMedium)))
+                else
+                  ListView.separated(
+                    key: const Key('recent_activity_list'),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _recentTransactions!.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final t = _recentTransactions![index];
+                      // Simple category -> icon mapping
+                      IconData icon;
+                      switch (t.category.toLowerCase()) {
+                        case 'food':
+                        case 'coffee':
+                          icon = Icons.local_cafe;
+                          break;
+                        case 'mileage':
+                          icon = Icons.directions_car;
+                          break;
+                        case 'utilities':
+                          icon = Icons.flash_on;
+                          break;
+                        default:
+                          icon = Icons.shopping_bag;
+                      }
+
+                      final amountText = (t.amount >= 0) ? '+\$${t.amount.toStringAsFixed(2)}' : '-\$${t.amount.abs().toStringAsFixed(2)}';
+
+                      return LumiCard(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(child: Icon(icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(t.vendor, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                    Text('${t.category} • ${t.date}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Text(amountText, style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
               ],
             ),
           ),
@@ -184,18 +215,4 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
-class _Transaction {
-  final String name;
-  final String subtitle;
-  final String amount;
-  final IconData icon;
 
-  const _Transaction(this.name, this.subtitle, this.amount, this.icon);
-}
-
-const _mockTransactions = <_Transaction>[
-  _Transaction('Coffee House', 'Latte & tip', '-\$6.75', Icons.local_cafe),
-  _Transaction('Office Depot', 'Printer ink', '-\$45.12', Icons.shopping_bag),
-  _Transaction('Mileage Reimbursement', 'Trip to client', '+\$80.40', Icons.directions_car),
-  _Transaction('Electric', 'April bill', '-\$120.00', Icons.flash_on),
-];
