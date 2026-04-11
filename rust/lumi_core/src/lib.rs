@@ -21,7 +21,7 @@ pub use db::{db_init, db_init_with_pool};
 pub use vector_db::vector_db_init;
 
 mod model_registry;
-pub use model_registry::{check_model_ready, compute_sha256, get_download_progress};
+pub use model_registry::{check_model_ready, compute_sha256, get_download_progress, frb_check_model_ready, frb_get_download_progress};
 
 // Inference module (LiteRT-LM bindings)
 mod inference;
@@ -135,5 +135,35 @@ mod tests {
         let sha = compute_sha256(&path).unwrap();
         assert!(!sha.is_empty());
         let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn frb_wrappers_respect_env_model_dir_and_progress_stub() {
+        use std::env;
+        use std::io::Write;
+        let tmp = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            env::temp_dir().join(format!("lumi_models_test_frb_{}_{}", std::process::id(), nanos))
+        };
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        // Point the FRB wrapper to the temp dir
+        env::set_var("LUMI_MODEL_DIR", &tmp);
+        let path = tmp.join("e2b.bin");
+        let mut f = std::fs::File::create(&path).unwrap();
+        f.write_all(b"dummy-model-content").unwrap();
+
+        // frb_check_model_ready should observe the file existence and return true
+        assert_eq!(frb_check_model_ready("e2b".to_string(), None), true);
+
+        // progress is stubbed to 0.0
+        let prog = frb_get_download_progress("e2b".to_string());
+        assert_eq!(prog, 0.0f32);
+
+        // Clean up
+        let _ = std::fs::remove_dir_all(&tmp);
+        // Unset env var to avoid affecting other tests
+        env::remove_var("LUMI_MODEL_DIR");
     }
 }

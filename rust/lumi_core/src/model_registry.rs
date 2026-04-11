@@ -54,3 +54,33 @@ pub fn check_model_ready(base_dir: &Path, model_id: &str, expected_sha256: Optio
 pub fn get_download_progress(_model_id: &str) -> f32 {
     0.0
 }
+
+use directories::ProjectDirs;
+use std::env;
+
+fn models_base_dir() -> std::path::PathBuf {
+    if let Ok(dir) = env::var("LUMI_MODEL_DIR") {
+        return std::path::PathBuf::from(dir);
+    }
+    if let Some(proj) = ProjectDirs::from("com", "lumi", "Lumi") {
+        return proj.data_dir().to_path_buf();
+    }
+    env::temp_dir()
+}
+
+/// FRB-friendly wrapper: check if a model file exists and (optionally) matches expected SHA.
+/// This uses LUMI_MODEL_DIR env var if present, else the platform data dir, else temp.
+pub fn frb_check_model_ready(model_id: String, expected_sha256: Option<String>) -> bool {
+    let base = models_base_dir();
+    match check_model_ready(&base, &model_id, expected_sha256.as_deref()) {
+        Ok(v) => v,
+        Err(_) => false,
+    }
+}
+
+/// FRB-friendly wrapper for download progress. Currently stubbed to 0.0.
+pub fn frb_get_download_progress(model_id: String) -> f32 {
+    // In a real implementation this would read progress from a shared state, file, or IPC.
+    let _ = model_id;
+    get_download_progress(&model_id)
+}
