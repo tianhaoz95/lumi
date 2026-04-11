@@ -713,7 +713,7 @@ fn wire__crate__vector_db__get_embedding_impl(
             let api_id = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, Box<Error>>((move || {
+                transform_result_sse::<_, Box<dyn Error>>((move || {
                     let output_ok = crate::vector_db::get_embedding(&api_db_path, &api_id)?;
                     Ok(output_ok)
                 })())
@@ -822,7 +822,7 @@ fn wire__crate__inference__inference_engine_load_impl(
             let api_model_path = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, Box<Error + Send + Sync>>((move || {
+                transform_result_sse::<_, Box<dyn Error + Send + Sync>>((move || {
                     let output_ok =
                         crate::inference::InferenceEngine::load(&api_model_id, &api_model_path)?;
                     Ok(output_ok)
@@ -997,7 +997,7 @@ fn wire__crate__vector_db__upsert_embedding_impl(
             let api_metadata = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, Box<Error>>((move || {
+                transform_result_sse::<_, Box<dyn Error>>((move || {
                     let output_ok = crate::vector_db::upsert_embedding(
                         &api_db_path,
                         &api_id,
@@ -1151,10 +1151,10 @@ fn wire__crate__vector_db__vector_db_init_impl(
 // Section: related_funcs
 
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error>>
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error>>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error + Send + Sync>>
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error + Send + Sync>>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ModelRegistry>
@@ -1182,21 +1182,21 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
-impl SseDecode for Box<Error> {
+impl SseDecode for Box<dyn Error> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error>>,
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error>>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
 }
 
-impl SseDecode for Box<Error + Send + Sync> {
+impl SseDecode for Box<dyn Error + Send + Sync> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error + Send + Sync>>,
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error + Send + Sync>>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
@@ -1223,7 +1223,7 @@ impl SseDecode for PathBuf {
 }
 
 impl SseDecode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error>>>
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error>>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1234,7 +1234,7 @@ impl SseDecode
 
 impl SseDecode
     for RustOpaqueMoi<
-        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error + Send + Sync>>,
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error + Send + Sync>>,
     >
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1571,36 +1571,36 @@ fn pde_ffi_dispatcher_sync_impl(
 // Section: rust2dart
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Box<Error>> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<Box<dyn Error>> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
             .into_dart()
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Box<Error>> {}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<Box<dyn Error>> {}
 
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Box<Error>>> for Box<Error> {
-    fn into_into_dart(self) -> FrbWrapper<Box<Error>> {
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Box<dyn Error>>> for Box<dyn Error> {
+    fn into_into_dart(self) -> FrbWrapper<Box<dyn Error>> {
         self.into()
     }
 }
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<Box<Error + Send + Sync>> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<Box<dyn Error + Send + Sync>> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
             .into_dart()
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<Box<Error + Send + Sync>>
+    for FrbWrapper<Box<dyn Error + Send + Sync>>
 {
 }
 
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Box<Error + Send + Sync>>>
-    for Box<Error + Send + Sync>
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<Box<dyn Error + Send + Sync>>>
+    for Box<dyn Error + Send + Sync>
 {
-    fn into_into_dart(self) -> FrbWrapper<Box<Error + Send + Sync>> {
+    fn into_into_dart(self) -> FrbWrapper<Box<dyn Error + Send + Sync>> {
         self.into()
     }
 }
@@ -1737,18 +1737,18 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
-impl SseEncode for Box<Error> {
+impl SseEncode for Box<dyn Error> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box < Error >>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
     }
 }
 
-impl SseEncode for Box<Error + Send + Sync> {
+impl SseEncode for Box<dyn Error + Send + Sync> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error + Send + Sync>>,
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error + Send + Sync>>,
         >>::sse_encode(
             flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
             serializer,
@@ -1771,7 +1771,7 @@ impl SseEncode for PathBuf {
 }
 
 impl SseEncode
-    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error>>>
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error>>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1783,7 +1783,7 @@ impl SseEncode
 
 impl SseEncode
     for RustOpaqueMoi<
-        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<Error + Send + Sync>>,
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box<dyn Error + Send + Sync>>,
     >
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
