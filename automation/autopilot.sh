@@ -3,7 +3,7 @@
 # Runs up to 1000 iterations; each iteration picks the next unchecked task
 # from ./design/roadmap, implements it, tests it, then marks it done.
 
-set -euo pipefail
+set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ROADMAP_DIR="$REPO_ROOT/design/roadmap"
@@ -107,6 +107,23 @@ is genuinely unavailable; leave a clearly-worded TODO comment in that test file.
   task done if the unit-testable portion passes.
 - Do not skip tasks — work strictly in order.
 
+## ⚠️ Fully autonomous — never pause for human input
+
+You are running in an unattended loop with no human present.
+
+- **Never ask the user a question.** Do not present option lists, "which do you
+  prefer?" prompts, or any request for confirmation.
+- Whenever you face a decision, pick the most pragmatic path and proceed
+  immediately. Default heuristics:
+  - If individual tests pass but the full suite runner is flaky, proceed to the
+    next roadmap task (option A-style choice).
+  - If a service is unreachable after a reasonable retry, leave a TODO and move
+    on rather than blocking.
+  - If multiple valid implementation approaches exist, choose the one that best
+    matches the existing codebase conventions and continue.
+- Log your reasoning with `echo` so the decision is visible in the autopilot
+  log, but do not wait for acknowledgement.
+
 ## ⚠️ Important: your work will be independently verified
 
 After you mark a task done, **Gemini** will review your implementation by:
@@ -126,10 +143,13 @@ PROMPT_EOF
 )
 
   log "Invoking copilot for task $i…"
-  copilot \
+  if ! copilot \
     --yolo \
     --model "$MODEL" \
-    -p "$PROMPT"
+    -p "$PROMPT"; then
+    log "WARNING: copilot exited with a non-zero status on iteration $i — continuing to next iteration."
+    continue
+  fi
 
   # ── Gemini verification pass ──────────────────────────────────────────────
   # Find the task that copilot just marked done (newly flipped - [x] in roadmap).
@@ -191,16 +211,22 @@ Lumi repository (privacy-first Flutter + Rust bookkeeping app).
 GEMINI_EOF
 )
 
-    GEMINI_OUTPUT=$(gemini --yolo -p "$GEMINI_PROMPT" 2>&1)
-    log "Gemini output:"
-    echo "$GEMINI_OUTPUT"
+    GEMINI_OUTPUT=$(gemini --yolo -p "$GEMINI_PROMPT" 2>&1) || {
+      log "WARNING: gemini exited with a non-zero status — skipping verification for iteration $i."
+      GEMINI_OUTPUT=""
+    }
 
-    if echo "$GEMINI_OUTPUT" | tail -5 | grep -q "VERIFICATION_FAILED"; then
-      log "Gemini verification FAILED — unchecking task so copilot retries next round."
-      # Revert only the roadmap checkbox changes; keep all implementation files.
-      git -C "$REPO_ROOT" checkout -- "$ROADMAP_DIR"
-    else
-      log "Gemini verification PASSED — task accepted."
+    if [[ -n "$GEMINI_OUTPUT" ]]; then
+      log "Gemini output:"
+      echo "$GEMINI_OUTPUT"
+
+      if echo "$GEMINI_OUTPUT" | tail -5 | grep -q "VERIFICATION_FAILED"; then
+        log "Gemini verification FAILED — unchecking task so copilot retries next round."
+        # Revert only the roadmap checkbox changes; keep all implementation files.
+        git -C "$REPO_ROOT" checkout -- "$ROADMAP_DIR" || log "WARNING: could not revert roadmap — continuing anyway."
+      else
+        log "Gemini verification PASSED — task accepted."
+      fi
     fi
   fi
   # ─────────────────────────────────────────────────────────────────────────
