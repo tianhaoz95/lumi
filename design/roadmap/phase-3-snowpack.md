@@ -53,7 +53,7 @@
       limit: Option<u32>,
   ) -> Result<Vec<TransactionSummary>>
   ```
-- [ ] **1.3.2** Implementation: build a sea-orm `SelectStatement` from the provided filters and return matching rows as `Vec<TransactionSummary>`.
+- [x] **1.3.2** Implementation: build a sea-orm `SelectStatement` from the provided filters and return matching rows as `Vec<TransactionSummary>`.
 
 **Tests:**
 - Rust unit test: empty filter returns all rows (up to default limit 50).
