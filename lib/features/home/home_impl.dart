@@ -13,6 +13,7 @@ import '../../shared/widgets/lumi_text_field.dart';
 import '../../widgets/floating_nav_bar.dart';
 import '../../shared/chat/chat_service.dart';
 import '../../shared/chat/chat_providers.dart';
+import '../../core/model_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -41,11 +42,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final prompt = _controller.text.trim();
     if (prompt.isEmpty || _isStreaming) return;
 
+    // Decide model tier for this prompt
+    final selectedTier = ModelRouter.select(prompt);
+
     // Add user message
     setState(() {
-      _messages.add(_ChatMessage(author: _Author.user, text: prompt));
-      // Add placeholder for Kit's streaming response
-      _messages.add(_ChatMessage(author: _Author.kit, text: '', isStreaming: true));
+      _messages.add(_ChatMessage(author: _Author.user, text: prompt, modelTier: ModelTier.sentinel));
+      // Add placeholder for Kit's streaming response (record the selected tier)
+      _messages.add(_ChatMessage(author: _Author.kit, text: '', isStreaming: true, modelTier: selectedTier));
       _isStreaming = true;
       _tokensPerSecond = null;
     });
@@ -53,13 +57,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _controller.clear();
 
     final chatService = ref.read(chatServiceProvider);
-    final stream = chatService.chat(prompt, ModelTier.sentinel);
+    final stream = chatService.chat(prompt, selectedTier);
 
     _streamSub = stream.listen((chunk) {
       setState(() {
         final last = _messages.last;
-        // Append token to last message text
-        final updated = _ChatMessage(author: last.author, text: last.text + chunk.token, isStreaming: !chunk.isFinal);
+        // Append token to last message text, preserving modelTier
+        final updated = _ChatMessage(author: last.author, text: last.text + chunk.token, isStreaming: !chunk.isFinal, modelTier: last.modelTier);
         _messages[_messages.length - 1] = updated;
         // Update tokens per second metric for overlay (debug only)
         _tokensPerSecond = chunk.tokensPerSecond;
@@ -71,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, onError: (e) {
       setState(() {
         final last = _messages.last;
-        _messages[_messages.length - 1] = _ChatMessage(author: last.author, text: 'Lumi is resting…', isStreaming: false);
+        _messages[_messages.length - 1] = _ChatMessage(author: last.author, text: 'Lumi is resting…', isStreaming: false, modelTier: last.modelTier);
         _isStreaming = false;
         _tokensPerSecond = null;
       });
@@ -209,6 +213,36 @@ class _ChatArea extends StatelessWidget {
           child: Row(
             mainAxisAlignment: m.author == _Author.user ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
+              // If Kit (assistant) message, show a small avatar + optional Auditor badge
+              if (m.author == _Author.kit) ...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0, left: 4.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.pets, size: 28, color: Colors.grey),
+                      const SizedBox(height: 4),
+                      if (m.modelTier == ModelTier.auditor)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                          decoration: BoxDecoration(
+                            color: LumiColors.primary.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.shield, size: 12, color: Color(0xFF00464A)),
+                              SizedBox(width: 4),
+                              Text('Auditor', style: TextStyle(fontSize: 10, color: Color(0xFF00464A))),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 560),
                 child: Container(
@@ -245,5 +279,6 @@ class _ChatMessage {
   final _Author author;
   final String text;
   final bool isStreaming;
-  const _ChatMessage({required this.author, required this.text, this.isStreaming = false});
+  final ModelTier modelTier;
+  const _ChatMessage({required this.author, required this.text, this.isStreaming = false, this.modelTier = ModelTier.sentinel});
 }
