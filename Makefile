@@ -41,6 +41,8 @@ codegen:
 test-unit:
 	flutter test test/
 
+# TODO: Integration tests require a running local Appwrite and a populated .env.test produced by the Appwrite bootstrap script.
+# In CI this is handled by scripts/ci-appwrite-bootstrap.sh and a pre-provisioned Appwrite instance.
 test-integration: services-up
 	flutter test integration_test/ \
 	  --dart-define-from-file=.env.test \
