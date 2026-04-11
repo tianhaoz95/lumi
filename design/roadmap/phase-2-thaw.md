@@ -118,7 +118,7 @@
   ```rust
   pub fn process_receipt_image(image_bytes: Vec<u8>) -> Result<ReceiptData>
   ```
-- [ ] **3.1.4** In Rust, encode the image as a base64 data URI and inject it into the Gemma 4 E4B multimodal prompt template for OCR.
+- [x] **3.1.4** In Rust, encode the image as a base64 data URI and inject it into the Gemma 4 E4B multimodal prompt template for OCR.
 
 ### 3.2 Structured Receipt Extraction
 

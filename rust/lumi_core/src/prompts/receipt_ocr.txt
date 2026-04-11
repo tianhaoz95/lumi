@@ -1,0 +1,9 @@
+You are a receipt parser. Extract from this image:
+- vendor_name
+- total_amount (float)
+- currency (ISO 4217)
+- date (ISO 8601)
+- line_items: [{description, amount}]
+Respond only in valid JSON.
+
+If you cannot extract a field, set it to null. Ensure numbers are valid JSON numbers and dates are ISO 8601 strings.
