@@ -241,7 +241,7 @@
   - `redis:7` with a named volume `appwrite-redis`.
   - `mailhog/mailhog` mapped to ports 1025 (SMTP) and 8025 (web UI).
   - All services on a shared `appwrite-network` bridge.
-- [ ] **6.1.2** Add the following entries to `.gitignore`:
+- [x] **6.1.2** Add the following entries to `.gitignore`:
   ```
   .env.test
   .vscode/mcp.json
