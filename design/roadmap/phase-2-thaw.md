@@ -82,7 +82,7 @@
 
 ### 2.2 Chat UI — Live Streaming
 
-- [ ] **2.2.1** Update `HomeScreen` to consume `ChatService.chat()`:
+- [x] **2.2.1** Update `HomeScreen` to consume `ChatService.chat()`:
   - Display Kit's response bubble with a text that builds character-by-character as chunks arrive.
   - Show a "breathing" animation (pulsing dot) while streaming is in progress.
   - Freeze and finalize bubble when `is_final == true`.
