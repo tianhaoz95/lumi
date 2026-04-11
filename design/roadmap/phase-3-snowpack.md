@@ -157,7 +157,7 @@
 ### 3.2 LanceDB Write Path
 
 - [x] **3.2.1** Implement `upsert_embedding(id: String, vector: Vec<f32>, metadata: String)` that inserts or updates a row in LanceDB's `transaction_embeddings` table.
-- [ ] **3.2.2** Call `upsert_embedding` automatically at the end of `log_transaction`.
+- [x] **3.2.2** Call `upsert_embedding` automatically at the end of `log_transaction`.
 
 **Tests:**
 - Rust unit test: `upsert_embedding` succeeds and the row is retrievable by ID.
@@ -165,7 +165,7 @@
 
 ### 3.3 LanceDB Read Path (ANN Search)
 
-- [ ] **3.3.1** Implement `vector_search(query_vector: Vec<f32>, top_k: u32) -> Result<Vec<SearchResult>>` using LanceDB's approximate nearest neighbour index.
+- [x] **3.3.1** Implement `vector_search(query_vector: Vec<f32>, top_k: u32) -> Result<Vec<SearchResult>>` using LanceDB's approximate nearest neighbour index.
 - [ ] **3.3.2** Build LanceDB IVF-PQ index on `transaction_embeddings` after each batch of ≥ 100 new entries.
 
 **Tests:**
