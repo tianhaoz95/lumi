@@ -174,7 +174,7 @@
 
 ### 3.4 RAG Accuracy Evaluation
 
-- [ ] **3.4.1** Create `rust/lumi_core/tests/rag_eval.rs` with 20 (query → expected transaction IDs) pairs from a seeded dataset.
+- [x] **3.4.1** Create `rust/lumi_core/tests/rag_eval.rs` with 20 (query → expected transaction IDs) pairs from a seeded dataset.
 - [ ] **3.4.2** Assert that the expected transaction appears in the top-5 results for ≥ 19/20 queries (≥ 95% recall@5).
 
 **Verifiable result:** `cargo test rag_eval` reports ≥ 95% recall.
