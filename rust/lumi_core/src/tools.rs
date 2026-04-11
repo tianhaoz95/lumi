@@ -357,6 +357,7 @@ mod tests {
     use crate::db;
     use sqlx::SqlitePool;
     use uuid::Uuid;
+    use serial_test::serial;
     use std::fs;
 
     #[tokio::test]
@@ -400,6 +401,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[serial]
     async fn log_transaction_tool_wrapper_inserts_row() -> Result<(), Box<dyn std::error::Error>> {
         // Use a temp file-backed sqlite DB so multiple connections can observe the data.
         let tmp_path = std::env::temp_dir().join(format!("lumi_test_{}.db", Uuid::new_v4()));
@@ -490,6 +492,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[serial]
     async fn log_mileage_tool_wrapper_inserts_row() -> Result<(), Box<dyn std::error::Error>> {
         let tmp_path = std::env::temp_dir().join(format!("lumi_mileage_test_{}.db", Uuid::new_v4()));
         let _f = std::fs::File::create(&tmp_path)?;
@@ -510,6 +513,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[serial]
     async fn semantic_search_returns_seeded_transaction() -> Result<(), Box<dyn std::error::Error>> {
         use crate::embeddings;
         use crate::vector_db;
@@ -580,6 +584,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[serial]
     async fn semantic_search_respects_default_top_k() -> Result<(), Box<dyn std::error::Error>> {
         use crate::embeddings;
         use crate::vector_db;

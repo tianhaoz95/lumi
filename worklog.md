@@ -19,7 +19,7 @@ Verifiable deliverables:
 - `design/roadmap/phase-3-snowpack.md` line for 1.5.1 is updated from `- [ ]` to `- [x]`.
 
 Reviewer Findings:
-1. **Missing `semantic_search` tests**: No integration or unit tests for the `semantic_search` tool itself were found in `rust/lumi_core/src/tools.rs` or elsewhere. The worker's plan (Step 4) specifically called for an "integration-flow test exercising semantic_search," but this was not delivered.
-2. **Missing default `top_k` test**: Roadmap 1.5.2 explicitly requires a test to verify that `top_k` defaults to 5. While the logic is in the code (`top_k.unwrap_or(5)`), there is no test verifying this behavior.
-3. **Roadmap mismatch**: The roadmap separates the tool definition (1.5.1) and implementation/tests (1.5.2). The worker implemented the tool and marked 1.5.1 as done, but did not mark 1.5.2 as done and failed to deliver the required tests for both items.
-4. **Conclusion**: Task 1.5.1 (and 1.5.2) remains undone until the integration/unit tests for `semantic_search` are implemented and passing.
+1. **Flaky tests (Parallel Execution Failure)**: Running `cargo test --lib` in `rust/lumi_core` fails when executed in parallel (the default behavior). Specifically, `log_transaction_tool_wrapper_inserts_row`, `semantic_search_returns_seeded_transaction`, and `semantic_search_respects_default_top_k` fail with database connection errors (`code: 14`) or "embedding not found" errors. This is caused by a race condition where multiple tests concurrently modify and restore the same global environment variables (`LUMI_DB_URL`, `LUMI_VECTOR_DB_PATH`) and cleanup temp directories.
+2. **Missing robust test isolation**: To satisfy the deliverable of a clean `cargo test` run, these tests must be made thread-safe (e.g., by not relying on global environment variables or using a serial test runner attribute if available) or the code should be refactored to allow passing DB handles/paths directly to the tools during testing.
+3. **Status of 1.5.2**: While the worker has implemented the logic and tests for `semantic_search` (which covers 1.5.2), the tests are currently failing in a standard run. Task 1.5.1 was marked done, but the verification criterion "cargo test --lib exits with code 0" is not met.
+4. **Conclusion**: Task 1.5.1 is reverted to incomplete until the test suite is stabilized and passing in parallel.
