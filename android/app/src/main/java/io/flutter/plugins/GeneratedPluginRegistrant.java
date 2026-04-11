@@ -21,9 +21,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin device_info_plus, dev.fluttercommunity.plus.device_info.DeviceInfoPlusPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.linusu.flutter_web_auth.FlutterWebAuthPlugin());
+      flutterEngine.getPlugins().add(new com.linusu.flutter_web_auth_2.FlutterWebAuth2Plugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_web_auth, com.linusu.flutter_web_auth.FlutterWebAuthPlugin", e);
+      Log.e(TAG, "Error registering plugin flutter_web_auth_2, com.linusu.flutter_web_auth_2.FlutterWebAuth2Plugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new dev.flutter.plugins.integration_test.IntegrationTestPlugin());
@@ -39,6 +39,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new io.flutter.plugins.urllauncher.UrlLauncherPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin url_launcher_android, io.flutter.plugins.urllauncher.UrlLauncherPlugin", e);
     }
   }
 }

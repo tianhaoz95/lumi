@@ -4,7 +4,6 @@
 // initialized.
 
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:appwrite/appwrite.dart';
 
@@ -84,14 +83,12 @@ class AppwriteService {
 
   /// Attempt to sign in with email+password using Appwrite Account API.
   /// Throws an exception on failure. Tests can inject a fake account that
-  /// implements `createSession({required String email, required String password})`.
+  /// implements `createEmailPasswordSession({required String email, required String password})`.
   Future<void> login(String email, String password) async {
     if (_account == null) throw StateError('AppwriteService not initialized.');
     try {
-      // Appwrite Dart SDK exposes createSession(email: password:)
-      await _account.createSession(email: email, password: password);
+      await _account.createEmailPasswordSession(email: email, password: password);
     } catch (e) {
-      // Re-throw so callers can surface errors to UI/tests.
       rethrow;
     }
   }
@@ -100,40 +97,17 @@ class AppwriteService {
   Future<void> logout() async {
     if (_account == null) return;
     try {
-      // Not all appwrite SDK versions support deleteSession current; attempt and ignore failures.
-      if (_account.deleteSession != null) {
-        await _account.deleteSession('current');
-      }
+      await _account.deleteSession(sessionId: 'current');
     } catch (_) {
       // ignore
     }
   }
 
   /// Send a password reset email using Appwrite Account API.
-  /// Tests can inject a fake account that implements `createRecovery` or similar.
   Future<void> sendPasswordReset(String email) async {
     if (_account == null) throw StateError('AppwriteService not initialized.');
     try {
-      // Prefer SDK methods if available.
-      if (_account.createRecovery != null) {
-        await _account.createRecovery(email: email, url: 'http://localhost/reset');
-        return;
-      }
-      if (_account.createPasswordRecovery != null) {
-        await _account.createPasswordRecovery(email: email, url: 'http://localhost/reset');
-        return;
-      }
-      // Fallback: attempt simple HTTP POST to the Appwrite recovery endpoint.
-      final uri = Uri.parse('$_endpoint/account/recovery');
-      final httpClient = HttpClient();
-      final request = await httpClient.postUrl(uri);
-      request.headers.set('Content-Type', 'application/json');
-      request.add(utf8.encode(jsonEncode({'email': email})));
-      final response = await request.close();
-      httpClient.close();
-      if (response.statusCode >= 400) {
-        throw Exception('Password reset request failed (status: ${response.statusCode})');
-      }
+      await _account.createRecovery(email: email, url: 'http://localhost/reset');
     } catch (e) {
       rethrow;
     }
@@ -144,7 +118,6 @@ class AppwriteService {
   Future<bool> restoreSession() async {
     if (_account == null) throw StateError('AppwriteService not initialized.');
     try {
-      if (_account.get == null) return false;
       final user = await _account.get();
       return user != null;
     } catch (_) {
@@ -156,7 +129,6 @@ class AppwriteService {
   Future<dynamic> getCurrentUser() async {
     if (_account == null) throw StateError('AppwriteService not initialized.');
     try {
-      if (_account.get == null) return null;
       return await _account.get();
     } catch (_) {
       return null;
