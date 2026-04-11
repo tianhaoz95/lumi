@@ -160,7 +160,7 @@
   - Kit the Fox mascot at full opacity with a "digging through snowbanks" idle animation (lottie or Flutter animation).
   - Progress bar consuming `get_download_progress()` stream.
   - Label: "Lumi is preparing your sanctuary…"
-- [ ] **4.1.2** After models are ready, transition to Login or Home with a 500 ms fade.
+- [x] **4.1.2** After models are ready, transition to Login or Home with a 500 ms fade.
 
 **Tests:**
 - Widget test: `LoadingScreen` renders progress bar and updates value from mock stream.
