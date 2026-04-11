@@ -13,7 +13,8 @@ class AppwriteService {
   static final AppwriteService instance = AppwriteService._private();
 
   Client? _client;
-  Account? _account;
+  // Use dynamic for _account so tests can inject a fake account implementation.
+  dynamic _account;
   String _endpoint = 'http://localhost/v1';
   String _projectId = 'lumi-dev';
 
@@ -36,6 +37,13 @@ class AppwriteService {
     _account = Account(_client!);
   }
 
+  /// Test helper: replace the underlying Account instance with a fake.
+  /// Only intended for unit tests.
+  @pragma('vm:entry-point')
+  void setAccountForTest(dynamic account) {
+    _account = account;
+  }
+
   /// Access the underlying Appwrite Client. Throws if `init()` was not called.
   Client get client {
     if (_client == null) {
@@ -45,11 +53,11 @@ class AppwriteService {
   }
 
   /// Access the Appwrite Account API.
-  Account get account {
+  dynamic get account {
     if (_account == null) {
       throw StateError('AppwriteService not initialized. Call init() first.');
     }
-    return _account!;
+    return _account;
   }
 
   /// Lightweight health check against the Appwrite HTTP health endpoint.
@@ -68,6 +76,33 @@ class AppwriteService {
       return ok;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// Attempt to sign in with email+password using Appwrite Account API.
+  /// Throws an exception on failure. Tests can inject a fake account that
+  /// implements `createSession({required String email, required String password})`.
+  Future<void> login(String email, String password) async {
+    if (_account == null) throw StateError('AppwriteService not initialized.');
+    try {
+      // Appwrite Dart SDK exposes createSession(email: password:)
+      await _account.createSession(email: email, password: password);
+    } catch (e) {
+      // Re-throw so callers can surface errors to UI/tests.
+      rethrow;
+    }
+  }
+
+  /// Sign out by deleting the current session if possible.
+  Future<void> logout() async {
+    if (_account == null) return;
+    try {
+      // Not all appwrite SDK versions support deleteSession current; attempt and ignore failures.
+      if (_account.deleteSession != null) {
+        await _account.deleteSession('current');
+      }
+    } catch (_) {
+      // ignore
     }
   }
 }

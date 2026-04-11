@@ -94,14 +94,14 @@
 
 ### 3.2 Auth Screens — Login
 
-- [ ] **3.2.1** Implement `LoginScreen` matching `ui_design/login/code.html`:
+- [x] **3.2.1** Implement `LoginScreen` matching `ui_design/login/code.html`:
   - Atmospheric background (blurred orbs + grain).
   - Glassmorphism card with email + password fields using `LumiTextField`.
   - Primary CTA "Enter the Sanctuary" button using `LumiButton`.
   - "Forgot?" link → `ForgotPasswordScreen`.
   - "New to the sanctuary?" → `SignUpScreen`.
-- [ ] **3.2.2** Implement `AuthNotifier` / `AuthBloc` that calls `AppwriteService.login(email, password)`.
-- [ ] **3.2.3** On success: navigate to `HomeScreen`. On failure: show inline error snackbar.
+- [x] **3.2.2** Implement `AuthNotifier` / `AuthBloc` that calls `AppwriteService.login(email, password)`.
+- [x] **3.2.3** On success: navigate to `HomeScreen`. On failure: show inline error snackbar.
 
 **Tests:**
 - Widget test: renders all form fields and buttons.
