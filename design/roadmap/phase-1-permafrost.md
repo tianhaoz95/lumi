@@ -135,8 +135,8 @@
 
 ### 3.5 Auth Guard & Router
 
-- [ ] **3.5.1** Configure `go_router` with a `redirect` guard: unauthenticated users are sent to `/login`; authenticated users skip auth screens.
-- [ ] **3.5.2** Persist Appwrite session across app restarts using the SDK's built-in session storage.
+- [x] **3.5.1** Configure `go_router` with a `redirect` guard: unauthenticated users are sent to `/login`; authenticated users skip auth screens.
+- [x] **3.5.2** Persist Appwrite session across app restarts using the SDK's built-in session storage.
 
 **Tests:**
 - Widget test: unauthenticated app state redirects to LoginScreen.
@@ -150,7 +150,7 @@
 
 ### 4.1 Home Screen ("Lumi AI")
 
-- [ ] **4.1.1** Implement `HomeScreen` matching `ui_design/home/code.html`:
+- [x] **4.1.1** Implement `HomeScreen` matching `ui_design/home/code.html`:
   - Fixed glassmorphism top app bar ("Lumi AI" + menu/settings icons).
   - Kit the Fox ghost mascot in center (opacity 40%).
   - Chat bubble list: Kit message bubble (left-aligned, `surface-container-lowest`, rounded except top-left) + User bubble (right-aligned, `primary` background).
