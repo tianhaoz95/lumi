@@ -156,7 +156,7 @@
 
 ### 3.2 LanceDB Write Path
 
-- [ ] **3.2.1** Implement `upsert_embedding(id: String, vector: Vec<f32>, metadata: String)` that inserts or updates a row in LanceDB's `transaction_embeddings` table.
+- [x] **3.2.1** Implement `upsert_embedding(id: String, vector: Vec<f32>, metadata: String)` that inserts or updates a row in LanceDB's `transaction_embeddings` table.
 - [ ] **3.2.2** Call `upsert_embedding` automatically at the end of `log_transaction`.
 
 **Tests:**
