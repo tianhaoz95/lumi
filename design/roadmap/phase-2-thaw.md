@@ -155,7 +155,7 @@
 
 ### 4.1 First-Launch Loading Screen
 
-- [ ] **4.1.1** On first launch (models not ready), show a full-screen loading state:
+- [x] **4.1.1** On first launch (models not ready), show a full-screen loading state:
   - Background: atmospheric blurred orbs.
   - Kit the Fox mascot at full opacity with a "digging through snowbanks" idle animation (lottie or Flutter animation).
   - Progress bar consuming `get_download_progress()` stream.
