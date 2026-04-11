@@ -2,5 +2,6 @@
 members = [
     "lumi_core",
     "litert-lm",
-    "rig-core"
+    "rig-core",
+    "rig-macros"
 ]

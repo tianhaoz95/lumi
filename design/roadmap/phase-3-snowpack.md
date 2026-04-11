@@ -21,7 +21,7 @@
 
 ### 1.2 Tool: `log_transaction`
 
-- [ ] **1.2.1** Define the tool in Rust using Rig's `#[tool]` macro (or equivalent):
+- [x] **1.2.1** Define the tool in Rust using Rig's `#[tool]` macro (or equivalent):
   ```rust
   #[tool(description = "Log a financial transaction to the local database")]
   async fn log_transaction(

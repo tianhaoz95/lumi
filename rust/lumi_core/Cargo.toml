@@ -29,12 +29,15 @@ directories = "4"
 # SHA-256 helper libraries
 sha2 = "0.10"
 hex = "0.4"
+uuid = { version = "1", features = ["v4"] }
 once_cell = "1.20"
 async-trait = "0.1"
 
 # LiteRT-LM bindings (local stub during development)
 litert-lm = { path = "../litert-lm" }
 rig-core = { path = "../rig-core" }
+rig-macros = { path = "../rig-macros" }
+anyhow = "1.0"
 chrono = "0.4.44"
 
 # LanceDB (vector / RAG store) - fetch from official lance-rs repository

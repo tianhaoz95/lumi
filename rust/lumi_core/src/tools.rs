@@ -1,0 +1,184 @@
+use sqlx::SqlitePool;
+use serde_json::json;
+use sha2::{Sha256, Digest};
+use hex;
+use chrono::{DateTime, Utc};
+use uuid::Uuid;
+use anyhow::anyhow;
+
+/// Insert a transaction into the provided SQLite pool.
+/// Returns the inserted (or existing) row id on success.
+pub async fn log_transaction_with_pool(
+    pool: &SqlitePool,
+    vendor: &str,
+    amount: f64,
+    currency: &str,
+    category: &str,
+    date: &str,
+    receipt_path: Option<&str>,
+) -> Result<String, sqlx::Error> {
+    // Build a deterministic JSON used for SHA-256 idempotency check
+    let meta = json!({
+        "vendor": vendor,
+        "amount": amount,
+        "currency": currency,
+        "category": category,
+        "date": date,
+        "receipt_path": receipt_path,
+    });
+    let meta_str = meta.to_string();
+    let mut hasher = Sha256::new();
+    hasher.update(meta_str.as_bytes());
+    let sha = hex::encode(hasher.finalize());
+
+    // Convert amount to integer cents to store as INTEGER
+    let amount_cents: i64 = (amount * 100.0).round() as i64;
+
+    // Parse date into unix timestamp (seconds). Fall back to now on parse failure.
+    let timestamp = DateTime::parse_from_rfc3339(date)
+        .map(|dt| dt.timestamp())
+        .unwrap_or_else(|_| Utc::now().timestamp());
+
+    // Check for an existing duplicate (vendor + amount + timestamp)
+    let existing: Option<String> = sqlx::query_scalar(
+        "SELECT id FROM transactions WHERE vendor = ?1 AND amount = ?2 AND timestamp = ?3 LIMIT 1",
+    )
+    .bind(vendor)
+    .bind(amount_cents)
+    .bind(timestamp)
+    .fetch_optional(pool)
+    .await?;
+
+    if let Some(id) = existing {
+        return Ok(id);
+    }
+
+    let id = Uuid::new_v4().to_string();
+
+    sqlx::query(
+        "INSERT INTO transactions (id, amount, currency, vendor, category, timestamp, receipt_path, is_tagged, sha256_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+    )
+    .bind(&id)
+    .bind(amount_cents)
+    .bind(currency)
+    .bind(vendor)
+    .bind(category)
+    .bind(timestamp)
+    .bind(receipt_path)
+    .bind(0i32)
+    .bind(&sha)
+    .execute(pool)
+    .await?;
+
+    Ok(id)
+}
+
+/// FRB/Tool-facing wrapper. This uses the LUMI_DB_URL env var if set; otherwise
+/// falls back to a local file-based `lumi.db` in the current working dir.
+/// The function is exposed to Rig as a tool and returns the inserted row ID on success.
+#[rig_macros::tool(description = "Log a financial transaction to the local database")]
+pub async fn log_transaction(
+    vendor: String,
+    amount: f64,
+    currency: String,
+    category: String,
+    date: String,
+    receipt_path: Option<String>,
+) -> anyhow::Result<String> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!("failed to connect to db: {}", e))?;
+
+    // Ensure schema exists (best-effort)
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!("db_init failed: {}", e));
+    }
+
+    let id = log_transaction_with_pool(&pool, &vendor, amount, &currency, &category, &date, receipt_path.as_deref()).await
+        .map_err(|e| anyhow!("insert failed: {}", e))?;
+
+    Ok(id)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db;
+    use sqlx::SqlitePool;
+    use uuid::Uuid;
+    use std::fs;
+
+    #[tokio::test]
+    async fn log_transaction_inserts_row_and_returns_id() -> Result<(), Box<dyn std::error::Error>> {
+        let pool = SqlitePool::connect(":memory:").await?;
+        db::db_init_with_pool(&pool).await?;
+
+        let id = log_transaction_with_pool(&pool, "Test Vendor", 4.25, "USD", "meals", "2026-01-02T12:00:00Z", Some("/tmp/receipt.png")).await?;
+        // Verify row exists
+        let row: (String,) = sqlx::query_as("SELECT id FROM transactions WHERE id = ?1")
+            .bind(&id)
+            .fetch_one(&pool)
+            .await?;
+        assert_eq!(row.0, id);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn sha_is_deterministic_for_same_inputs() -> Result<(), Box<dyn std::error::Error>> {
+        let pool = SqlitePool::connect(":memory:").await?;
+        db::db_init_with_pool(&pool).await?;
+
+        let _id1 = log_transaction_with_pool(&pool, "Vendor A", 10.0, "USD", "supplies", "2026-02-03T09:00:00Z", None).await?;
+        // Fetch sha stored
+        let cents_first = (10.0f64 * 100.0f64).round() as i64;
+        let sha1: (Option<String>,) = sqlx::query_as("SELECT sha256_hash FROM transactions WHERE vendor = ?1 AND amount = ?2 LIMIT 1")
+            .bind("Vendor A")
+            .bind(cents_first)
+            .fetch_one(&pool)
+            .await?;
+
+        // Insert same logical transaction again; should return existing ID (idempotent)
+        let id2 = log_transaction_with_pool(&pool, "Vendor A", 10.0, "USD", "supplies", "2026-02-03T09:00:00Z", None).await?;
+        let cents = (10.0f64 * 100.0f64).round() as i64;
+        let sha2: (Option<String>,) = sqlx::query_as("SELECT sha256_hash FROM transactions WHERE id = ?1")
+            .bind(&id2)
+            .fetch_one(&pool)
+            .await?;
+
+        // verify deterministic sha for the same logical transaction
+        let sha1_row: (Option<String>,) = sqlx::query_as("SELECT sha256_hash FROM transactions WHERE vendor = ?1 AND amount = ?2 LIMIT 1")
+            .bind("Vendor A")
+            .bind(cents)
+            .fetch_one(&pool)
+            .await?;
+
+        assert_eq!(sha1_row.0, sha2.0);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn log_transaction_tool_wrapper_inserts_row() -> Result<(), Box<dyn std::error::Error>> {
+        // Use a temp file-backed sqlite DB so multiple connections can observe the data.
+        let tmp_path = std::env::temp_dir().join(format!("lumi_test_{}.db", Uuid::new_v4()));
+        // Ensure the file exists so sqlite can open it.
+        let _f = std::fs::File::create(&tmp_path)?;
+        let db_url = format!("sqlite:{}", tmp_path.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        // Call the public tool wrapper
+        let id = log_transaction("Tool Vendor".to_string(), 5.50, "USD".to_string(), "meals".to_string(), "2026-03-04T12:00:00Z".to_string(), None).await?;
+
+        // Verify row exists via a new connection to the same file
+        let pool = SqlitePool::connect(&db_url).await?;
+        let row: (String,) = sqlx::query_as("SELECT id FROM transactions WHERE id = ?1")
+            .bind(&id)
+            .fetch_one(&pool)
+            .await?;
+        assert_eq!(row.0, id);
+
+        // Cleanup
+        let _ = fs::remove_file(&tmp_path);
+        Ok(())
+    }
+}

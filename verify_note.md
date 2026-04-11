@@ -16,3 +16,19 @@ The implementation failed to compile due to a `StreamSink` type collision and mi
 3. Fix the `StreamSink` collision by either renaming the internal placeholder in `inference/mod.rs` or properly using the `flutter_rust_bridge::StreamSink` for public-facing APIs.
 4. Rename `frb_agent_chat` to `agent_chat`.
 5. Update `agent_chat` to use `AgentChunk` and ensure it actually flows through the `LumiAgent` logic (even if currently thin, it should be the architectural entry point).
+
+## [**1.2.1** Define the tool in Rust using Rig's #[tool] macro (or equivalent):]
+**Verdict:** FAILED
+**Root cause:**
+The implementation is a plain Rust function that lacks the required Rig `#[tool]` macro and deviates from the specified return type. The supporting `rig-core` library also lacks the macro definition.
+
+**Specific findings:**
+- **Missing Macro:** `rust/lumi_core/src/tools.rs`: The `log_transaction` function is defined without the `#[tool]` attribute specified in the roadmap.
+- **Type Mismatch:** `rust/lumi_core/src/tools.rs`: The return type is `Result<String, String>` instead of the roadmap's `Result<String>`.
+- **Incomplete Scaffold:** `rust/rig-core/src/lib.rs`: The local Rig scaffold does not yet provide a `tool` macro, preventing proper tool definition.
+
+**Suggested fix:**
+1. Implement a (scaffold) `#[tool]` attribute macro in `rig-core` or a companion crate.
+2. Apply `#[tool(description = "...")]` to `log_transaction` in `tools.rs`.
+3. Align the return type with the roadmap specification.
+- **Incomplete Testing:** `rust/lumi_core/src/tools.rs`: The tests only cover the `log_transaction_with_pool` internal helper, not the actual `log_transaction` tool wrapper specified in the roadmap.
