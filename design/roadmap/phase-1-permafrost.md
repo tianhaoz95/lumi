@@ -246,7 +246,7 @@
   .env.test
   .vscode/mcp.json
   ```
-- [ ] **6.1.3** Add `scripts/wait-for-appwrite.sh`:
+- [x] **6.1.3** Add `scripts/wait-for-appwrite.sh`:
   ```bash
   #!/usr/bin/env bash
   until curl -sf http://localhost/v1/health > /dev/null; do
