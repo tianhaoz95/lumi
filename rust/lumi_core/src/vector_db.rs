@@ -212,4 +212,10 @@ mod tests {
         fs::remove_dir_all(&dir)?;
         Ok(())
     }
+
+    #[test]
+    fn rag_vector_search() -> Result<(), Box<dyn std::error::Error>> {
+        // Wrapper test requested by reviewer to match worklog deliverable name.
+        vector_search_returns_most_similar()
+    }
 }
