@@ -208,11 +208,11 @@
 ### 5.2 SQLite Initialization (sea-orm)
 
 - [x] **5.2.1** Add `sea-orm` with SQLite backend and `sqlx` to `rust/Cargo.toml`.
-- [ ] **5.2.2** Define initial schema (migrations via `sea-orm-migration`):
+- [x] **5.2.2** Define initial schema (migrations via `sea-orm-migration`):
   - `transactions` table: `id`, `amount`, `currency`, `vendor`, `category`, `timestamp`, `receipt_path`, `is_tagged`, `sha256_hash`.
   - `mileage_logs` table: `id`, `distance_miles`, `start_lat`, `start_lng`, `end_lat`, `end_lng`, `timestamp`, `deduction_amount`.
   - `users` table: `id`, `appwrite_user_id`, `display_name`.
-- [ ] **5.2.3** Expose `db_init()` via FRB; call it at app startup before rendering any authenticated screen.
+- [x] **5.2.3** Expose `db_init()` via FRB; call it at app startup before rendering any authenticated screen.
 
 **Tests:**
 - Rust unit test: `db_init()` creates all tables without error.
