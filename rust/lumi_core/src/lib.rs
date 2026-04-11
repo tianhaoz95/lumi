@@ -43,7 +43,7 @@ mod embeddings;
 // embeddings::embed_transaction is intentionally not re-exported publicly
 
 mod tools;
-pub use tools::{log_transaction, log_transaction_with_pool};
+pub use tools::{log_transaction, log_transaction_with_pool, get_summary};
 
 #[cfg(test)]
 mod tests {

@@ -97,7 +97,7 @@
 
 ### 1.6 Tool: `get_summary`
 
-- [ ] **1.6.1** Define tool:
+- [x] **1.6.1** Define tool:
   ```rust
   #[tool(description = "Return a financial summary for a given period")]
   async fn get_summary(period: String) -> Result<FinancialSummary>

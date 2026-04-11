@@ -4,7 +4,7 @@ use sqlx::Row;
 use serde_json::json;
 use sha2::{Sha256, Digest};
 use hex;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Datelike, TimeZone};
 use uuid::Uuid;
 use anyhow::anyhow;
 use serde::{Serialize, Deserialize};
@@ -350,6 +350,106 @@ pub async fn semantic_search(
     Ok(out)
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FinancialSummary {
+    pub period: String,
+    pub total_expenses: f64,
+    pub top_categories: Vec<(String, f64)>,
+    pub total_miles: f64,
+    pub estimated_deduction: f64,
+    pub working_hours: Option<f64>,
+}
+
+#[rig_macros::tool(description = "Return a financial summary for a given period")]
+pub async fn get_summary(period: String) -> anyhow::Result<FinancialSummary> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // Ensure schema exists
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!(format!("db_init failed: {}", e)));
+    }
+
+    let now = Utc::now();
+    let (start_ts, end_ts) = match period.as_str() {
+        "this_month" => {
+            let start = Utc.ymd(now.year(), now.month(), 1).and_hms(0,0,0);
+            (start.timestamp(), now.timestamp())
+        }
+        "last_month" => {
+            let (y, m) = if now.month() == 1 { (now.year() - 1, 12) } else { (now.year(), now.month() - 1) };
+            let start = Utc.ymd(y, m, 1).and_hms(0,0,0);
+            let end = if m == 12 {
+                Utc.ymd(y + 1, 1, 1).and_hms(0,0,0).checked_sub_signed(chrono::Duration::seconds(1)).unwrap()
+            } else {
+                Utc.ymd(y, m + 1, 1).and_hms(0,0,0).checked_sub_signed(chrono::Duration::seconds(1)).unwrap()
+            };
+            (start.timestamp(), end.timestamp())
+        }
+        "ytd" => {
+            let start = Utc.ymd(now.year(), 1, 1).and_hms(0,0,0);
+            (start.timestamp(), now.timestamp())
+        }
+        _ => return Err(anyhow!(format!("unknown period: {}", period))),
+    };
+
+    // total expenses
+    let total_cents: Option<i64> = sqlx::query_scalar("SELECT SUM(amount) FROM transactions WHERE timestamp >= ?1 AND timestamp <= ?2")
+        .bind(start_ts)
+        .bind(end_ts)
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| anyhow!(format!("total query failed: {}", e)))?;
+    let total_expenses = total_cents.unwrap_or(0) as f64 / 100.0;
+
+    // top categories
+    let rows = sqlx::query("SELECT category, SUM(amount) as total FROM transactions WHERE timestamp >= ?1 AND timestamp <= ?2 GROUP BY category ORDER BY total DESC LIMIT 5")
+        .bind(start_ts)
+        .bind(end_ts)
+        .fetch_all(&pool)
+        .await
+        .map_err(|e| anyhow!(format!("top categories query failed: {}", e)))?;
+    let mut top_categories: Vec<(String, f64)> = Vec::new();
+    for r in rows {
+        let cat: Option<String> = r.try_get("category")?;
+        let cents: i64 = r.try_get("total")?;
+        if let Some(c) = cat {
+            top_categories.push((c, cents as f64 / 100.0));
+        }
+    }
+
+    // mileage sums
+    let total_miles_opt: Option<f64> = sqlx::query_scalar("SELECT SUM(distance_miles) FROM mileage_logs WHERE timestamp >= ?1 AND timestamp <= ?2")
+        .bind(start_ts)
+        .bind(end_ts)
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| anyhow!(format!("miles query failed: {}", e)))?;
+    let total_miles = total_miles_opt.unwrap_or(0.0);
+
+    let total_deduction_opt: Option<f64> = sqlx::query_scalar("SELECT SUM(deduction_amount) FROM mileage_logs WHERE timestamp >= ?1 AND timestamp <= ?2")
+        .bind(start_ts)
+        .bind(end_ts)
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| anyhow!(format!("deduction query failed: {}", e)))?;
+    let estimated_deduction = total_deduction_opt.unwrap_or(0.0);
+
+    // working hours not yet implemented
+    let working_hours = None;
+
+    Ok(FinancialSummary {
+        period,
+        total_expenses,
+        top_categories,
+        total_miles,
+        estimated_deduction,
+        working_hours,
+    })
+}
 
 #[cfg(test)]
 mod tests {
