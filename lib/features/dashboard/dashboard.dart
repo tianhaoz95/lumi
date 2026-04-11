@@ -28,9 +28,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _loading = true;
     });
     try {
-      final map = await fetchMonthlySummary();
+      final summary = await fetchMonthlySummary();
       setState(() {
-        _summary = FinancialSummary.fromJson(map);
+        _summary = summary;
       });
     } catch (e) {
       // swallow — UI will show placeholders

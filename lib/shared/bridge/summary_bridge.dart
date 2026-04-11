@@ -2,14 +2,15 @@
 /// not yet available. Returns deterministic mock data for development and tests.
 
 import 'dart:async';
+import '../models/financial_summary.dart';
 
-Future<Map<String, dynamic>> fetchMonthlySummary() async {
-  // In production this should call the Rust core via FRB/MethodChannel.
+Future<FinancialSummary> fetchMonthlySummary() async {
+  // In production this should call the Rust core via FRB/MethodChannel/FRB-generated bindings.
   // This shim returns a deterministic result that matches the shape the UI expects.
   await Future.delayed(Duration(milliseconds: 50));
-  return {
-    'total_expenses': 1234.56,
-    'total_miles': 120.0,
-    'estimated_deduction': 80.40,
-  };
+  return FinancialSummary(
+    totalExpenses: 1234.56,
+    totalMiles: 120.0,
+    estimatedDeduction: 80.40,
+  );
 }
