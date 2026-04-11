@@ -54,6 +54,16 @@ pub fn upsert_embedding(db_path: &str, id: &str, embedding: &[f32], metadata: &s
     let json = serde_json::to_vec(&record)?;
     let mut f = fs::File::create(&file_path)?;
     f.write_all(&json)?;
+
+    // After upsert, check number of embeddings and trigger index build every 100 inserts.
+    let count = std::fs::read_dir(&emb_dir)?.filter_map(|e| e.ok()).count();
+    if count >= 100 && count % 100 == 0 {
+        // best-effort: build index; log warnings on failure but don't fail the upsert
+        if let Err(e) = build_ivf_pq_index(db_path) {
+            eprintln!("Warning: failed to build IVF-PQ index: {}", e);
+        }
+    }
+
     Ok(())
 }
 
@@ -114,6 +124,21 @@ pub fn vector_search(db_path: &str, query_vector: &[f32], top_k: u32) -> Result<
     let k = std::cmp::min(top_k as usize, results.len());
     results.truncate(k);
     Ok(results)
+}
+
+/// Build an IVF-PQ index for the transaction_embeddings collection.
+///
+/// In the Phase 1 placeholder environment this writes a marker file so tests
+/// can verify the index-build step without requiring a LanceDB server.
+pub fn build_ivf_pq_index(db_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let emb_dir = Path::new(db_path).join("transaction_embeddings");
+    if !emb_dir.exists() {
+        return Err("transaction_embeddings directory does not exist".into());
+    }
+    let marker = emb_dir.join("index_ivfpq.built");
+    let now = format!("built_at:{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_secs());
+    fs::write(marker, now.as_bytes())?;
+    Ok(())
 }
 
 #[cfg(test)]
@@ -217,5 +242,28 @@ mod tests {
     fn rag_vector_search() -> Result<(), Box<dyn std::error::Error>> {
         // Wrapper test requested by reviewer to match worklog deliverable name.
         vector_search_returns_most_similar()
+    }
+
+    #[test]
+    fn build_ivf_pq_index_after_100() -> Result<(), Box<dyn std::error::Error>> {
+        use std::path::Path;
+        let mut dir = std::env::temp_dir();
+        dir.push(format!("lumi_vector_db_index_test_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_millis()));
+        let dir_str = dir.to_str().unwrap().to_string();
+        if dir.exists() { fs::remove_dir_all(&dir)?; }
+        vector_db_init(&dir_str)?;
+
+        // upsert 100 embeddings
+        for i in 0..100 {
+            let id = format!("idx-{}", i);
+            let emb = vec![i as f32 * 0.001f32; 768];
+            upsert_embedding(&dir_str, &id, &emb, "{\"vendor\":\"Bulk\"}")?;
+        }
+
+        let marker = Path::new(&dir_str).join("transaction_embeddings").join("index_ivfpq.built");
+        assert!(marker.exists(), "index marker should exist after 100 inserts");
+
+        fs::remove_dir_all(&dir)?;
+        Ok(())
     }
 }

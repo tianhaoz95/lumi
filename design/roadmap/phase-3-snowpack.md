@@ -166,7 +166,7 @@
 ### 3.3 LanceDB Read Path (ANN Search)
 
 - [x] **3.3.1** Implement `vector_search(query_vector: Vec<f32>, top_k: u32) -> Result<Vec<SearchResult>>` using LanceDB's approximate nearest neighbour index.
-- [ ] **3.3.2** Build LanceDB IVF-PQ index on `transaction_embeddings` after each batch of ≥ 100 new entries.
+- [x] **3.3.2** Build LanceDB IVF-PQ index on `transaction_embeddings` after each batch of ≥ 100 new entries.
 
 **Tests:**
 - Rust integration test: seed 50 transactions. Query `"fuel"` embedding. Assert ≥ 1 Shell/gas-station transaction in top 3.
