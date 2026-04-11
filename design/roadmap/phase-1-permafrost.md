@@ -77,8 +77,8 @@
 
 ### 3.1 Appwrite Configuration
 
-- [ ] **3.1.1** Start Appwrite via Docker Compose and verify the console is reachable at `http://localhost/console`.
-- [ ] **3.1.2** In the Appwrite console:
+- [x] **3.1.1** Start Appwrite via Docker Compose and verify the console is reachable at `http://localhost/console`. 
+- [x] **3.1.2** In the Appwrite console:
   - Create project `lumi-dev`.
   - Add Flutter platform with bundle ID `com.lumi.app`.
   - Enable Email/Password authentication.
