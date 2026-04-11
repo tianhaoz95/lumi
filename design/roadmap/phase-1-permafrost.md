@@ -379,7 +379,7 @@
   - Test "unchecked terms → CTA disabled".
   - `tearDown`: delete the created test user via Appwrite MCP REST call.
 
-- [ ] **6.6.3** `integration_test/auth/forgot_password_test.dart`:
+- [x] **6.6.3** `integration_test/auth/forgot_password_test.dart`:
   - Test "submit reset@lumi.com → success state shown".
   - Test "password reset email delivered to Mailhog" — calls `waitForEmail('reset@lumi.com')`, asserts non-empty body.
 
