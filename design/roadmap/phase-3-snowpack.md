@@ -125,7 +125,7 @@
 
 ### 2.2 Tool-Choice Evaluation Suite
 
-- [ ] **2.2.1** Create `rust/lumi_core/tests/tool_choice_eval.rs` with a table of (prompt → expected_tool) pairs:
+- [x] **2.2.1** Create `rust/lumi_core/tests/tool_choice_eval.rs` with a table of (prompt → expected_tool) pairs:
 
   | Prompt | Expected Tool |
   |---|---|
@@ -135,7 +135,7 @@
   | "Show me my expenses for March" | `query_transactions` |
   | "Give me a summary of this month" | `get_summary` |
 
-- [ ] **2.2.2** The eval test asserts correct tool choice for all entries. All must pass before Phase 3 is complete.
+- [x] **2.2.2** The eval test asserts correct tool choice for all entries. All must pass before Phase 3 is complete.
 
 **Verifiable result:** `cargo test tool_choice_eval` passes with 100% accuracy on the eval table.
 
