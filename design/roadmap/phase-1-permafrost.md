@@ -88,7 +88,7 @@
   const appwriteEndpoint = 'http://localhost/v1';
   const appwriteProjectId = 'lumi-dev';
   ```
-- [ ] **3.1.4** Create `AppwriteService` singleton in `lib/features/auth/appwrite_service.dart` that initializes the Appwrite `Client` and exposes an `Account` instance.
+- [x] **3.1.4** Create `AppwriteService` singleton in `lib/features/auth/appwrite_service.dart` that initializes the Appwrite `Client` and exposes an `Account` instance.
 
 **Verifiable result:** `AppwriteService.ping()` returns 200 from the local Appwrite instance in an integration test.
 
