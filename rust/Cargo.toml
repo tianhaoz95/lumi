@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "lumi_core",
+    "litert-lm"
+]

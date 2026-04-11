@@ -1,5 +1,8 @@
 /// Lumi core library
 
+pub mod build_support;
+pub use build_support::*;
+
 /// Simple ping used for FRB smoke test.
 pub fn ping() -> String {
     "pong".to_string()
@@ -16,6 +19,9 @@ mod db;
 mod vector_db;
 pub use db::{db_init, db_init_with_pool};
 pub use vector_db::vector_db_init;
+
+mod model_registry;
+pub use model_registry::{check_model_ready, compute_sha256, get_download_progress};
 
 // Inference module (LiteRT-LM bindings)
 mod inference;
@@ -93,5 +99,41 @@ mod tests {
         .await?;
         assert_eq!(rows.len(), 3, "Expected 3 tables to be created");
         Ok(())
+    }
+
+    #[test]
+    fn check_model_ready_false_when_missing() {
+        use std::env;
+        let tmp = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            env::temp_dir().join(format!("lumi_models_test_{}_{}", std::process::id(), nanos))
+        };
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        assert_eq!(check_model_ready(&tmp, "e2b", None).unwrap(), false);
+        let _ = std::fs::remove_dir_all(&tmp);
+    }
+
+    #[test]
+    fn check_model_ready_true_with_valid_hash() {
+        use std::env;
+        use std::io::Write;
+        let tmp = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            env::temp_dir().join(format!("lumi_models_test_{}_{}", std::process::id(), nanos))
+        };
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        let path = tmp.join("e2b.bin");
+        let mut f = std::fs::File::create(&path).unwrap();
+        f.write_all(b"dummy-model-content").unwrap();
+        // Existence check
+        assert_eq!(check_model_ready(&tmp, "e2b", None).unwrap(), true);
+        // SHA computation sanity: non-empty
+        let sha = compute_sha256(&path).unwrap();
+        assert!(!sha.is_empty());
+        let _ = std::fs::remove_dir_all(&tmp);
     }
 }

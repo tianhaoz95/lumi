@@ -15,13 +15,13 @@
   - `aarch64-linux-android` (Android, NPU path)
   - `aarch64-apple-ios` (iOS, ANE path)
   - `x86_64-unknown-linux-gnu` (host, CPU fallback for CI)
-- [ ] **1.1.3** Verify `cargo build --target aarch64-linux-android` links successfully.
+- [x] **1.1.3** Verify `cargo build --target aarch64-linux-android` links successfully.
 
 **Verifiable result:** `cargo build` passes on host; `flutter build apk` picks up native libs without linker errors.
 
 ### 1.2 Model File Management
 
-- [ ] **1.2.1** Download Gemma 4 E2B (quantized, `.task` / `.bin` format for LiteRT) and Gemma 4 E4B.
+- [x] **1.2.1** Download Gemma 4 E2B (quantized, `.task` / `.bin` format for LiteRT) and Gemma 4 E4B.
 - [ ] **1.2.2** Store model files outside the Flutter asset bundle (too large). Define a `ModelRegistry` in Rust that resolves model paths from the platform's application support directory.
 - [ ] **1.2.3** Implement `ModelDownloadService` exposed via FRB:
   - `check_model_ready(model_id: String) -> bool` — checks if model file exists and passes SHA-256 integrity check.

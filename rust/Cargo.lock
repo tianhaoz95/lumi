@@ -1019,11 +1019,13 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "flutter_rust_bridge",
+ "hex",
  "litert-lm",
  "regex",
  "sea-orm",
  "serde",
  "serde_json",
+ "sha2",
  "sqlx",
  "tokio",
 ]
