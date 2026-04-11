@@ -222,6 +222,80 @@ pub async fn query_transactions(
     Ok(res)
 }
 
+/// Result returned after logging mileage.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct MileageLogResult {
+    pub id: String,
+    pub deduction_amount: f64,
+}
+
+/// Insert a mileage log into the provided SQLite pool.
+/// Calculates IRS deduction at $0.67/mile (2026 rate) and returns the inserted row id and deduction.
+pub async fn log_mileage_with_pool(
+    pool: &SqlitePool,
+    distance_miles: f64,
+    start_location: &str,
+    end_location: &str,
+    date: &str,
+    purpose: &str,
+) -> Result<MileageLogResult, sqlx::Error> {
+    // compute deduction
+    let deduction = (distance_miles * 0.67 * 100.0).round() / 100.0; // round to cents
+
+    // parse date
+    let timestamp = DateTime::parse_from_rfc3339(date)
+        .map(|dt| dt.timestamp())
+        .unwrap_or_else(|_| Utc::now().timestamp());
+
+    let id = Uuid::new_v4().to_string();
+
+    sqlx::query(
+        "INSERT INTO mileage_logs (id, distance_miles, start_lat, start_lng, end_lat, end_lng, start_location, end_location, purpose, timestamp, deduction_amount) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
+    )
+    .bind(&id)
+    .bind(distance_miles)
+    .bind(Option::<f64>::None)
+    .bind(Option::<f64>::None)
+    .bind(Option::<f64>::None)
+    .bind(Option::<f64>::None)
+    .bind(start_location)
+    .bind(end_location)
+    .bind(purpose)
+    .bind(timestamp)
+    .bind(deduction)
+    .execute(pool)
+    .await?;
+
+    Ok(MileageLogResult { id, deduction_amount: deduction })
+}
+
+/// FRB/Tool-facing wrapper for logging mileage.
+#[rig_macros::tool(description = "Log a mileage entry and calculate IRS deduction")]
+pub async fn log_mileage(
+    distance_miles: f64,
+    start_location: String,
+    end_location: String,
+    date: String,
+    purpose: String,
+) -> anyhow::Result<MileageLogResult> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url)
+        .await
+        .map_err(|e| anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // Ensure schema exists (best-effort)
+    if let Err(e) = crate::db::db_init_with_pool(&pool).await {
+        return Err(anyhow!(format!("db_init failed: {}", e)));
+    }
+
+    let res = log_mileage_with_pool(&pool, distance_miles, &start_location, &end_location, &date, &purpose)
+        .await
+        .map_err(|e| anyhow!(format!("insert failed: {}", e)))?;
+
+    Ok(res)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -339,6 +413,50 @@ mod tests {
         let res = query_transactions_with_pool(&pool, Some("fuel"), None, None, None).await?;
         assert_eq!(res.len(), 1);
         assert_eq!(res[0].category.as_deref(), Some("fuel"));
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn log_mileage_calculation_and_persist() -> Result<(), Box<dyn std::error::Error>> {
+        let pool = SqlitePool::connect(":memory:").await?;
+        db::db_init_with_pool(&pool).await?;
+
+        let res = log_mileage_with_pool(&pool, 10.0, "Start A", "End B", "2026-04-01T08:00:00Z", "client meeting").await?;
+        assert_eq!(res.deduction_amount, 6.70);
+
+        // verify persisted row
+        let row: (String, f64, Option<String>, Option<String>, Option<String>) = sqlx::query_as(
+            "SELECT id, distance_miles, start_location, end_location, purpose FROM mileage_logs WHERE id = ?1"
+        )
+        .bind(&res.id)
+        .fetch_one(&pool)
+        .await?;
+        assert_eq!(row.0, res.id);
+        assert!((row.1 - 10.0).abs() < 1e-6);
+        assert_eq!(row.2.as_deref(), Some("Start A"));
+        assert_eq!(row.3.as_deref(), Some("End B"));
+        assert_eq!(row.4.as_deref(), Some("client meeting"));
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn log_mileage_tool_wrapper_inserts_row() -> Result<(), Box<dyn std::error::Error>> {
+        let tmp_path = std::env::temp_dir().join(format!("lumi_mileage_test_{}.db", Uuid::new_v4()));
+        let _f = std::fs::File::create(&tmp_path)?;
+        let db_url = format!("sqlite:{}", tmp_path.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        let res = log_mileage(12.0, "Home".to_string(), "Office".to_string(), "2026-04-02T10:00:00Z".to_string(), "commute".to_string()).await?;
+
+        let pool = SqlitePool::connect(&db_url).await?;
+        let row: (String,) = sqlx::query_as("SELECT id FROM mileage_logs WHERE id = ?1")
+            .bind(&res.id)
+            .fetch_one(&pool)
+            .await?;
+        assert_eq!(row.0, res.id);
+
+        let _ = fs::remove_file(&tmp_path);
         Ok(())
     }
 }

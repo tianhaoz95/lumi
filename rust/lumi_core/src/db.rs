@@ -42,6 +42,9 @@ pub async fn db_init_with_pool(pool: &SqlitePool) -> Result<(), sqlx::Error> {
             start_lng REAL,
             end_lat REAL,
             end_lng REAL,
+            start_location TEXT,
+            end_location TEXT,
+            purpose TEXT,
             timestamp INTEGER NOT NULL,
             deduction_amount REAL
         );

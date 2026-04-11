@@ -62,7 +62,7 @@
 
 ### 1.4 Tool: `log_mileage`
 
-- [ ] **1.4.1** Define tool:
+- [x] **1.4.1** Define tool:
   ```rust
   #[tool(description = "Log a mileage entry and calculate IRS deduction")]
   async fn log_mileage(
