@@ -75,7 +75,7 @@
       pub tokens_per_second: f32,
   }
   ```
-- [ ] **2.1.2** Run `flutter_rust_bridge_codegen generate` to produce the streaming Dart bindings.
+- [x] **2.1.2** Run `flutter_rust_bridge_codegen generate` to produce the streaming Dart bindings.
 - [ ] **2.1.3** In Dart, wrap the stream in a `ChatService` that exposes `Stream<InferenceChunk> chat(String prompt, ModelTier tier)`.
 
 **Verifiable result:** A raw stream integration test sends a prompt and receives ≥ 1 `InferenceChunk` within 5 seconds on a real device.

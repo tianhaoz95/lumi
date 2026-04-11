@@ -12,7 +12,7 @@ crate-type = ["rlib", "cdylib"]
 # Tokio for async runtimes used by FRB and other async Rust code
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 # flutter_rust_bridge crate (left permissive) - used by FRB codegen and bindings
-flutter_rust_bridge = "*"
+flutter_rust_bridge = "=2.11.1"
 # Regex for input validation
 regex = "1"
 # sea-orm with sqlx sqlite backend and sqlx for compile-time checks
@@ -31,6 +31,7 @@ once_cell = "1.20"
 
 # LiteRT-LM bindings (local stub during development)
 litert-lm = { path = "../litert-lm" }
+rig-core = { path = "../rig-core" }
 chrono = "0.4.44"
 
 # LanceDB (vector / RAG store) - fetch from official lance-rs repository

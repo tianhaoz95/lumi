@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "lumi_core",
-    "litert-lm"
+    "litert-lm",
+    "rig-core"
 ]

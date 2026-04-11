@@ -422,5 +422,28 @@ mod tests {
         assert!(chunks.len() >= 1, "expected at least one chunk");
         assert!(chunks.iter().any(|c| c.is_final), "expected a final chunk");
     }
+
+    #[tokio::test]
+    async fn frb_infer_stream_sends_chunks_via_sink() {
+        use tokio::time::{timeout, Duration};
+        let prompt = "lumi stream test".to_string();
+        // Create a sink and receiver pair
+        let (sink, mut rx) = StreamSink::new_channel(8);
+
+        // Call infer_stream which spawns background tasks and returns immediately
+        let res = infer_stream(prompt, ModelTier::Sentinel, sink.clone());
+        assert!(res.is_ok(), "infer_stream should return Ok(())");
+
+        // Expect at least one chunk from the receiver within 5 seconds
+        match timeout(Duration::from_secs(5), rx.recv()).await {
+            Ok(Some(chunk)) => {
+                // We received a chunk; ensure it has the expected fields
+                assert!(chunk.tokens_per_second >= 0.0);
+                // token may be empty for final chunk, but presence is sufficient
+            }
+            Ok(None) => panic!("Channel closed without sending chunks"),
+            Err(_) => panic!("Timed out waiting for inference chunk")
+        }
+    }
 }
 

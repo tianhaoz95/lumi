@@ -34,7 +34,21 @@ class LumiCoreBridge {
     final file = File(path);
     await file.create(recursive: true);
     // Optionally write an SQLite header to identify the file as a DB
-    final header = <int>[0x53,0x51,0x4c,0x69,0x74,0x65,0x20,0x66,0x6f,0x72,0x6d,0x61,0x74]; // "SQLite format"
+    final header = <int>[
+      0x53,
+      0x51,
+      0x4c,
+      0x69,
+      0x74,
+      0x65,
+      0x20,
+      0x66,
+      0x6f,
+      0x72,
+      0x6d,
+      0x61,
+      0x74
+    ]; // "SQLite format"
     if (await file.length() == 0) {
       await file.writeAsBytes(header, flush: true);
     }
