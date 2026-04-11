@@ -163,7 +163,7 @@
 
 ### 4.2 Dashboard Screen ("The Tundra")
 
-- [ ] **4.2.1** Implement `DashboardScreen` matching `ui_design/dashboard/code.html`:
+- [x] **4.2.1** Implement `DashboardScreen` matching `ui_design/dashboard/code.html`:
   - Fixed glassmorphism top app bar with "The Tundra" title and top nav links.
   - 3-column bento grid (1-col on mobile) with:
     - **Current Expenses** card: large dollar amount + trend indicator.
@@ -179,7 +179,7 @@
 
 ### 4.3 Settings Screen ("The Cabin")
 
-- [ ] **4.3.1** Implement `SettingsScreen` matching `ui_design/settings/code.html`:
+- [x] **4.3.1** Implement `SettingsScreen` matching `ui_design/settings/code.html`:
   - Back arrow + "The Cabin" title in app bar.
   - User profile section: avatar ring (gradient border), name, email.
   - Workspace settings list: Account Preferences, Security, Notifications (with badge "3 New") — all navigating to placeholder screens.

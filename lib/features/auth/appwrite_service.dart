@@ -22,20 +22,22 @@ class AppwriteService {
   /// Initialize the Appwrite client. Call once at app startup (after reading
   /// environment config). `apiKey` is optional and only required for server-side
   /// operations in CI.
-  void init({String? endpoint, String? projectId, String? apiKey}) {
+  void init({String? endpoint, String? projectId, String? apiKey, bool createClient = true}) {
     _endpoint = endpoint ?? _endpoint;
     _projectId = projectId ?? _projectId;
 
-    _client = Client()
-        .setEndpoint(_endpoint)
-        .setProject(_projectId);
+    if (createClient) {
+      _client = Client()
+          .setEndpoint(_endpoint)
+          .setProject(_projectId);
 
-    // Note: Appwrite Dart SDK's client does not expose a setKey() method in
-    // the Flutter/browser client. Server-side API keys are not required for the
-    // client's typical usage in the app. If future CI needs server keys, inject
-    // them into a server-side wrapper.
+      // Note: Appwrite Dart SDK's client does not expose a setKey() method in
+      // the Flutter/browser client. Server-side API keys are not required for the
+      // client's typical usage in the app. If future CI needs server keys, inject
+      // them into a server-side wrapper.
 
-    _account = Account(_client!);
+      _account = Account(_client!);
+    }
   }
 
   /// Test helper: replace the underlying Account instance with a fake.
@@ -134,6 +136,30 @@ class AppwriteService {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  /// Restore session across app restarts using the SDK's built-in session storage.
+  /// Returns true if a valid session exists and account.get() succeeded.
+  Future<bool> restoreSession() async {
+    if (_account == null) throw StateError('AppwriteService not initialized.');
+    try {
+      if (_account.get == null) return false;
+      final user = await _account.get();
+      return user != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Returns the current account object if available, otherwise null.
+  Future<dynamic> getCurrentUser() async {
+    if (_account == null) throw StateError('AppwriteService not initialized.');
+    try {
+      if (_account.get == null) return null;
+      return await _account.get();
+    } catch (_) {
+      return null;
     }
   }
 }
