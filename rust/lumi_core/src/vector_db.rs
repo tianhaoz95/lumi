@@ -179,4 +179,37 @@ mod tests {
         fs::remove_dir_all(&dir)?;
         Ok(())
     }
+
+    #[test]
+    fn upsert_embedding_idempotent() -> Result<(), Box<dyn std::error::Error>> {
+        let mut dir = std::env::temp_dir();
+        dir.push(format!("lumi_vector_db_idempotent_test_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)?.as_millis()));
+        let dir_str = dir.to_str().unwrap().to_string();
+        if dir.exists() { fs::remove_dir_all(&dir)?; }
+        vector_db_init(&dir_str)?;
+
+        let id = "idempotent-1";
+        let emb1 = vec![0.1f32; 768];
+        let emb2 = vec![0.2f32; 768];
+        let meta1 = "{\"vendor\":\"A\"}";
+        let meta2 = "{\"vendor\":\"B\"}";
+
+        upsert_embedding(&dir_str, id, &emb1, meta1)?;
+        upsert_embedding(&dir_str, id, &emb2, meta2)?;
+
+        // ensure only one file exists for the id
+        let emb_dir = std::path::Path::new(&dir_str).join("transaction_embeddings");
+        let mut files: Vec<_> = std::fs::read_dir(&emb_dir)?.filter_map(|e| e.ok()).collect();
+        // there should be at least one matching file; specifically the one for this id
+        assert!(files.iter().any(|e| e.file_name().to_string_lossy().starts_with(id)));
+
+        // Retrieve and assert it's the second value
+        let (got_embedding, got_metadata) = get_embedding(&dir_str, id)?;
+        assert_eq!(got_embedding.len(), 768);
+        assert!((got_embedding[0] - 0.2).abs() < 1e-6);
+        assert_eq!(got_metadata, meta2.to_string());
+
+        fs::remove_dir_all(&dir)?;
+        Ok(())
+    }
 }

@@ -65,6 +65,8 @@ pub fn embed_text(text: &str) -> Result<Vec<f32>> {
     Ok(out)
 }
 
+pub use crate::vector_db::upsert_embedding;
+
 #[cfg(test)]
 mod tests {
     use super::*;
