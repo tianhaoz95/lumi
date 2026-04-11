@@ -121,7 +121,7 @@
   - Instructs to always prefer a tool call over a guessed answer when financial data is involved.
   - Instructs to ask clarifying questions if tool parameters are ambiguous.
 - [x] **2.1.2** Add few-shot examples to the system prompt for each tool.
-- [ ] **2.1.3** Set a maximum of 5 tool-call iterations per conversation turn to prevent infinite loops.
+- [x] **2.1.3** Set a maximum of 5 tool-call iterations per conversation turn to prevent infinite loops.
 
 ### 2.2 Tool-Choice Evaluation Suite
 

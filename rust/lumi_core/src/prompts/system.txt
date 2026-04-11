@@ -36,6 +36,7 @@ Tone and safety:
 Operational note:
 - Prefer tool calls for any factual claims about stored financial data.
 - Ask one clarifying question at a time if needed; do not chain multiple ambiguous assumptions into a single tool call.
+- Limit tool-call iterations per conversation turn to 5 to prevent infinite loops.
 
 Few-shot examples (use these as templates when mapping user requests to tool calls):
 
