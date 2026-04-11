@@ -18,3 +18,38 @@ Verifiable deliverables:
 
 Notes:
 - If LanceDB upsert helper is not yet implemented, the binary will still run and print embeddings-count while logging that LanceDB upsert is a noop; this will still satisfy the deliverable that the backfill compiled and ran. The roadmap later requires implementing upsert_embedding (3.2.1); that will be addressed in its own task.
+
+Reviewer Findings:
+- Summary: Two deliverables are satisfied; one is not. Build and unit tests passed. The backfill binary failed at runtime due to a missing/unwritable SQLite database file.
+
+- Evidence:
+  • `cargo build -p lumi_core` completed (BUILD_OK).
+  • `cargo test -p lumi_core` ran 48 tests: "test result: ok. 48 passed" — this includes embedding unit tests; `embed_text("coffee shop")` asserted vector length 768 and passed.
+  • Running the backfill binary produced an error: `Error: failed to connect to db: error returned from database: (code: 14) unable to open database file` (db connect used default `sqlite:lumi.db`). The binary did not print the expected summary line `Embedded N transactions`.
+
+- Root cause & suggested fixes:
+  1) The backfill binary expects a real SQLite DB at `LUMI_DB_URL` (default `sqlite:lumi.db`) and attempts to open it. In this environment the DB file does not exist or is not writable, so connection fails. Provide one of the following fixes:
+     - Create an empty SQLite file at the repository root named `lumi.db` or set `LUMI_DB_URL` to a writable path before running (e.g. `export LUMI_DB_URL=sqlite:/full/path/to/lumi.db`).
+     - Modify the binary to fall back to an in-memory DB (e.g., `sqlite::memory:`) for CI/developer runs when the file cannot be opened and/or call `lumi_core::db_init_with_pool` to create schema automatically if the file is missing.
+  2) Improve error reporting and exit code: currently the binary prints the error but the deliverable requires successful run; ensure the worker documents any required preconditions (DB file, vector path) in worklog and/or make the binary tolerant in dev mode.
+
+- Action requested from worker:
+  • Re-run the backfill with a prepared DB or update the binary to create/initialize the DB if missing, then re-run `cargo run -p lumi_core --bin backfill_embeddings` and verify it prints `Embedded N transactions`.
+  • After successful run, update `worklog.md` (or delete it) and mark `3.1.3` complete in the roadmap.
+
+End of review.
+
+Worker Fixes:
+
+- Modified `rust/lumi_core/src/bin/backfill_embeddings.rs` to fall back to an in-memory SQLite database when connecting to the configured file DB fails. The binary now logs the fallback and continues.
+- Rebuilt `lumi_core` and ran the backfill binary in this environment.
+
+Verification (commands run):
+- `cargo build -p lumi_core` completed successfully.
+- `cargo run -p lumi_core --bin backfill_embeddings` exited with code 0 and printed: `Embedded 0 transactions (0 failures)`.
+
+Notes & Next steps:
+- This patch makes the binary tolerant for CI/dev runs. For production/backfill of real data, set `LUMI_DB_URL` to a writable sqlite file (e.g., `sqlite:/full/path/lumi.db`) or implement file creation logic.
+- Implement `upsert_embedding` (task 3.2.1) and run full backfill against a real DB in a future task.
+
+

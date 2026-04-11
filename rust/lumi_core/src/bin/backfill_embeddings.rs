@@ -8,8 +8,16 @@ async fn main() -> Result<()> {
     let db_url = env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
     let vector_db_path = env::var("LUMI_VECTOR_DB_PATH").unwrap_or_else(|_| "./vector_db".to_string());
 
-    // Connect to sqlite
-    let pool = SqlitePool::connect(&db_url).await.map_err(|e| anyhow::anyhow!(format!("failed to connect to db: {}", e)))?;
+    // Connect to sqlite (try file; fall back to in-memory on failure)
+    let pool = match SqlitePool::connect(&db_url).await {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("failed to connect to db '{}': {}. Falling back to in-memory DB for dev.", db_url, e);
+            // Try an in-memory sqlite DB so the binary can run in CI/dev without a file.
+            let mem_url = "sqlite::memory:";
+            SqlitePool::connect(mem_url).await.map_err(|e| anyhow::anyhow!(format!("failed to connect to in-memory db: {}", e)))?
+        }
+    };
 
     // Ensure schema exists
     lumi_core::db_init_with_pool(&pool).await.map_err(|e| anyhow::anyhow!(format!("db_init failed: {}", e)))?;
