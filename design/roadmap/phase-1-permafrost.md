@@ -280,11 +280,11 @@
     }
   }
   ```
-- [ ] **6.2.3** Add `.vscode/mcp.json` (the real file with the key) to `.gitignore`.
+- [x] **6.2.3** Add `.vscode/mcp.json` (the real file with the key) to `.gitignore`.
 
 ### 6.3 Appwrite Bootstrap Script (via MCP)
 
-- [ ] **6.3.1** Document the exact Copilot agent prompt to use for bootstrap (store in `scripts/BOOTSTRAP.md`):
+- [x] **6.3.1** Document the exact Copilot agent prompt to use for bootstrap (store in `scripts/BOOTSTRAP.md`):
   ```
   Using the appwrite MCP server, perform the following steps in order.
   Confirm each step before proceeding to the next.
