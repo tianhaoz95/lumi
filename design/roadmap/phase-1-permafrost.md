@@ -207,7 +207,7 @@
 
 ### 5.2 SQLite Initialization (sea-orm)
 
-- [ ] **5.2.1** Add `sea-orm` with SQLite backend and `sqlx` to `rust/Cargo.toml`.
+- [x] **5.2.1** Add `sea-orm` with SQLite backend and `sqlx` to `rust/Cargo.toml`.
 - [ ] **5.2.2** Define initial schema (migrations via `sea-orm-migration`):
   - `transactions` table: `id`, `amount`, `currency`, `vendor`, `category`, `timestamp`, `receipt_path`, `is_tagged`, `sha256_hash`.
   - `mileage_logs` table: `id`, `distance_miles`, `start_lat`, `start_lng`, `end_lat`, `end_lng`, `timestamp`, `deduction_amount`.

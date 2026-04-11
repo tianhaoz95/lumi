@@ -58,4 +58,14 @@ mod tests {
         let binding_path = Path::new(manifest_dir).join("../../lib/shared/bridge/lumi_core_bridge.dart");
         assert!(binding_path.exists(), "Expected generated Dart binding at {}", binding_path.display());
     }
+
+    // New test to verify sqlx + SQLite work by connecting to an in-memory database
+    #[tokio::test]
+    async fn sqlx_sqlite_memory_connect() -> Result<(), sqlx::Error> {
+        // connect to an in-memory SQLite database
+        let pool = sqlx::SqlitePool::connect(":memory:").await?;
+        let row: (i64,) = sqlx::query_as("SELECT 1 as value").fetch_one(&pool).await?;
+        assert_eq!(row.0, 1);
+        Ok(())
+    }
 }

@@ -15,3 +15,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 flutter_rust_bridge = "*"
 # Regex for input validation
 regex = "1"
+# sea-orm with sqlx sqlite backend for relational DB (SQLite)
+sea-orm = { version = "0.11", features = ["sqlx-sqlite"] }
+# sqlx for SQLite support used by sea-orm (enable macros for compile-time checks)
+sqlx = { version = "0.6", features = ["sqlite", "runtime-tokio-rustls", "macros"] }
