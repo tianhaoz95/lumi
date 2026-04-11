@@ -361,7 +361,7 @@
   - `Future<Session> createTestSession()` — calls `account.createEmailPasswordSession` with env vars.
   - `Future<void> clearTestSessions()` — calls `account.deleteSessions()` to clean up.
   - `Future<String> waitForEmail(String to, {Duration timeout = const Duration(seconds: 10)})` — polls `GET http://localhost:8025/api/v2/messages` until a message addressed to `to` appears; returns the message body.
-- [ ] **6.5.3** Create `integration_test/helpers/flutter_driver_utils.dart`:
+- [x] **6.5.3** Create `integration_test/helpers/flutter_driver_utils.dart`:
   - `Future<void> pumpUntilFound(WidgetTester tester, Finder finder, {Duration timeout})` — pumps frames until the finder resolves or timeout.
 
 ### 6.6 Integration Test Files — Auth Suite
