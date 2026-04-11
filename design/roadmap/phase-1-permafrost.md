@@ -372,7 +372,7 @@
   - Test "invalid password → shows inline error, stays on LoginScreen".
   - Test "empty email → validation error displayed".
 
-- [ ] **6.6.2** `integration_test/auth/signup_test.dart`:
+- [x] **6.6.2** `integration_test/auth/signup_test.dart`:
   - Uses a unique email per run (`${uuid()}@lumi-test.com`) to avoid conflicts.
   - Test "create account → auto-logged in → HomeScreen shown".
   - Test "duplicate email → shows error".
