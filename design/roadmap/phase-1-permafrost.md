@@ -260,11 +260,11 @@
 
 ### 6.2 Appwrite MCP Configuration
 
-- [ ] **6.2.1** Document the one-time MCP setup in `README.md` under a "Development Setup" section:
+- [x] **6.2.1** Document the one-time MCP setup in `README.md` under a "Development Setup" section:
   1. Install `uv`: `curl -LsSf https://astral.sh/uv/install.sh | sh`
   2. Create `.vscode/mcp.json` from the template in `IMPLEMENTATION_PLAN.md`.
   3. Start Appwrite, open Copilot in agent mode, and run the bootstrap prompt.
-- [ ] **6.2.2** Create `.vscode/mcp.json.template` (committed, no secrets):
+- [x] **6.2.2** Create `.vscode/mcp.json.template` (committed, no secrets):
   ```json
   {
     "servers": {
