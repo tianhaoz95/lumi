@@ -413,6 +413,8 @@ mod tests {
         if vec_dir.exists() { fs::remove_dir_all(&vec_dir)?; }
         let vec_dir_str = vec_dir.to_string_lossy().to_string();
         std::env::set_var("LUMI_VECTOR_DB_PATH", &vec_dir_str);
+        // Ensure vector DB initialized so the upsert in log_transaction succeeds
+        crate::vector_db::vector_db_init(&vec_dir_str)?;
 
         // Call the public tool wrapper
         let id = log_transaction("Tool Vendor".to_string(), 5.50, "USD".to_string(), "meals".to_string(), "2026-03-04T12:00:00Z".to_string(), None).await?;
@@ -504,6 +506,144 @@ mod tests {
         assert_eq!(row.0, res.id);
 
         let _ = fs::remove_file(&tmp_path);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn semantic_search_returns_seeded_transaction() -> Result<(), Box<dyn std::error::Error>> {
+        use crate::embeddings;
+        use crate::vector_db;
+        use sqlx::SqlitePool;
+        use std::fs;
+        use uuid::Uuid;
+
+        // save/restore env vars to avoid test interference
+        let prev_db = std::env::var("LUMI_DB_URL").ok();
+        let prev_vec = std::env::var("LUMI_VECTOR_DB_PATH").ok();
+
+        // prepare temp sqlite db
+        let tmp_db = std::env::temp_dir().join(format!("lumi_sem_search_{}.db", Uuid::new_v4()));
+        let _f = std::fs::File::create(&tmp_db)?;
+        let db_url = format!("sqlite:{}", tmp_db.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        // prepare temp vector db
+        let vec_dir = std::env::temp_dir().join(format!("lumi_vector_sem_search_{}", Uuid::new_v4()));
+        if vec_dir.exists() { fs::remove_dir_all(&vec_dir)?; }
+        let vec_dir_str = vec_dir.to_string_lossy().to_string();
+        std::env::set_var("LUMI_VECTOR_DB_PATH", &vec_dir_str);
+        crate::vector_db::vector_db_init(&vec_dir_str)?;
+
+        // init sqlite schema
+        let pool = SqlitePool::connect(&db_url).await?;
+        crate::db::db_init_with_pool(&pool).await?;
+
+        // create a deterministic query and matching embedding
+        let query = "unique-query-for-test-123";
+        let emb = embeddings::embed_text(query)?;
+
+        // insert a transaction row with id matching embedding id
+        let id = Uuid::new_v4().to_string();
+        let amount_cents: i64 = 425;
+        let timestamp: i64 = 1_700_000_000;
+        let insert_sql = "INSERT INTO transactions (id, amount, currency, vendor, category, timestamp, receipt_path, is_tagged, sha256_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)";
+        sqlx::query(insert_sql)
+            .bind(&id)
+            .bind(amount_cents)
+            .bind("USD")
+            .bind("TestVendor")
+            .bind("testing")
+            .bind(timestamp)
+            .bind(Option::<String>::None)
+            .bind(0i32)
+            .bind("sha-placeholder")
+            .execute(&pool)
+            .await?;
+
+        // upsert embedding for that id using the same embedding as query
+        vector_db::upsert_embedding(&vec_dir_str, &id, &emb, &format!("{{\"vendor\":\"TestVendor\"}}"))?;
+
+        // call semantic_search
+        let res = semantic_search(query.to_string(), None).await?;
+        assert!(!res.is_empty());
+        assert_eq!(res[0].id, id);
+
+        // cleanup
+        let _ = fs::remove_file(&tmp_db);
+        let _ = fs::remove_dir_all(&vec_dir);
+
+        // restore env
+        if let Some(v) = prev_db { std::env::set_var("LUMI_DB_URL", v); } else { std::env::remove_var("LUMI_DB_URL"); }
+        if let Some(v) = prev_vec { std::env::set_var("LUMI_VECTOR_DB_PATH", v); } else { std::env::remove_var("LUMI_VECTOR_DB_PATH"); }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn semantic_search_respects_default_top_k() -> Result<(), Box<dyn std::error::Error>> {
+        use crate::embeddings;
+        use crate::vector_db;
+        use sqlx::SqlitePool;
+        use std::fs;
+        use uuid::Uuid;
+
+        // save/restore env vars to avoid test interference
+        let prev_db = std::env::var("LUMI_DB_URL").ok();
+        let prev_vec = std::env::var("LUMI_VECTOR_DB_PATH").ok();
+
+        // prepare temp sqlite db
+        let tmp_db = std::env::temp_dir().join(format!("lumi_sem_search_topk_{}.db", Uuid::new_v4()));
+        let _f = std::fs::File::create(&tmp_db)?;
+        let db_url = format!("sqlite:{}", tmp_db.to_string_lossy());
+        std::env::set_var("LUMI_DB_URL", &db_url);
+
+        // prepare temp vector db
+        let vec_dir = std::env::temp_dir().join(format!("lumi_vector_sem_search_topk_{}", Uuid::new_v4()));
+        if vec_dir.exists() { fs::remove_dir_all(&vec_dir)?; }
+        let vec_dir_str = vec_dir.to_string_lossy().to_string();
+        std::env::set_var("LUMI_VECTOR_DB_PATH", &vec_dir_str);
+        crate::vector_db::vector_db_init(&vec_dir_str)?;
+
+        // init sqlite schema
+        let pool = SqlitePool::connect(&db_url).await?;
+        crate::db::db_init_with_pool(&pool).await?;
+
+        // build a shared embedding for all inserted transactions
+        let query = "common-search-term-topk";
+        let emb = embeddings::embed_text(query)?;
+
+        // insert 10 transactions with embeddings identical to query emb
+        for i in 0..10 {
+            let id = format!("topk-{}", i);
+            let amount_cents: i64 = 100 + i as i64;
+            let timestamp: i64 = 1_700_000_000 + i as i64;
+            sqlx::query("INSERT INTO transactions (id, amount, currency, vendor, category, timestamp, receipt_path, is_tagged, sha256_hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)")
+                .bind(&id)
+                .bind(amount_cents)
+                .bind("USD")
+                .bind(format!("Vendor{}", i))
+                .bind("misc")
+                .bind(timestamp)
+                .bind(Option::<String>::None)
+                .bind(0i32)
+                .bind(format!("sha-{}", i))
+                .execute(&pool)
+                .await?;
+            vector_db::upsert_embedding(&vec_dir_str, &id, &emb, &format!("{{\"vendor\":\"Vendor{}\"}}", i))?;
+        }
+
+        // semantic_search with None top_k should default to 5
+        let res = semantic_search(query.to_string(), None).await?;
+        assert_eq!(res.len(), 5);
+
+        // cleanup
+        let _ = fs::remove_file(&tmp_db);
+        let _ = fs::remove_dir_all(&vec_dir);
+
+        // restore env
+        if let Some(v) = prev_db { std::env::set_var("LUMI_DB_URL", v); } else { std::env::remove_var("LUMI_DB_URL"); }
+        if let Some(v) = prev_vec { std::env::set_var("LUMI_VECTOR_DB_PATH", v); } else { std::env::remove_var("LUMI_VECTOR_DB_PATH"); }
+
         Ok(())
     }
 }

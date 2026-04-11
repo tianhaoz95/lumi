@@ -18,6 +18,8 @@ Verifiable deliverables:
 - Running `cd rust/lumi_core && cargo test --lib` exits with code 0 (all tests pass).
 - `design/roadmap/phase-3-snowpack.md` line for 1.5.1 is updated from `- [ ]` to `- [x]`.
 
-Notes:
-- This work uses deterministic placeholder embeddings (sha-based) so CI and unit tests do not require real model binaries.
-- Do not remove or delete this worklog; reviewers will verify the listed deliverables and the test results.
+Reviewer Findings:
+1. **Missing `semantic_search` tests**: No integration or unit tests for the `semantic_search` tool itself were found in `rust/lumi_core/src/tools.rs` or elsewhere. The worker's plan (Step 4) specifically called for an "integration-flow test exercising semantic_search," but this was not delivered.
+2. **Missing default `top_k` test**: Roadmap 1.5.2 explicitly requires a test to verify that `top_k` defaults to 5. While the logic is in the code (`top_k.unwrap_or(5)`), there is no test verifying this behavior.
+3. **Roadmap mismatch**: The roadmap separates the tool definition (1.5.1) and implementation/tests (1.5.2). The worker implemented the tool and marked 1.5.1 as done, but did not mark 1.5.2 as done and failed to deliver the required tests for both items.
+4. **Conclusion**: Task 1.5.1 (and 1.5.2) remains undone until the integration/unit tests for `semantic_search` are implemented and passing.
