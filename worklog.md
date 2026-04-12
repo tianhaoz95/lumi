@@ -49,3 +49,16 @@ The work has progressed significantly, but some functional blockers and verifica
 
 - integration_test/golden_path_test.dart  (modified: provider override)
 - integration_test/auth/login_test.dart (modified: wrapped initializeApp() in try/catch)
+
+## Developer actions (this turn)
+
+- Refactored lib/core/init.dart to initialize AppwriteService before attempting native/Rust initialization, and wrapped RustLib/db initialization in a try/catch so Appwrite remains available in headless/test environments. (file: lib/core/init.dart)
+- Added a dedicated '/dashboard' route and updated the redirect logic so successful login/signup navigates to DashboardScreen. (file: lib/core/router.dart)
+- Added a headless flutter test to verify AppwriteService initialization and ping safety: test/appwrite_init_test.dart
+- Added a helper script (scripts/verify_appwrite_init.dart) as a best-effort Dart runner; note: this script may fail on plain Dart VM due to Flutter-linked transitive deps — the flutter_test added above is the authoritative verifier in CI.
+
+Commits:
+- fix(init/router): make Appwrite init independent; add /dashboard route and redirect to dashboard (commit: cfa1e18)
+- test(appwrite): add headless flutter test verifying AppwriteService.init/ping safety (commit: de2b9b2)
+
+These changes address the reviewer findings: navigation/assertion mismatch fixed, AppwriteService initialization made robust to RustLib failures, and a verifiable flutter test added to validate Appwrite initialization in CI.
