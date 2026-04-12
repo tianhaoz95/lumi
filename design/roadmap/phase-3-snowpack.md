@@ -199,7 +199,7 @@
 
 ### 4.2 GenUI — TransactionCard
 
-- [ ] **4.2.1** Implement `TransactionCard` widget with fields:
+- [x] **4.2.1** Implement `TransactionCard` widget with fields:
   - Vendor icon (Material Symbol based on category mapping).
   - Vendor name + category label + date.
   - Amount (negative = expense in `on-surface`, positive = credit in `primary`).
