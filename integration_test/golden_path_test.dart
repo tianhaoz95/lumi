@@ -259,7 +259,7 @@ void main() {
       AppwriteService.instance.setAccountForTest(fake);
 
       // Launch app
-      await tester.pumpWidget(ProviderScope(overrides: [authNotifierProvider.overrideWithValue(_TestAuthNotifier())], child: MyApp()));
+      await tester.pumpWidget(ProviderScope(overrides: [authNotifierProvider.overrideWith((ref) => _TestAuthNotifier())], child: MyApp()));
       await tester.pumpAndSettle();
 
       // Ensure Home is shown by presence of chat input
