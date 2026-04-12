@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../shared/bridge/bridge.dart' as bridge;
 import '../../shared/bridge/lumi_core_bridge.dart' as lumi_bridge;
@@ -87,11 +86,80 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                 date: _receiptData!.date,
                 amount: -_receiptData!.totalAmount,
                 isTagged: true,
-                onConfirm: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Confirmed (not yet persisted)')));
+                onConfirm: () async {
+                  try {
+                    final id = await lumi_bridge.LumiCoreBridge.logTransaction(
+                      vendor: _receiptData!.vendorName,
+                      amount: _receiptData!.totalAmount,
+                      currency: _receiptData!.currency,
+                      category: 'uncategorized',
+                      date: _receiptData!.date,
+                      receiptPath: null,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
+                    setState(() {
+                      _receiptData = null;
+                      _receiptJson = null;
+                    });
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                  }
                 },
-                onEdit: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Edit not implemented')));
+                onEdit: () async {
+                  // show simple edit dialog and on Save call logTransaction with edited values
+                  final vendorCtrl = TextEditingController(text: _receiptData!.vendorName);
+                  final categoryCtrl = TextEditingController(text: 'uncategorized');
+                  final dateCtrl = TextEditingController(text: _receiptData!.date);
+                  final amountCtrl = TextEditingController(text: _receiptData!.totalAmount.toString());
+                  final currencyCtrl = TextEditingController(text: _receiptData!.currency);
+
+                  final saved = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Edit transaction'),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(controller: vendorCtrl, decoration: const InputDecoration(labelText: 'Vendor')),
+                            TextField(controller: categoryCtrl, decoration: const InputDecoration(labelText: 'Category')),
+                            TextField(controller: amountCtrl, decoration: const InputDecoration(labelText: 'Amount'), keyboardType: TextInputType.number),
+                            TextField(controller: currencyCtrl, decoration: const InputDecoration(labelText: 'Currency')),
+                            TextField(controller: dateCtrl, decoration: const InputDecoration(labelText: 'Date')),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+                        ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(ctx).pop(true);
+                            },
+                            child: const Text('Save')),
+                      ],
+                    ),
+                  );
+
+                  if (saved == true) {
+                    try {
+                      final parsedAmount = double.tryParse(amountCtrl.text) ?? _receiptData!.totalAmount;
+                      final id = await lumi_bridge.LumiCoreBridge.logTransaction(
+                        vendor: vendorCtrl.text,
+                        amount: parsedAmount,
+                        currency: currencyCtrl.text,
+                        category: categoryCtrl.text,
+                        date: dateCtrl.text,
+                        receiptPath: null,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
+                      setState(() {
+                        _receiptData = null;
+                        _receiptJson = null;
+                      });
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                    }
+                  }
                 },
                 onDismiss: () {
                   setState(() {

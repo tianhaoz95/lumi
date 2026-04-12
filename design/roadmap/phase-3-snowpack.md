@@ -206,7 +206,7 @@
   - AI-auto-tagged badge ("AI" chip in `primary-fixed` background) when `is_tagged == true`.
   - Edit button → inline edit form.
 - [x] **4.2.2** After receipt OCR (Phase 2), render a `TransactionCard` for user confirmation before saving.
-- [ ] **4.2.3** "Confirm" → calls `log_transaction` tool. "Edit" → opens field editors. "Dismiss" → discards.
+- [x] **4.2.3** "Confirm" → calls `log_transaction` tool. "Edit" → opens field editors. "Dismiss" → discards.
 
 **Tests:**
 - Widget test: `TransactionCard` shows AI badge when `is_tagged = true`.

@@ -52,6 +52,39 @@ class LumiCoreBridge {
     }
   }
 
+  /// Call the native Rust `log_transaction` tool via MethodChannel/FRB.
+  /// Expects the Rust side to return either a string ID, an int, or a small map containing an ID.
+  static Future<String> logTransaction({
+    required String vendor,
+    required double amount,
+    required String currency,
+    required String category,
+    required String date,
+    String? receiptPath,
+  }) async {
+    try {
+      final res = await _channel.invokeMethod<dynamic>('log_transaction', <String, dynamic>{
+        'vendor': vendor,
+        'amount': amount,
+        'currency': currency,
+        'category': category,
+        'date': date,
+        'receipt_path': receiptPath,
+      });
+
+      if (res is String) return res;
+      if (res is int) return res.toString();
+      if (res is Map) {
+        final id = res['id'] ?? res['row_id'] ?? res['result'];
+        return id?.toString() ?? '';
+      }
+
+      return '';
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Initialize the on-device database.
   /// In production this forwards to the Rust `db_init` via FRB.
   /// For Phase 1 this shim creates a local file at the provided path.
