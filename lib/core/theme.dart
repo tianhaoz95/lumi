@@ -94,8 +94,7 @@ ThemeData getLumiTheme() {
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LumiRadius.defaultRadius)),
       focusedBorder: OutlineInputBorder(
-          borderSide:
-              BorderSide(color: LumiColors.outlineVariant.withOpacity(0.4))),
+          borderSide: BorderSide(color: Color(0x66BEC8C9))),
     ),
     dividerTheme: const DividerThemeData(
       color: Colors.transparent,
