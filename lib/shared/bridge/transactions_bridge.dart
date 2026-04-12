@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import '../models/transaction_summary.dart';
-import 'package:flutter/material.dart';
 
 /// Shim for recent transactions used by the UI when FRB/Rust bindings are not available.
 Future<List<TransactionSummary>> fetchRecentTransactions({int limit = 5}) async {

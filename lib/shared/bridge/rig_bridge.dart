@@ -32,23 +32,21 @@ Future<List<TransactionSummary>> queryTransactions({int limit = 5}) async {
   try {
     // Try native FRB binding first
     final res = await frb.LumiCoreBridge.queryTransactions(limit: limit);
-    if (res is List) {
-      final List<TransactionSummary> mapped = res.map((e) {
+    try {
+      final List<TransactionSummary> mapped = (res as List).map((e) {
         final m = Map<String, dynamic>.from(e as Map);
-        // Convert timestamp (seconds) to ISO date string if present
         if (m.containsKey('timestamp') && (m['timestamp'] is int || m['timestamp'] is num)) {
           final ts = (m['timestamp'] as num).toInt();
           m['date'] = DateTime.fromMillisecondsSinceEpoch(ts * 1000).toIso8601String();
         }
-        // Map Rust naming to Dart model expectations
         if (m.containsKey('is_tagged')) m['isCredit'] = m['is_tagged'];
-        // amount should already be in dollars; ensure it's a number
         return TransactionSummary.fromMap(m);
       }).toList();
       return mapped;
+    } catch (_) {
+      // Unexpected response shape — fall back to shim
+      return await txshim.fetchRecentTransactions(limit: limit);
     }
-    // Unexpected response shape — fall back to shim
-    return await txshim.fetchRecentTransactions(limit: limit);
   } catch (e) {
     // FRB/native binding not available — fall back to shim for development and tests
     try {

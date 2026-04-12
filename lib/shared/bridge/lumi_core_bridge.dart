@@ -6,7 +6,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'receipt.dart';
 
