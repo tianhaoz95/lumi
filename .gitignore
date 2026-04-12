@@ -65,3 +65,4 @@ lib/core/env.dart
 
 # Python
 .venv
+android/.kotlin/sessions
