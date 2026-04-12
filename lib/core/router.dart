@@ -15,6 +15,9 @@ class _AuthChangeNotifier extends ChangeNotifier {
   void notifyAuthChanged() => notifyListeners();
 }
 
+// Global navigator key used for programmatic navigation (e.g. notification deep-links)
+final appNavigatorKey = GlobalKey<NavigatorState>();
+
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = _AuthChangeNotifier();
 
@@ -36,6 +39,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   });
 
   return GoRouter(
+    navigatorKey: appNavigatorKey,
     debugLogDiagnostics: false,
     initialLocation: '/',
     refreshListenable: notifier,

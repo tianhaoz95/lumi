@@ -61,7 +61,7 @@
     - Untagged: *"You have 3 untagged transactions. Tap to review with Lumi."*
     - Missing day: *"No entries logged for Monday. Tap to review."*
     - Geofence (§2): *"Just finished at {vendor}? Tap to snap your receipt."*
-- [ ] **1.3.3** Tapping the notification deep-links to the relevant screen (untagged → Dashboard, geofence → Camera/Chat).
+- [x] **1.3.3** Tapping the notification deep-links to the relevant screen (untagged → Dashboard, geofence → Camera/Chat).
 - [ ] **1.3.4** Implement notification grouping: if multiple alerts fire, bundle them into one notification with a summary count.
 
 **Tests:**

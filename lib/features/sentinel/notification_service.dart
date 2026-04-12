@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/router.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._();
@@ -19,8 +22,27 @@ class NotificationService {
 
     await _plugin.initialize(
       InitializationSettings(android: android, iOS: ios),
-      // payload handling is left to app routing layer
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        final String payload = response.payload ?? '';
+        _handlePayloadTap(payload);
+      },
+      // For older plugin versions, onSelectNotification may be used by tests.
+      onDidReceiveBackgroundNotificationResponse: null,
     );
+
+    // If the app was launched via a notification, handle the initial payload.
+    try {
+      final details = await _plugin.getNotificationAppLaunchDetails();
+      if (details != null && details.didNotificationLaunchApp) {
+        final payload = details.notificationResponse?.payload ?? '';
+        if (payload.isNotEmpty) {
+          // Defer slightly to ensure router is ready.
+          Future.microtask(() => _handlePayloadTap(payload));
+        }
+      }
+    } catch (_) {
+      // ignore
+    }
 
     // Create channel for sentinel alerts
     const channel = AndroidNotificationChannel(
@@ -107,6 +129,39 @@ class NotificationService {
   String buildSentinelTitle(Map<String, dynamic> report) {
     final body = buildSentinelBody(report);
     return body == 'No issues detected.' ? 'Lumi: Scan complete' : 'Lumi: Action needed';
+  }
+
+  /// Handle a tapped notification payload by parsing it and navigating the app.
+  void _handlePayloadTap(String payloadJson) {
+    try {
+      final routeMap = NotificationService.parsePayloadToRoute(payloadJson);
+      final String route = routeMap['route'] as String? ?? '/';
+      final params = routeMap['params'];
+
+      final ctx = appNavigatorKey.currentContext;
+      if (ctx != null) {
+        try {
+          // Use GoRouter to navigate so app-level guards and redirects are applied.
+          if (params != null) {
+            GoRouter.of(ctx).go(route, extra: params);
+          } else {
+            GoRouter.of(ctx).go(route);
+          }
+        } catch (e) {
+          if (kDebugMode) debugPrint('[NotificationService] GoRouter navigation failed: $e');
+          // Fallback to navigator by name if available.
+          try {
+            appNavigatorKey.currentState?.pushNamed(route);
+          } catch (_) {
+            // ignore fallback failures
+          }
+        }
+      } else {
+        if (kDebugMode) debugPrint('[NotificationService] No navigator context available to handle notification tap for route: $route');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[NotificationService] _handlePayloadTap error: $e');
+    }
   }
 
   /// Parse a notification payload JSON and return a routing map suitable for deep-link handling.

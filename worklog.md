@@ -226,3 +226,16 @@ Verifiable deliverables added/updated in this run:
 - `cd rust/lumi_core && cargo test --lib` returned all tests passed.
 
 
+
+Actions performed (2026-04-12T15:50:52Z):
+- Implemented notification tap deep-linking in lib/features/sentinel/notification_service.dart: initialize now registers onDidReceiveNotificationResponse and handles app-launch payloads; tapped payloads are routed via appNavigatorKey + GoRouter.
+- Added appNavigatorKey in lib/core/router.dart and set GoRouter.navigatorKey to it so deep-links can navigate without a BuildContext.
+- Ran unit tests for NotificationService: test/notification_service_test.dart succeeded (All tests passed, exit code 0).
+
+Verifiable deliverables added/validated:
+- File lib/features/sentinel/notification_service.dart updated and contains _handlePayloadTap and initialization handlers.
+- File lib/core/router.dart contains appNavigatorKey and navigatorKey: appNavigatorKey in GoRouter.
+- test/notification_service_test.dart ran successfully locally (flutter test exited 0).
+
+Notes:
+- Manual verification on physical devices (notification tap routing when app is backgrounded or cold-started) is recommended by reviewer for final acceptance.
