@@ -8,14 +8,18 @@ import 'package:flutter/material.dart';
 enum KitState { idle, thinking, found, alert }
 
 class KitAnimated extends StatefulWidget {
-  final KitState state;
+  // Preferred API: explicit state
+  final KitState? state;
+  // Backwards-compatible boolean used by older imports
+  final bool? isProcessing;
   final double size;
   final VoidCallback? onFoundComplete;
   final VoidCallback? onAlertComplete;
 
   const KitAnimated({
     Key? key,
-    this.state = KitState.idle,
+    this.state,
+    this.isProcessing,
     this.size = 96.0,
     this.onFoundComplete,
     this.onAlertComplete,
@@ -30,6 +34,8 @@ class _KitAnimatedState extends State<KitAnimated> with TickerProviderStateMixin
   late AnimationController _thinkingController; // lateral swipe
   late AnimationController _foundController; // one-shot
   late AnimationController _alertController; // one-shot
+
+  KitState get _effectiveState => widget.state ?? (widget.isProcessing == true ? KitState.thinking : KitState.idle);
 
   @override
   void initState() {
@@ -54,14 +60,16 @@ class _KitAnimatedState extends State<KitAnimated> with TickerProviderStateMixin
       duration: const Duration(milliseconds: 400),
     );
 
-    _applyState(widget.state);
+    _applyState(_effectiveState);
   }
 
   @override
   void didUpdateWidget(covariant KitAnimated oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.state != widget.state) {
-      _applyState(widget.state);
+    final oldEffective = oldWidget.state ?? (oldWidget.isProcessing == true ? KitState.thinking : KitState.idle);
+    final newEffective = _effectiveState;
+    if (oldEffective != newEffective) {
+      _applyState(newEffective);
     }
   }
 
