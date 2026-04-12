@@ -140,4 +140,14 @@ class LumiCoreBridge {
       rethrow;
     }
   }
+
+  /// Increment the visit count for a vendor fence via native bridge.
+  static Future<void> incrementVisit(String fenceId) async {
+    try {
+      await _channel.invokeMethod<dynamic>('increment_visit', <String, dynamic>{'id': fenceId});
+    } catch (e) {
+      // Propagate to caller for visibility; callers may choose to ignore failures.
+      rethrow;
+    }
+  }
 }

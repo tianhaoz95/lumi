@@ -115,7 +115,7 @@
 
 ### 2.3 Geofence Exit Handler
 
-- [ ] **2.3.1** In `GeofenceService.onGeofenceExit(fence)`:
+- [x] **2.3.1** In `GeofenceService.onGeofenceExit(fence`: call VendorFenceService.increment_visit, show geofence alert, include metadata)
   1. Call `VendorFenceService.increment_visit(fence.id)`.
   2. Call `NotificationService.showGeofenceAlert(fence.vendorName)`.
   3. The notification payload carries `vendorName` and `lat/lng` as metadata.

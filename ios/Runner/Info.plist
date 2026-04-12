@@ -74,5 +74,9 @@
 	<array>
 		<string>com.lumi.app.heartbeat</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lumi uses your location to detect nearby vendors and suggest logging purchases while the app is in use.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Lumi uses background location to detect visits to known vendors so it can prompt you to log receipts even when the app is not open. This data is stored only on your device.</string>
 </dict>
 </plist>
