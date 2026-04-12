@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
-import '../../shared/widgets/grain_texture.dart';
+import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/lumi_buttons.dart';
 import 'auth_notifier.dart';
 
@@ -127,9 +127,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             final wide = constraints.maxWidth > 700;
             return Stack(
               children: [
-                // Grain texture background (fixed)
+                // Atmospheric orbs + grain background (fixed)
                 const Positioned.fill(
-                  child: GrainTexture(),
+                  child: AtmosphericBackground(),
                 ),
                 // KitGhost background (subtle mascot)
                 Positioned(

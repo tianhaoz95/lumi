@@ -3,6 +3,7 @@ import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_buttons.dart';
+import '../../shared/widgets/atmospheric_background.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
 
 /// ForgotPasswordScreen
@@ -66,8 +67,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: LumiColors.surface,
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
+        child: Stack(
+          children: [
+            const Positioned.fill(child: AtmosphericBackground()),
+            Center(
+              child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 720),
             child: Padding(
               padding: const EdgeInsets.all(24.0),

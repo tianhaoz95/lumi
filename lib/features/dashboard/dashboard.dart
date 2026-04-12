@@ -1,6 +1,7 @@
 // Dashboard implementation for Phase 1 (upgraded to use live summary shim)
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/lumi_card.dart';
 import 'widgets/lumi_glass_card.dart';
 import '../../widgets/floating_nav_bar.dart';
@@ -61,11 +62,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: LumiTopAppBar(title: const Text('The Tundra')),
       backgroundColor: LumiColors.surface,
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
+      body: Stack(
+        children: [
+          const AtmosphericBackground(),
+          RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -5,6 +5,7 @@ import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_buttons.dart';
+import '../../shared/widgets/atmospheric_background.dart';
 import 'auth_notifier.dart';
 
 /// SignUpScreen
@@ -93,12 +94,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             final wide = constraints.maxWidth > 700;
             return Stack(
               children: [
+                const Positioned.fill(child: AtmosphericBackground()),
                 Positioned(
                   left: wide ? 12 : 24,
                   top: wide ? 36 : 20,
                   child: KitGhost(opacity: 0.06, size: wide ? 220.0 : 120.0),
                 ),
-                Center(
+                Center,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1000),
                     child: Padding(
