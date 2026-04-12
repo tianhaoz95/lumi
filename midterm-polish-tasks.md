@@ -13,8 +13,8 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
     - [x] **Receipt Logging**: Use diagnostics or a mock to simulate a receipt extraction and verify it appears in the dashboard.
     - [x] **Logout**: Ensure session is cleared and user returns to login.
 - [x] **Fix Functional Blockers**:
-    - [ ] Ensure `AppwriteService` is properly initialized in all test environments.
-    - [ ] Fix any `ProviderScope` or `GoRouter` state issues identified by the E2E test.
+    - [x] Ensure `AppwriteService` is properly initialized in all test environments.
+    - [x] Fix any `ProviderScope` or `GoRouter` state issues identified by the E2E test.
     - [ ] Verify that background model loading does not block the UI or the test execution.
 
 ## 2. Design System Foundation (Theming)
