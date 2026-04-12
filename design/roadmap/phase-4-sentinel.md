@@ -101,7 +101,7 @@
     last_visited TEXT
   );
   ```
-- [ ] **2.2.2** Implement `VendorFenceService` in Rust (exposed via FRB):
+- [x] **2.2.2** Implement `VendorFenceService` in Rust (exposed via FRB):
   - `add_vendor_fence(name, lat, lng) -> Result<String>` — inserts and returns ID.
   - `get_all_fences() -> Result<Vec<VendorFence>>` — returns all registered fences.
   - `increment_visit(fence_id: String)` — updates `visit_count` and `last_visited`.

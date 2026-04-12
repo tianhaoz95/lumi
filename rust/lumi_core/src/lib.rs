@@ -48,6 +48,9 @@ pub use tools::{log_transaction, log_transaction_with_pool, get_summary, query_t
 mod sentinel;
 pub use sentinel::{run_sentinel_scan, SentinelReport};
 
+mod vendor_fence;
+pub use vendor_fence::{add_vendor_fence, get_all_fences, increment_visit, VendorFence};
+
 #[cfg(test)]
 mod tests {
     use super::*;
