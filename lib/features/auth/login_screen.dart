@@ -138,9 +138,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 920),
+                    constraints: const BoxConstraints(maxWidth: 1000),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
                       child: SingleChildScrollView(
                         child: wide
                             ? Row(
@@ -150,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(right: 48.0, top: 24.0),
+                                      padding: const EdgeInsets.only(right: 64.0, top: 40.0),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -167,7 +167,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     child: AnimatedContainer(
                                       duration: const Duration(milliseconds: 300),
                                       curve: Curves.easeOut,
-                                      padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
+                                      padding: EdgeInsets.all(_hasFocus ? 56.0 : 48.0),
                                       decoration: BoxDecoration(
                                         color: LumiColors.surfaceContainerHigh,
                                         borderRadius: BorderRadius.circular(20),
@@ -188,7 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeOut,
-                                    padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
+                                    padding: EdgeInsets.all(_hasFocus ? 56.0 : 48.0),
                                     decoration: BoxDecoration(
                                       color: LumiColors.surfaceContainerHigh,
                                       borderRadius: BorderRadius.circular(20),

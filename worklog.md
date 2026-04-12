@@ -1,27 +1,15 @@
-# Worklog: Convert Chat Input Bar to Floating Glass Pill
+Task: Implement intentional asymmetry and generous negative space on the Login & Sign Up screen
 
-Task: Home / Chat — Input Bar
+Plan:
+1. Inspect existing login UI code at lib/features/auth/login_screen.dart.
+2. Increase layout asymmetry and negative space for wide and narrow layouts: widen max container, increase left hero padding, increase overall page horizontal padding, and add subtle spacing tweaks when form fields are focused.
+3. Run a quick format/check (git diff) and commit changes.
 
-Goal
-- Convert the bottom chat input bar into a floating pill styled with glassmorphism. It should not span full width (leave horizontal margins), have a high border radius (pill), and include a subtle backdrop blur and translucent surface.
+Verifiable deliverables:
+- File lib/features/auth/login_screen.dart contains asymmetry (left hero flex 3 / right form flex 2) and updated spacing (maxWidth 1000, horizontal padding 32, increased right gap on hero to 64).
+- worklog.md exists at repository root and lists the plan and deliverables (this file).
+- Git commit present with message containing "Implement login asymmetry and spacing".
 
-Planned steps
-1. Locate the chat input widget in lib/features/home/ (search for "chat", "input", "message", "composer").
-2. Edit the widget to wrap the input in a Container with:
-   - borderRadius: 9999 (pill)
-   - background color using theme token `surface` at ~70% opacity
-   - BackdropFilter with Gaussian blur (20px)
-   - Horizontal margin ("snow" on sides) and vertical padding to float above keyboard
-3. Ensure the widget is not full-width by applying constrained width or horizontal margin.
-4. Run analysis/tests: `flutter analyze` and `make test` (existing checks). Fix any compile issues.
-5. Commit changes.
-
-Verifiable deliverables
-- worklog.md exists at project root and lists the task, steps, and deliverables (this file).
-- The repository contains an edited chat input widget file (e.g., lib/features/home/... ) where the input Container includes `BackdropFilter` and a BoxDecoration with borderRadius 9999 and translucent background.
-- The chat input Container applies horizontal margin (not full width) — reviewer can inspect code for EdgeInsets symmetric horizontal > 12.
-- `flutter analyze` exits with code 0 (static analysis passes) OR `make test` exits 0 if test suite exists and is runnable in this environment.
-
-Notes
-- If any missing assets or packages are required, document them in this worklog and provide instructions to the reviewer.
-
+Notes for reviewer:
+- Visual verification: open the login screen on wide layout and confirm the left hero area is significantly larger and the form is narrower with generous space.
+- Code checks: search for "maxWidth: 1000" and "padding: const EdgeInsets.symmetric(horizontal: 32.0" in lib/features/auth/login_screen.dart.
