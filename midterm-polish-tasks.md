@@ -20,10 +20,10 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
 ## 2. Design System Foundation (Theming)
 Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
 
-- [ ] **Typography**: 
-    - [ ] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
-    - [ ] Set `lineHeight` to `1.6` for all body and label styles.
-    - [ ] Implement the "High-Low" pairing (extreme scale contrast).
+- [x] **Typography**: 
+    - [x] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
+    - [x] Set `lineHeight` to `1.6` for all body and label styles.
+    - [x] Implement the "High-Low" pairing (extreme scale contrast).
 - [ ] **Button Theming**:
     - [ ] Implement `LumiPrimaryButton` with a 135-degree linear gradient (`primary` to `primaryContainer`).
     - [ ] Implement `LumiSecondaryButton` with Glassmorphism (40% opacity white + 12px backdrop blur).

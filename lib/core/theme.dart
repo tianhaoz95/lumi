@@ -39,6 +39,9 @@ ThemeData getLumiTheme() {
     titleLarge: TextStyle(fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.02),
     bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16, height: 1.6),
     bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14, height: 1.6),
+    bodySmall: TextStyle(fontFamily: 'Inter', fontSize: 12, height: 1.6),
+    labelLarge: TextStyle(fontFamily: 'Inter', fontSize: 14, height: 1.6),
+    labelMedium: TextStyle(fontFamily: 'Inter', fontSize: 13, height: 1.6),
     labelSmall: TextStyle(fontFamily: 'Inter', fontSize: 12, height: 1.6),
   );
 
