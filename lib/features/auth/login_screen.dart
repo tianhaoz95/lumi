@@ -103,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            TextButton(
+            LumiTextAction(
               onPressed: isSubmitting ? null : () => context.go('/signup'),
               child: const Text("Don't have an account? Create one"),
             ),

@@ -36,8 +36,8 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 
 ### 3.1 Login & Sign Up (`lib/features/auth/`)
 - [x] **Layout**: Implement intentional asymmetry and generous negative space.
-- [ ] **Mascot**: Add `KitGhost` (5-10% opacity) to the background or header.
-- [ ] **Transitions**: Ensure field focus and button taps use "drifting" (ease-out) animations.
+- [x] **Mascot**: Add `KitGhost` (5-10% opacity) to the background or header.
+- [x] **Transitions**: Ensure field focus and button taps use "drifting" (ease-out) animations.
 
 ### 3.2 Dashboard (`lib/features/dashboard/`)
 - [ ] **Metrics Cards**:

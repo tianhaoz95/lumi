@@ -190,7 +190,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
-                                              TextButton(
+                                              LumiTextAction(
                                                 onPressed: isSubmitting ? null : () => context.go('/login'),
                                                 child: const Text('Already have an account? Sign in'),
                                               ),
@@ -276,7 +276,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                               ),
                                             ),
                                             const SizedBox(height: 16),
-                                            TextButton(
+                                            LumiTextAction(
                                               onPressed: isSubmitting ? null : () => context.go('/login'),
                                               child: const Text('Already have an account? Sign in'),
                                             ),
