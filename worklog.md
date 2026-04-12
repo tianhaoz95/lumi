@@ -451,3 +451,24 @@ Verifiable deliverables:
 
 Notes:
 - This adds the manifest-side intent filters; wiring the receive_sharing_intent plugin to route incoming shares to the app's Dart entry (and then to `process_receipt_image()` in Rust) is a follow-up (3.1.4) and depends on platform-specific share-handling code (Android file URIs and permissions).
+
+Actions performed (2026-04-12T17:00:00Z): Implemented iOS Share Extension skeleton (3.1.3)
+
+1. Created ios/ShareExtension/ with:
+   - Info.plist (NSExtension configured for com.apple.share-services)
+   - ShareViewController.swift (saves text/image to App Group container "group.com.lumi.shared")
+   - ShareExtension.entitlements (grants the App Group)
+2. Added ios/Runner/Runner.entitlements with the same App Group entry for the main app target.
+3. Marked roadmap task 3.1.3 as complete in design/roadmap/phase-4-sentinel.md.
+
+Verifiable deliverables for reviewer:
+- ios/ShareExtension/Info.plist exists and contains NSExtension/NSExtensionPointIdentifier = com.apple.share-services.
+- ios/ShareExtension/ShareViewController.swift exists and writes shared text to UserDefaults(suiteName: "group.com.lumi.shared") and images to the app-group container.
+- ios/ShareExtension/ShareExtension.entitlements exists and contains the application group "group.com.lumi.shared".
+- ios/Runner/Runner.entitlements exists and contains the application group "group.com.lumi.shared" for the main app.
+- design/roadmap/phase-4-sentinel.md shows 3.1.3 as checked (- [x]).
+
+Notes & next steps for reviewer (manual steps required on macOS/Xcode):
+- Add a Share Extension target in Xcode using the files in ios/ShareExtension and point its "Info.plist" and entitlements accordingly, or import the target into the project.pbxproj.
+- In Xcode, enable the App Group "group.com.lumi.shared" for both the Runner app target and the Share Extension target (Capabilities tab).
+- Rebuild on device and test sharing an image/text to confirm the extension writes data to the shared container; the main app can read via UserDefaults(suiteName: "group.com.lumi.shared") or container URL.
