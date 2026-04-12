@@ -499,3 +499,10 @@ Verifiable deliverables:
 - Running `flutter analyze --no-pub` exits with code 0 (no analyzer issues).
 
 Timestamp: 2026-04-12T17:41:00Z
+
+## Actions performed (automated)
+
+- Implemented 4.2.1: enforced a 30-second timeout for run_sentinel_scan() using tokio::time::timeout and added run_with_timeout helper.
+- Added unit test `run_with_timeout_times_out` to verify timeout behavior (uses short durations for fast test).
+- Ran `cd rust/lumi_core && cargo test --lib` — all tests passed.
+
