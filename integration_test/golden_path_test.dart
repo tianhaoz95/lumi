@@ -83,11 +83,41 @@ void main() {
     }, skip: false);
 
     testWidgets('Login', (WidgetTester tester) async {
-      // Steps:
-      // 1. Launch the app.
-      // 2. Enter known credentials and sign in.
-      // 3. Assert navigation to dashboard and presence of user name.
-    }, skip: true);
+      // Lightweight init for test environments.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // ignore
+      }
+
+      // Use fake account to avoid network dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Launch app
+      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpAndSettle();
+
+      // Ensure login screen shown
+      expect(find.byKey(const Key('email_field')), findsOneWidget);
+
+      // Enter credentials and submit
+      await tester.enterText(find.byKey(const Key('email_field')), 'test@lumi.test');
+      await tester.enterText(find.byKey(const Key('password_field')), 'Password123');
+      final loginBtn = find.byKey(const Key('login_button'));
+      expect(loginBtn, findsOneWidget);
+      await tester.tap(loginBtn);
+
+      // Allow async auth flows to complete
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+
+      // Verify that Home is shown by presence of chat input
+      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+
+      // Ensure fake account recorded session creation
+      expect(fake.sessionCreated, isTrue);
+    }, skip: false);
 
     testWidgets('Dashboard Load', (WidgetTester tester) async {
       // Steps:
