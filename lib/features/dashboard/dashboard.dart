@@ -4,6 +4,7 @@ import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../widgets/floating_nav_bar.dart';
 import '../../shared/bridge/rig_bridge.dart';
+import 'package:go_router/go_router.dart';
 import '../../shared/models/financial_summary.dart';
 import '../../shared/models/transaction_summary.dart';
 
@@ -186,7 +187,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
             IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
             IconButton(onPressed: () {}, icon: const Icon(Icons.pie_chart)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
+            IconButton(onPressed: () => context.push('/settings'), icon: const Icon(Icons.settings)),
           ],
         ),
       ),

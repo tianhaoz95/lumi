@@ -6,6 +6,7 @@ import '../features/home/home.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/sign_up_screen.dart';
 import '../features/auth/auth_notifier.dart';
+import '../features/settings/settings.dart';
 
 class _AuthChangeNotifier extends ChangeNotifier {
   _AuthChangeNotifier();
@@ -31,6 +32,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
+      GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
     ],
     redirect: (BuildContext context, GoRouterState state) {
       final authState = ref.read(authNotifierProvider);

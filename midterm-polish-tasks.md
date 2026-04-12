@@ -11,7 +11,7 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
     - [x] **Dashboard Load**: Verify summary cards and recent activity appear.
     - [x] **Chat Interaction**: Send a message to Lumi and receive a non-echo response.
     - [ ] **Receipt Logging**: Use diagnostics or a mock to simulate a receipt extraction and verify it appears in the dashboard.
-    - [ ] **Logout**: Ensure session is cleared and user returns to login.
+    - [x] **Logout**: Ensure session is cleared and user returns to login.
 - [ ] **Fix Functional Blockers**:
     - [ ] Ensure `AppwriteService` is properly initialized in all test environments.
     - [ ] Fix any `ProviderScope` or `GoRouter` state issues identified by the E2E test.

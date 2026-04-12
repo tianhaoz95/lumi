@@ -11,6 +11,9 @@ import 'package:lumi/shared/chat/chat_service.dart';
 import 'package:lumi/shared/chat/chat_providers.dart';
 import 'package:lumi/shared/bridge/inference.dart' as bridge;
 import 'package:lumi/features/home/home_impl.dart';
+import 'package:lumi/features/auth/auth_notifier.dart';
+import 'package:lumi/shared/bridge/transactions_bridge.dart' as txshim;
+import 'package:lumi/shared/models/transaction_summary.dart';
 
 // Golden Path integration test scaffold for Project Lumi.
 // These tests are scaffolded and skipped by default because they require
@@ -31,6 +34,12 @@ class _FakeAccount {
   Future<void> deleteSession({required String sessionId}) async {}
 
   Future<dynamic> get() async => {'id': 'fake'};
+}
+
+class _TestAuthNotifier extends AuthNotifier {
+  _TestAuthNotifier() {
+    state = const AuthState.authenticated();
+  }
 }
 
 void main() {
@@ -207,15 +216,73 @@ void main() {
     }, skip: false);
 
     testWidgets('Receipt Logging', (WidgetTester tester) async {
-      // Steps:
-      // 1. Use diagnostics or a mocked extractor to simulate receipt parsing.
-      // 2. Verify the new transaction/receipt appears in the dashboard.
-    }, skip: true);
+      // Lightweight init for test environments.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // ignore
+      }
+
+      // Use fake account to avoid network dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Inject a simulated receipt by injecting transactions into the shim.
+      txshim.injectRecentTransactions([
+        TransactionSummary(id: '99', vendor: 'Scanned Bakery', category: 'food', amount: -12.30, date: '2026-04-12', isCredit: false),
+        // keep a couple of known items as well to emulate a realistic list
+        TransactionSummary(id: '100', vendor: 'Coffee House', category: 'food', amount: -6.75, date: '2026-04-10', isCredit: false),
+      ]);
+
+      // Pump the DashboardScreen directly so this test is self-contained.
+      await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: DashboardScreen())));
+
+      // Allow async shimbed fetches to complete.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
+
+      // Verify the injected receipt/vendor appears in the dashboard recent activity list
+      expect(find.text('Scanned Bakery'), findsOneWidget);
+    }, skip: false);
 
     testWidgets('Logout', (WidgetTester tester) async {
-      // Steps:
-      // 1. Trigger logout from settings.
-      // 2. Verify session cleared and app shows login screen.
-    }, skip: true);
+      // Lightweight init for test environments.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // ignore
+      }
+
+      // Use fake account to avoid network dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Launch app
+      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpAndSettle();
+
+      // Ensure Home is shown by presence of chat input
+      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+
+      // Open Settings via the settings icon in the top app bar
+      final settingsBtn = find.widgetWithIcon(IconButton, Icons.settings);
+      expect(settingsBtn, findsOneWidget);
+      await tester.tap(settingsBtn);
+      await tester.pumpAndSettle();
+
+      // Find and tap the Logout button
+      final logoutFinder = find.widgetWithIcon(OutlinedButton, Icons.logout);
+      expect(logoutFinder, findsOneWidget);
+      await tester.tap(logoutFinder);
+
+      // Allow logout flows to complete and for navigation to update
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
+
+      // Verify that the app navigated back to the Login screen (email field present)
+      expect(find.byKey(const Key('email_field')), findsOneWidget);
+    }, skip: false);
   });
 }

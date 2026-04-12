@@ -15,6 +15,7 @@ import '../../widgets/floating_nav_bar.dart';
 import '../../shared/chat/chat_service.dart';
 import '../../shared/chat/chat_providers.dart';
 import '../../core/model_router.dart';
+import 'package:go_router/go_router.dart';
 import '../chat/widgets/insight_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -158,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             Expanded(child: Text('Lumi AI', style: Theme.of(context).textTheme.titleLarge)),
                             IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-                            IconButton(icon: const Icon(Icons.settings), onPressed: () => Navigator.of(context).pushNamed('/settings')),
+                            IconButton(icon: const Icon(Icons.settings), onPressed: () => context.push('/settings')),
                           ],
                         ),
                       ),
@@ -222,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.dashboard)),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.receipt_long)),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.person)),
+                IconButton(onPressed: () => context.push('/settings'), icon: const Icon(Icons.person)),
               ],
             ),
           ),
