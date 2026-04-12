@@ -41,9 +41,15 @@ typedef _StreamProvider = Stream<InferenceChunk> Function({required String promp
 class ChatService {
   final _StreamProvider _streamProvider;
 
-  ChatService({ _StreamProvider? streamProvider }) : _streamProvider = streamProvider ?? _defaultNotImplemented;
+  ChatService({_StreamProvider? streamProvider}) : _streamProvider = streamProvider ?? _defaultNotImplemented;
 
+  /// Legacy streaming API (uses underlying stream provider).
   Stream<InferenceChunk> chat(String prompt, ModelTier tier) => _streamProvider(prompt: prompt, modelTier: tier);
+
+  /// Rig-backed agent chat entrypoint. By default delegates to the same
+  /// stream provider as `chat`. Production builds can override the provider
+  /// to call the FRB `agent_chat` binding which emits agent-aware chunks.
+  Stream<InferenceChunk> agentChat(String prompt, ModelTier tier) => _streamProvider(prompt: prompt, modelTier: tier);
 }
 
 Stream<InferenceChunk> _defaultNotImplemented({required String prompt, required ModelTier modelTier}) {

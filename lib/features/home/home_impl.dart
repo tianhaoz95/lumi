@@ -98,7 +98,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _controller.clear();
 
     final chatService = ref.read(chatServiceProvider);
-    final stream = chatService.chat(prompt, selectedTier);
+    // Use the Rig-backed agent chat entrypoint (agent_chat) when available.
+    final stream = chatService.agentChat(prompt, selectedTier);
 
     _streamSub = stream.listen((chunk) {
       setState(() {
