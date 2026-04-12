@@ -41,8 +41,8 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 
 ### 3.2 Dashboard (`lib/features/dashboard/`)
 - [x] **Metrics Cards**:
-    - [ ] Replace standard cards with Glassmorphism containers if floating.
-    - [ ] Ensure tonal shifts (`surface` vs `surface-container-low`) provide structure without borders.
+    - [x] Replace standard cards with Glassmorphism containers if floating.
+    - [x] Ensure tonal shifts (`surface` vs `surface-container-low`) provide structure without borders.
 - [ ] **Recent Activity**:
     - [ ] Increase vertical spacing between items to 1.5rem–2rem.
     - [ ] Implement alternating backgrounds for list items.

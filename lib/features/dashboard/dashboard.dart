@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
+import 'widgets/lumi_glass_card.dart';
 import '../../widgets/floating_nav_bar.dart';
 import '../../shared/bridge/rig_bridge.dart';
 import 'package:go_router/go_router.dart';
@@ -204,7 +205,7 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LumiCard(
+    return LumiGlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,

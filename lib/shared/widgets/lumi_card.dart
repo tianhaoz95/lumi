@@ -26,28 +26,32 @@ class LumiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Container(
-              padding: padding,
-              decoration: BoxDecoration(
-                color: LumiColors.surfaceContainerLowest.withAlpha((opacity * 255).round()),
-                borderRadius: BorderRadius.circular(radius),
-                boxShadow: [
-                  BoxShadow(
-                    color: LumiColors.onSurface.withAlpha((0.04 * 255).round()),
-                    blurRadius: 40,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: LumiColors.onSurface.withAlpha((0.04 * 255).round()),
+            blurRadius: 40,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Container(
+                padding: padding,
+                decoration: BoxDecoration(
+                  color: LumiColors.surfaceContainerLowest.withAlpha((opacity * 255).round()),
+                  borderRadius: BorderRadius.circular(radius),
+                ),
+                child: child,
               ),
-              child: child,
             ),
           ),
         ),
