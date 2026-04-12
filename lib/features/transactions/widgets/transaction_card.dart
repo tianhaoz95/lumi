@@ -126,6 +126,6 @@ class TransactionCard extends StatelessWidget {
   String _formatAmount(double amt) {
     final sign = amt < 0 ? '-' : '';
     final absAmt = amt.abs().toStringAsFixed(2);
-    return '$sign$absAmt'.replaceFirst('\u001B', '\$');
+    return sign + String.fromCharCode(36) + absAmt;
   }
 }
