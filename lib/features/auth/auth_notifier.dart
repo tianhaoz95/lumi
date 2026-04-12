@@ -29,7 +29,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await AppwriteService.instance.login(email, password);
       state = const AuthState.authenticated();
     } catch (e) {
-      state = AuthState.error(e?.toString() ?? 'Unknown error');
+      state = AuthState.error(e.toString());
     }
   }
 
@@ -40,7 +40,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await AppwriteService.instance.login(email, password);
       state = const AuthState.authenticated();
     } catch (e) {
-      state = AuthState.error(e?.toString() ?? 'Unknown error');
+      state = AuthState.error(e.toString());
     }
   }
 
@@ -50,7 +50,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await AppwriteService.instance.logout();
       state = const AuthState.initial();
     } catch (e) {
-      state = AuthState.error(e?.toString() ?? 'Unknown error');
+      state = AuthState.error(e.toString());
     }
   }
 }

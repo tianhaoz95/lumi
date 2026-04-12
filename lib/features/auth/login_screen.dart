@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
+import '../../shared/widgets/kit_ghost.dart';
 import 'auth_notifier.dart';
 
 /// LoginScreen
@@ -18,6 +19,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _hasFocus = false;
 
   @override
   void dispose() {
@@ -60,48 +62,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Widget _buildForm(bool isSubmitting) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          LumiTextField(
-            key: const Key('email_field'),
-            controller: _emailController,
-            hintText: 'Email',
-            keyboardType: TextInputType.emailAddress,
-            validator: _validateEmail,
-            enabled: !isSubmitting,
-          ),
-          const SizedBox(height: 12),
-          LumiTextField(
-            key: const Key('password_field'),
-            controller: _passwordController,
-            hintText: 'Password',
-            obscureText: true,
-            validator: _validatePassword,
-            enabled: !isSubmitting,
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              key: const Key('login_button'),
-              onPressed: isSubmitting ? null : _submit,
-              child: isSubmitting
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Sign in'),
+    // Wrap the form in a Focus widget to detect any focus changes inside the form
+    return Focus(
+      onFocusChange: (focused) => setState(() => _hasFocus = focused),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            LumiTextField(
+              key: const Key('email_field'),
+              controller: _emailController,
+              hintText: 'Email',
+              keyboardType: TextInputType.emailAddress,
+              validator: _validateEmail,
+              enabled: !isSubmitting,
             ),
-          ),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: isSubmitting ? null : () => context.go('/signup'),
-            child: const Text("Don't have an account? Create one"),
-          ),
-        ],
+            const SizedBox(height: 12),
+            LumiTextField(
+              key: const Key('password_field'),
+              controller: _passwordController,
+              hintText: 'Password',
+              obscureText: true,
+              validator: _validatePassword,
+              enabled: !isSubmitting,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                key: const Key('login_button'),
+                onPressed: isSubmitting ? null : _submit,
+                child: isSubmitting
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Sign in'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: isSubmitting ? null : () => context.go('/signup'),
+              child: const Text("Don't have an account? Create one"),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -123,9 +129,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Positioned(
                   left: wide ? 20 : 40,
                   top: wide ? 40 : 20,
-                  child: Opacity(
+                  child: KitGhost(
                     opacity: 0.06,
-                    child: Icon(Icons.pets, size: wide ? 260 : 140, color: LumiColors.primary),
+                    size: wide ? 260.0 : 140.0,
+                    color: LumiColors.primary,
                   ),
                 ),
                 Center(
@@ -159,7 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     child: AnimatedContainer(
                                       duration: const Duration(milliseconds: 300),
                                       curve: Curves.easeOut,
-                                      padding: const EdgeInsets.all(32.0),
+                                      padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
                                       decoration: BoxDecoration(
                                         color: LumiColors.surfaceContainerHigh,
                                         borderRadius: BorderRadius.circular(20),
@@ -180,7 +187,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeOut,
-                                    padding: const EdgeInsets.all(32.0),
+                                    padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
                                     decoration: BoxDecoration(
                                       color: LumiColors.surfaceContainerHigh,
                                       borderRadius: BorderRadius.circular(20),
