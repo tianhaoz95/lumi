@@ -7,6 +7,7 @@ import '../../core/theme.dart';
 import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/kit_ghost.dart';
+import '../../shared/widgets/kit_animated.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../shared/widgets/glass_modal.dart';
 import '../../shared/widgets/tokens_overlay.dart';
@@ -184,7 +185,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: _ChatArea(messages: _messages),
+                    child: _ChatArea(messages: _messages, isProcessing: _isStreaming),
                   ),
                 ),
 
@@ -252,11 +253,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 class _ChatArea extends StatelessWidget {
   final List<_ChatMessage> messages;
-  const _ChatArea({Key? key, required this.messages}) : super(key: key);
+  final bool isProcessing;
+  const _ChatArea({Key? key, required this.messages, required this.isProcessing}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (messages.isEmpty) return const Center(child: KitGhost(opacity: 0.4, size: 160));
+    if (messages.isEmpty) return Center(child: KitAnimated(isProcessing: isProcessing, opacity: 0.4, size: 160));
 
     return ListView.builder(
       itemCount: messages.length,

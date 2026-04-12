@@ -63,7 +63,7 @@
   - **Thinking** — Kit "digging through a snowbank" (lateral swipe with particle dots, 1.5 s loop). Plays while Rig agent is processing.
   - **Found** — Kit emerges from snowbank holding a data card (plays once on tool result return, 0.8 s).
   - **Alert** — Kit's ears perk up (plays once on Sentinel notification, 0.4 s).
-- [ ] **2.2.2** Replace the static `KitGhost` widget in `HomeScreen` with the animated Kit widget. Show **Thinking** animation while `agent_chat` stream is active.
+- [x] **2.2.2** Replace the static `KitGhost` widget in `HomeScreen` with the animated Kit widget. Show **Thinking** animation while `agent_chat` stream is active.
 - [ ] **2.2.3** Show **Found** animation when a tool result (InsightCard) is rendered.
 - [ ] **2.2.4** Ghost Kit (5–10% opacity) overlaid in the background of `DashboardScreen` using the **Idle** animation.
 
