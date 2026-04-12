@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../../core/lumi_animations.dart';
 
 /// LumiButton: primary CTA with full-pill shape, gradient, and scale animations
 class LumiButton extends StatefulWidget {
@@ -27,8 +28,8 @@ class _LumiButtonState extends State<LumiButton> with SingleTickerProviderStateM
 
   double get _scale => _pressed ? 0.98 : (_hover ? 1.02 : 1.0);
 
-  static const Duration _animDuration = Duration(milliseconds: 300);
-  static const Curve _animCurve = Curves.easeOut;
+  static const Duration _animDuration = LumiAnimations.driftDuration;
+  static const Curve _animCurve = LumiAnimations.driftCurve;
 
   @override
   Widget build(BuildContext context) {

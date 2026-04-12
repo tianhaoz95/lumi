@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
+import '../../core/lumi_animations.dart';
 
 /// A reusable glassmorphism modal/card container.
 /// Use `GlassModal` as the root of modal builders, or call
@@ -63,7 +64,7 @@ Future<T?> showGlassDialog<T>({
   required WidgetBuilder builder,
   bool barrierDismissible = true,
   Color barrierColor = Colors.black54,
-  Duration transitionDuration = const Duration(milliseconds: 200),
+  Duration transitionDuration = LumiAnimations.snapDuration,
 }) {
   return showGeneralDialog<T>(
     context: context,
@@ -84,7 +85,7 @@ Future<T?> showGlassDialog<T>({
       );
     },
     transitionBuilder: (ctx, anim, secAnim, child) {
-      final curved = Curves.easeOut.transform(anim.value);
+      final curved = LumiAnimations.driftCurve.transform(anim.value);
       return Opacity(
         opacity: anim.value,
         child: Transform.translate(

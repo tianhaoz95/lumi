@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../../core/lumi_animations.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_buttons.dart';
@@ -117,8 +118,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           )
                         else
                           AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut,
+                            duration: LumiAnimations.driftDuration,
+                            curve: LumiAnimations.driftCurve,
                             padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
                             decoration: BoxDecoration(
                               color: LumiColors.surfaceContainerHigh,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../core/lumi_animations.dart';
 
 class LoadingScreen extends StatefulWidget {
   final Stream<double> progressStream;
@@ -10,7 +11,7 @@ class LoadingScreen extends StatefulWidget {
   const LoadingScreen({
     Key? key,
     required this.progressStream,
-    this.transitionDelay = const Duration(milliseconds: 500),
+    this.transitionDelay = LumiAnimations.driftDuration,
     this.onComplete,
   }) : super(key: key);
 

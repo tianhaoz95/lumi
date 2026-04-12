@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../../core/lumi_animations.dart';
 
 /// LumiTextField
 /// - Filled with `LumiColors.surfaceContainerHigh`
@@ -39,8 +40,8 @@ class _LumiTextFieldState extends State<LumiTextField> {
   bool _focused = false;
   bool _ownFocusNode = false;
 
-  static const Duration _animDuration = Duration(milliseconds: 300);
-  static const Curve _animCurve = Curves.easeOut;
+  static const Duration _animDuration = LumiAnimations.driftDuration;
+  static const Curve _animCurve = LumiAnimations.driftCurve;
 
   @override
   void initState() {

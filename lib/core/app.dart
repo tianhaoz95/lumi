@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'router.dart';
 import 'theme.dart';
+import 'lumi_animations.dart';
 import '../shared/providers/model_ready_provider.dart';
 
 class MyApp extends ConsumerStatefulWidget {
@@ -18,7 +19,7 @@ class _MyAppState extends ConsumerState<MyApp> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _fadeController = AnimationController(vsync: this, duration: LumiAnimations.driftDuration);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'lumi_button.dart';
+import '../../core/lumi_animations.dart';
 
 /// LumiPrimaryButton: thin wrapper around existing LumiButton to provide a named API.
 class LumiPrimaryButton extends StatelessWidget {
@@ -41,8 +42,8 @@ class _LumiSecondaryButtonState extends State<LumiSecondaryButton> {
 
   double get _scale => _pressed ? 0.98 : (_hover ? 1.02 : 1.0);
 
-  static const Duration _animDuration = Duration(milliseconds: 300);
-  static const Curve _animCurve = Curves.easeOut;
+  static const Duration _animDuration = LumiAnimations.driftDuration;
+  static const Curve _animCurve = LumiAnimations.driftCurve;
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +105,8 @@ class _LumiTextActionState extends State<LumiTextAction> {
 
   double get _scale => _pressed ? 0.98 : (_hover ? 1.02 : 1.0);
 
-  static const Duration _animDuration = Duration(milliseconds: 300);
-  static const Curve _animCurve = Curves.easeOut;
+  static const Duration _animDuration = LumiAnimations.driftDuration;
+  static const Curve _animCurve = LumiAnimations.driftCurve;
 
   @override
   Widget build(BuildContext context) {

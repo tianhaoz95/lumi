@@ -46,14 +46,14 @@
 
 ### 2.1 Global Animation Constants
 
-- [ ] **2.1.1** Create `LumiAnimations` constants class:
+- [x] **2.1.1** Create `LumiAnimations` constants class:
   ```dart
   static const driftDuration = Duration(milliseconds: 400);
   static const driftCurve = Curves.easeOut;
   static const snapDuration = Duration(milliseconds: 150);
   static const snapCurve = Curves.easeInOut;
   ```
-- [ ] **2.1.2** Replace all `AnimatedContainer`, `AnimationController`, and `TweenAnimationBuilder` usages to reference `LumiAnimations` constants (no hardcoded durations).
+- [x] **2.1.2** Replace all `AnimatedContainer`, `AnimationController`, and `TweenAnimationBuilder` usages to reference `LumiAnimations` constants (no hardcoded durations).
 - [ ] **2.1.3** Verify: no animation duration < 300 ms (except micro-snaps ≤ 150 ms) and none > 500 ms.
 
 ### 2.2 Kit the Fox — Animations

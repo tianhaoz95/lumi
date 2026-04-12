@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
+import '../../core/lumi_animations.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_buttons.dart';
@@ -127,8 +128,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                   Expanded(
                                     flex: 2,
                                     child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
+                                      duration: LumiAnimations.driftDuration,
+                                      curve: LumiAnimations.driftCurve,
                                       padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
                                       decoration: BoxDecoration(
                                         color: LumiColors.surfaceContainerHigh,
@@ -213,8 +214,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                   Text('Join the sanctuary — all your data stays on device.', style: Theme.of(context).textTheme.bodyLarge),
                                   const SizedBox(height: 24),
                                   AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOut,
+                                    duration: LumiAnimations.driftDuration,
+                                    curve: LumiAnimations.driftCurve,
                                     padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
                                     decoration: BoxDecoration(
                                       color: LumiColors.surfaceContainerHigh,
