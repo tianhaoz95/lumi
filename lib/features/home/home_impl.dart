@@ -166,14 +166,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(16.0),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         decoration: BoxDecoration(
                           color: LumiColors.surfaceContainerLowest.withOpacity(0.7), // ignore: deprecated_member_use
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         child: Row(
                           children: [
@@ -293,7 +293,7 @@ class _ChatArea extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                           decoration: BoxDecoration(
                             color: LumiColors.primary.withOpacity(0.12), // ignore: deprecated_member_use
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,

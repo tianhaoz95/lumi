@@ -295,7 +295,7 @@ class _SettingsRow extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     color: LumiColors.primaryContainer.withOpacity(0.12), // ignore: deprecated_member_use
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(icon, color: LumiColors.primary),
                 ),

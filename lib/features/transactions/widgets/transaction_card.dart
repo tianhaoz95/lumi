@@ -58,7 +58,7 @@ class TransactionCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.primary.withOpacity(0.12), // ignore: deprecated_member_use
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             'AI',
