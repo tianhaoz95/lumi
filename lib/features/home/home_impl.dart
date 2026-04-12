@@ -249,7 +249,7 @@ class _ChatArea extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
       itemBuilder: (context, index) {
         final m = messages[index];
-        final align = m.author == _Author.user ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+
         final bgColor = m.author == _Author.user ? LumiColors.primary : LumiColors.surfaceContainerLowest;
         final textColor = m.author == _Author.user ? Colors.white : LumiColors.onSurface;
 

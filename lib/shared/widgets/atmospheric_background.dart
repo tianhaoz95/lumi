@@ -82,13 +82,13 @@ class _Orb extends StatelessWidget {
 }
 
 class _GrainPainter extends CustomPainter {
-  final int seed;
-  _GrainPainter({this.seed = 12345});
+  static const int _seed = 12345;
+  const _GrainPainter();
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..color = Colors.black.withOpacity(0.02);
-    final rand = Random(seed);
+    final rand = Random(_seed);
     // Number of grains scaled by area, clamped for performance
     final total = (size.width * size.height / 2000).clamp(100, 600).toInt();
     for (int i = 0; i < total; i++) {

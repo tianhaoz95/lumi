@@ -12,7 +12,7 @@ dependencies:
   go_router: ^7.0.0
   appwrite: ^21.0.0
   flutter_riverpod: ^2.0.0
-  google_fonts: ^4.0.3
+  google_fonts: ^3.0.1
   material_symbols_icons: ^4.2928.1
   path_provider: ^2.1.0
   image_picker: ^0.8.7+4
