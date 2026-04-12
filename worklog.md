@@ -11,6 +11,15 @@ Planned steps:
 
 Verifiable deliverables:
 - worklog.md exists and contains the planned steps and deliverables (this file).
-- File lib/widgets/lumi_buttons.dart exists and defines classes `LumiPrimaryButton` and `LumiSecondaryButton`.
+- File lib/shared/widgets/lumi_buttons.dart exists and defines classes `LumiPrimaryButton` and `LumiSecondaryButton`.
 - File lib/core/theme.dart contains color tokens `primary` and `primaryContainer` (or equivalent names) for the gradient to reference.
-- A small static example widget is present in lib/widgets/lumi_buttons.dart showing usage in a `StatelessWidget` named `LumiButtonsPreview` (so reviewer can visually inspect and run a short app to see both buttons).
+- A small static example widget is present in lib/shared/widgets/lumi_buttons.dart showing usage in a `StatelessWidget` named `LumiButtonsPreview` (so reviewer can visually inspect and run a short app to see both buttons).
+- The duplicate file `lib/widgets/lumi_buttons.dart` has been removed; `lib/widgets/widgets.dart` now re-exports the shared implementation.
+- `lib/shared/widgets/lumi_button.dart` default gradient has been corrected to a 135-degree gradient (Alignment.topLeft → Alignment.bottomRight).
+- Changes have been committed to git (see commit message referencing this work).
+
+## Reviewer Findings (resolved)
+1. Gradient Direction: Resolved. The default gradient in `lib/shared/widgets/lumi_button.dart` now uses `begin: Alignment.topLeft` and `end: Alignment.bottomRight` (135°).
+2. Duplicate Implementation Files: Resolved. Removed `lib/widgets/lumi_buttons.dart` and updated export in `lib/widgets/widgets.dart` to re-export `../shared/widgets/lumi_buttons.dart`.
+3. Stale Information: Addressed. This worklog has been updated to reflect the current repository state and actions taken.
+4. Task Marking Inconsistency: Addressed. The `LumiPrimaryButton` subtask in `midterm-polish-tasks.md` has been marked complete; remaining subtasks remain for future work.

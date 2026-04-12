@@ -35,7 +35,6 @@ class _LumiButtonState extends State<LumiButton> with SingleTickerProviderStateM
       colors: [LumiColors.primary, LumiColors.primaryContainer],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      transform: const GradientRotation(135 * 3.14159265 / 180),
     );
 
     return MouseRegion(
