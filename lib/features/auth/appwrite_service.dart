@@ -168,4 +168,14 @@ class AppwriteService {
       return null;
     }
   }
+
+  /// Helper to configure the service for test environments without creating
+  /// a real Appwrite client. This allows tests to set a fake Account via
+  /// `setAccountForTest` while ensuring endpoint/projectId configuration is
+  /// present.
+  void initForTest({String? endpoint, String? projectId}) {
+    // Reuse init but prevent creating a real client which requires Flutter
+    // bindings in some environments. Tests can still inject a fake account.
+    init(endpoint: endpoint, projectId: projectId, createClient: false);
+  }
 }

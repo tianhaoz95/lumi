@@ -44,6 +44,9 @@ class _TestAuthNotifier extends AuthNotifier {
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  // Configure AppwriteService for test environments without creating a real
+  // Appwrite client to avoid requiring Flutter-native bindings in CI.
+  AppwriteService.instance.initForTest(endpoint: 'http://localhost', projectId: 'lumi-test');
 
   group('Golden Path', () {
     testWidgets('Onboarding/SignUp', (WidgetTester tester) async {
