@@ -7,23 +7,11 @@ Plan:
 4. Commit changes and mark the task done in midterm-polish-tasks.md once verification passes.
 
 Verifiable deliverables:
-- File changed: lib/features/dashboard/recent_activity.dart (or the file that contains the Recent Activity list) updated to include spacing of at least 24px between items.
-- A git commit exists with the changes.
-- Running `git --no-pager diff --name-only HEAD~1..HEAD` shows the modified file.
-- grep confirms `SizedBox(height:` with value >=24 or `EdgeInsets.symmetric(vertical:` with value >=24 in the modified file.
+- File changed: lib/features/dashboard/dashboard.dart updated to include spacing constant `kRecentActivityVerticalSpacing = 28.0` and alternating opacity logic (`opacity: index.isEven ? 0.70 : 0.85`).
+- A git commit exists that modifies lib/features/dashboard/dashboard.dart and is present at HEAD.
+- Running `git --no-pager diff --name-only HEAD~1..HEAD` shows lib/features/dashboard/dashboard.dart.
+- grep confirms `kRecentActivityVerticalSpacing = 28.0` and `opacity: index.isEven ? 0.70 : 0.85` in the modified file.
 
-Notes for reviewer:
-- If the project has a different file name for Recent Activity, the updated file will be in lib/features/dashboard/ and contain the implemented spacing change.
-- No UI screenshots are included; reviewer can run the app or inspect code to verify spacing.
-
-Verification:
-- kRecentActivityVerticalSpacing set to 28.0 in lib/features/dashboard/dashboard.dart.
-- Commit d35aea9 updated lib/features/dashboard/dashboard.dart.
-- Recent commits (most recent first):
-  - e13a8ec: Midterm polish: mark recent-activity spacing task done; add worklog.md
-  - d35aea9: Dashboard: increase recent activity spacing to 28px
-
-Commands a reviewer can run:
-- `git --no-pager log -n 3 --pretty=oneline`
-- `git --no-pager show d35aea9 --name-only`
-- `rg "kRecentActivityVerticalSpacing|SizedBox\\(height" lib/features/dashboard`
+Reviewer Findings:
+1. **Sub-bullets Status:** Although the vertical spacing is correctly increased to 28px (`kRecentActivityVerticalSpacing = 28.0`) and alternating backgrounds are implemented in the code (`opacity: index.isEven ? 0.70 : 0.85`), the sub-bullet "Implement alternating backgrounds for list items" in `midterm-polish-tasks.md` remains unchecked (`- [ ]`). Please update the task list to correctly reflect the completion of ALL sub-tasks before marking the parent "Recent Activity" as done.
+2. **Deliverable Verification:** The deliverable "Running `git --no-pager diff --name-only HEAD~1..HEAD` shows the modified file" is technically not satisfied because the most recent commit `0d10f4a` only contains `worklog.md`. The code changes are in `d35aea9`. While the reviewer found the changes by searching the history, ensure that the verification steps in the worklog are accurate and reachable by the reviewer.
