@@ -8,7 +8,7 @@ use anyhow::Result;
 pub struct SentinelReport {
     pub untagged_count: u32,
     pub missing_days: Vec<String>,   // ISO 8601 dates
-    pub incomplete_mileage: Vec<String>, // mileage_log IDs (string ids)
+    pub incomplete_mileage: Vec<u64>, // mileage_log IDs (numeric ids)
 }
 
 /// Run a sentinel scan against the provided SqlitePool and return a report.
@@ -45,10 +45,11 @@ pub async fn run_sentinel_scan_with_pool(pool: &SqlitePool) -> Result<SentinelRe
     let rows = sqlx::query("SELECT id FROM mileage_logs WHERE purpose IS NULL OR TRIM(purpose) = ''")
         .fetch_all(pool)
         .await?;
-    let mut incomplete_mileage = Vec::new();
+    let mut incomplete_mileage: Vec<u64> = Vec::new();
     for r in rows {
-        let id: String = r.try_get("id")?;
-        incomplete_mileage.push(id);
+        // mileage_logs.id is stored as integer in the DB; read as i64 and cast to u64
+        let id_i64: i64 = r.try_get("id")?;
+        incomplete_mileage.push(id_i64 as u64);
     }
 
     Ok(SentinelReport { untagged_count, missing_days, incomplete_mileage })

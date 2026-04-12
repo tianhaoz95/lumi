@@ -32,7 +32,7 @@
   - Query for any day in the past 14 days with zero transaction entries.
   - Query for mileage logs without a `purpose` field.
   - Return a `SentinelReport` with lists of issues.
-- [ ] **1.2.2** `SentinelReport` structure:
+- [x] **1.2.2** `SentinelReport` structure:
   ```rust
   pub struct SentinelReport {
       pub untagged_count: u32,
