@@ -78,3 +78,25 @@ sqlite3 lumi_test.db "PRAGMA table_info('design_debt');"  -- shows id, screen, d
 ```
 
 Status: Fixed and verified locally.
+
+---
+
+Next task started: 1.1.3 — Apply the No-Line Rule
+
+Task: Apply the No-Line Rule across the app: remove explicit Divider() widgets and Container/BoxDecoration borders in production screens; replace visual separators with tonal shifts (boxShadow, background tonal surfaces) or increased spacing.
+
+Planned steps:
+1. Search the Flutter codebase for explicit `Divider(`, `Border.all(`, and other `border:` usages in `lib/`.
+2. Replace explicit 1px borders with subtle `boxShadow` or remove them where spacing suffices.
+3. Prefer tonal shifts (use existing LumiColors tokens) over hard borders.
+4. Run a quick code search to verify no remaining `Border.all(..., width: 1.0)` occurrences in `lib/`.
+5. Commit changes and update roadmap (mark task 1.1.3 done).
+
+Verifiable deliverables:
+- All edits are committed to the repository.
+- No `Divider(` occurrences in `lib/` (search returns none).
+- No `Border.all(..., width: 1.0)` occurrences in `lib/` (search returns none).
+- `design/roadmap/phase-5-aurora.md` shows task 1.1.3 marked as done.
+
+Notes:
+- This change replaces visual 1px borders with `BoxShadow` entries to maintain visual separation without explicit border lines, following the No-Line Rule.

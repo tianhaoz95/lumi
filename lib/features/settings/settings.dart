@@ -66,7 +66,9 @@ class SettingsScreen extends ConsumerWidget {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                border: Border.all(color: const Color(0x14F5FAFC), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(color: const Color(0x14F5FAFC), blurRadius: 1.0, spreadRadius: 0),
+                                ],
                               ),
                               child: const Icon(Icons.person, color: Colors.white, size: 20),
                             ),
@@ -129,7 +131,9 @@ class SettingsScreen extends ConsumerWidget {
                                       decoration: BoxDecoration(
                                         color: LumiColors.primaryContainer,
                                         shape: BoxShape.circle,
-                                        border: Border.all(color: LumiColors.surface, width: 2),
+                                        boxShadow: [
+                                          BoxShadow(color: LumiColors.surface, blurRadius: 2.0, spreadRadius: 0),
+                                        ],
                                       ),
                                       child: const Icon(Icons.edit, size: 16, color: Colors.white),
                                     ),
