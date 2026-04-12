@@ -205,7 +205,7 @@
   - Amount (negative = expense in `on-surface`, positive = credit in `primary`).
   - AI-auto-tagged badge ("AI" chip in `primary-fixed` background) when `is_tagged == true`.
   - Edit button → inline edit form.
-- [ ] **4.2.2** After receipt OCR (Phase 2), render a `TransactionCard` for user confirmation before saving.
+- [x] **4.2.2** After receipt OCR (Phase 2), render a `TransactionCard` for user confirmation before saving.
 - [ ] **4.2.3** "Confirm" → calls `log_transaction` tool. "Edit" → opens field editors. "Dismiss" → discards.
 
 **Tests:**

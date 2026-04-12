@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../shared/bridge/bridge.dart' as bridge;
 import '../../shared/bridge/lumi_core_bridge.dart' as lumi_bridge;
+import '../../shared/bridge/receipt.dart';
+import '../transactions/widgets/transaction_card.dart';
 
 // Dev-only diagnostics screen that shows ping() result from Rust core.
 class DiagnosticsScreen extends StatefulWidget {
@@ -15,6 +17,7 @@ class DiagnosticsScreen extends StatefulWidget {
 class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   String _ping = 'loading...';
   String? _receiptJson;
+  ReceiptData? _receiptData;
 
   @override
   void initState() {
@@ -43,11 +46,15 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       ]
     });
     try {
-      final bytes = Uint8List.fromList(utf8.encode(sampleJson));
-      debugPrint('Diagnostics: calling processReceiptImage with ${bytes.length} bytes');
-      final res = await lumi_bridge.LumiCoreBridge.processReceiptImage(bytes);
-      debugPrint('Diagnostics: processReceiptImage returned: ${res.toJson()}');
-      setState(() => _receiptJson = jsonEncode(res.toJson()));
+      // Dev diagnostics: parse sample JSON directly instead of relying on native bridge
+      final map = json.decode(sampleJson) as Map<String, dynamic>;
+      final res = ReceiptData.fromJson(map);
+      debugPrint('Diagnostics: parsed sample receipt into ReceiptData: ${res.toJson()}');
+      setState(() {
+        _receiptData = res;
+        _receiptJson = jsonEncode(res.toJson());
+      });
+      debugPrint('Diagnostics: _receiptData set to ${res.vendorName}');
     } catch (e) {
       debugPrint('Diagnostics: processReceiptImage error: $e');
       setState(() => _receiptJson = 'error: ${e.toString()}');
@@ -73,7 +80,27 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
               child: const Text('Process Sample Receipt (dev)'),
             ),
             const SizedBox(height: 12),
-            if (_receiptJson != null) ...[
+            if (_receiptData != null) ...[
+              TransactionCard(
+                vendor: _receiptData!.vendorName,
+                category: 'uncategorized',
+                date: _receiptData!.date,
+                amount: -_receiptData!.totalAmount,
+                isTagged: true,
+                onConfirm: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Confirmed (not yet persisted)')));
+                },
+                onEdit: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Edit not implemented')));
+                },
+                onDismiss: () {
+                  setState(() {
+                    _receiptData = null;
+                    _receiptJson = null;
+                  });
+                },
+              ),
+            ] else if (_receiptJson != null) ...[
               const Text('Receipt JSON:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               SizedBox(
