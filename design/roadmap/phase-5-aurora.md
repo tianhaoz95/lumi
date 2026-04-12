@@ -58,7 +58,7 @@
 
 ### 2.2 Kit the Fox — Animations
 
-- [ ] **2.2.1** Create 4 Kit animation states using Lottie or a Flutter custom painter:
+- [x] **2.2.1** Create 4 Kit animation states using Lottie or a Flutter custom painter:
   - **Idle** — gentle breathing (scale 1.0 → 1.03 → 1.0, 2 s loop).
   - **Thinking** — Kit "digging through a snowbank" (lateral swipe with particle dots, 1.5 s loop). Plays while Rig agent is processing.
   - **Found** — Kit emerges from snowbank holding a data card (plays once on tool result return, 0.8 s).
