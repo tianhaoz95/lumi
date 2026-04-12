@@ -153,13 +153,13 @@ class SettingsScreen extends ConsumerWidget {
                                 label: 'Account Preferences',
                                 onTap: () {},
                               ),
-                              const Divider(height: 0, thickness: 0, color: Colors.transparent),
+                              const SizedBox(height: 8),
                               _SettingsRow(
                                 icon: Icons.verified_user,
                                 label: 'Security',
                                 onTap: () {},
                               ),
-                              const Divider(height: 0, thickness: 0, color: Colors.transparent),
+                              const SizedBox(height: 8),
                               _SettingsRow(
                                 icon: Icons.notifications,
                                 label: 'Notifications',

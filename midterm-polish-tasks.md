@@ -59,8 +59,8 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 - [x] **"The Cabin" Header**:
     - [x] Match the glassmorphism top bar from the design.
     - [x] Use the circular gradient profile placeholder.
-- [ ] **List Items**:
-    - [ ] Remove dividers. Use tonal background cards for grouping.
+- [x] **List Items**:
+    - [x] Remove dividers. Use tonal background cards for grouping.
 
 ## 4. UI Components & Polish
 - [ ] **`LumiCard`**: Refine glassmorphism parameters (70% opacity, 20px-40px blur).
