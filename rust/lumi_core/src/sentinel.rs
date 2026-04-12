@@ -92,3 +92,68 @@ pub async fn run_sentinel_scan() -> anyhow::Result<SentinelReport> {
 
     Ok(report)
 }
+
+#[rig_macros::tool(description = "Update last sentinel log with battery levels")]
+pub async fn update_last_sentinel_battery(battery_before: Option<i64>, battery_after: Option<i64>) -> anyhow::Result<()> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url).await.map_err(|e| anyhow::anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // compute delta if both provided
+    let battery_delta: Option<i64> = match (battery_before, battery_after) {
+        (Some(b1), Some(b2)) => Some(b2 - b1),
+        _ => None,
+    };
+
+    // Update the most recent sentinel_logs row (if any) with battery info
+    let _ = sqlx::query(
+        "UPDATE sentinel_logs SET battery_before = ?1, battery_after = ?2, battery_delta = ?3 WHERE id = (SELECT id FROM sentinel_logs ORDER BY id DESC LIMIT 1)"
+    )
+    .bind(battery_before)
+    .bind(battery_after)
+    .bind(battery_delta)
+    .execute(&pool)
+    .await;
+
+    Ok(())
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SentinelHealth {
+    pub last_scan_ts: Option<i64>,
+    pub avg_battery_delta: Option<f64>,
+    pub scans_last_24h: i64,
+}
+
+#[rig_macros::tool(description = "Get sentinel health summary")]
+pub async fn get_sentinel_health() -> anyhow::Result<SentinelHealth> {
+    let db_url = std::env::var("LUMI_DB_URL").unwrap_or_else(|_| "sqlite:lumi.db".to_string());
+    let pool = SqlitePool::connect(&db_url).await.map_err(|e| anyhow::anyhow!(format!("failed to connect to db: {}", e)))?;
+
+    // last scan timestamp (max ts)
+    let last_row: Option<(Option<i64>,)> = sqlx::query_as("SELECT MAX(ts) FROM sentinel_logs")
+        .fetch_optional(&pool)
+        .await?;
+    let last_scan_ts = match last_row {
+        Some((maybe_ts,)) => maybe_ts,
+        None => None,
+    };
+
+    // average battery delta (nullable)
+    let avg_row: Option<(Option<f64>,)> = sqlx::query_as("SELECT AVG(battery_delta) as avg_delta FROM sentinel_logs WHERE battery_delta IS NOT NULL")
+        .fetch_optional(&pool)
+        .await?;
+    let avg_battery_delta = match avg_row {
+        Some((maybe_avg,)) => maybe_avg,
+        None => None,
+    };
+
+    // scans in last 24 hours
+    let cutoff = Utc::now().timestamp() - (24 * 3600);
+    let cnt_row: (i64,) = sqlx::query_as("SELECT COUNT(*) FROM sentinel_logs WHERE ts >= ?1")
+        .bind(cutoff)
+        .fetch_one(&pool)
+        .await?;
+    let scans_last_24h = cnt_row.0 as i64;
+
+    Ok(SentinelHealth { last_scan_ts, avg_battery_delta, scans_last_24h })
+}

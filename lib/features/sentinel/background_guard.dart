@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:lumi/features/sentinel/notification_service.dart';
+import 'package:lumi/features/sentinel/battery_monitor.dart';
 
 class BackgroundGuard {
   static final BackgroundGuard _instance = BackgroundGuard._();
@@ -48,7 +49,9 @@ class BackgroundGuard {
     // Attempt to invoke native/rust sentinel scan via FRB bridge. If bindings are not
     // yet generated, catch and log the error for reviewer triage.
     try {
-      final res = await MethodChannel('lumi_core_bridge').invokeMethod<dynamic>('run_sentinel_scan');
+      final res = await BatteryMonitor().runWithBatteryLogging<dynamic>(() async {
+        return await MethodChannel('lumi_core_bridge').invokeMethod<dynamic>('run_sentinel_scan');
+      });
       debugPrint('[BackgroundGuard] run_sentinel_scan result: $res');
 
       // If the native side returned a report, attempt to parse and trigger a notification.

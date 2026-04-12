@@ -76,8 +76,8 @@ class ShareService {
 
         // Perform lightweight subscription detection on the parsed receipt text and notify if found.
         try {
-          final combinedText = StringBuffer()..write(receipt.vendorName ?? '');
-          if (receipt.lineItems != null && receipt.lineItems.isNotEmpty) {
+          final combinedText = StringBuffer()..write('${receipt.vendorName}');
+          if (receipt.lineItems.isNotEmpty) {
             combinedText.write(' ');
             combinedText.writeAll(receipt.lineItems.map((li) => li.description), ' ');
           }

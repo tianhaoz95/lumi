@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../../shared/widgets/lumi_card.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../features/sentinel/known_locations.dart';
 import '../../features/auth/auth_notifier.dart';
+import '../../shared/bridge/sentinel.dart';
 
 /// Settings screen implemented to match design/ui_design/settings/code.html
 class SettingsScreen extends ConsumerWidget {
@@ -219,6 +221,33 @@ class SettingsScreen extends ConsumerWidget {
                         ),
 
                         const SizedBox(height: 40.0),
+
+                        // Sentinel Health (dev mode only)
+                        if (kDebugMode)
+                          LumiCard(
+                            padding: const EdgeInsets.all(12.0),
+                            child: FutureBuilder<SentinelHealth>(
+                              future: getSentinelHealth(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) return const Text('Loading Sentinel health...');
+                                if (snapshot.hasError) return Text('Sentinel health error: ${snapshot.error}');
+                                final health = snapshot.data;
+                                final lastScan = (health != null && health.lastScanTs != null) ? DateTime.fromMillisecondsSinceEpoch(health.lastScanTs! * 1000).toLocal().toString() : 'N/A';
+                                final avgBattery = (health != null && health.avgBatteryDelta != null) ? '${health.avgBatteryDelta!.toStringAsFixed(2)}' : 'N/A';
+                                final scans24 = (health?.scansLast24H ?? 0);
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Sentinel Health (dev)', style: Theme.of(context).textTheme.titleMedium),
+                                    const SizedBox(height: 8),
+                                    Text('Last scan: $lastScan'),
+                                    Text('Avg battery delta per scan: $avgBattery%'),
+                                    Text('Scans in last 24h: $scans24'),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
 
                         // Decorative ghost icon
                         Opacity(

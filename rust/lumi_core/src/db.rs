@@ -75,7 +75,10 @@ pub async fn db_init_with_pool(pool: &SqlitePool) -> Result<(), sqlx::Error> {
             report_json TEXT NOT NULL,
             untagged_count INTEGER,
             missing_days_count INTEGER,
-            incomplete_mileage_count INTEGER
+            incomplete_mileage_count INTEGER,
+            battery_before INTEGER,
+            battery_after INTEGER,
+            battery_delta INTEGER
         );
         "#,
     )

@@ -132,10 +132,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double dco_decode_box_autoadd_f_64(dynamic raw);
 
   @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
+
+  @protected
   LiteRtSession dco_decode_box_autoadd_lite_rt_session(dynamic raw);
 
   @protected
   LumiAgent dco_decode_box_autoadd_lumi_agent(dynamic raw);
+
+  @protected
+  SubscriptionInfo dco_decode_box_autoadd_subscription_info(dynamic raw);
 
   @protected
   TransactionSummary dco_decode_box_autoadd_transaction_summary(dynamic raw);
@@ -228,6 +234,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double? dco_decode_opt_box_autoadd_f_64(dynamic raw);
 
   @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  SubscriptionInfo? dco_decode_opt_box_autoadd_subscription_info(dynamic raw);
+
+  @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
 
   @protected
@@ -244,7 +256,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (String, double) dco_decode_record_string_f_64(dynamic raw);
 
   @protected
+  SentinelHealth dco_decode_sentinel_health(dynamic raw);
+
+  @protected
   SentinelReport dco_decode_sentinel_report(dynamic raw);
+
+  @protected
+  SubscriptionInfo dco_decode_subscription_info(dynamic raw);
 
   @protected
   TransactionSummary dco_decode_transaction_summary(dynamic raw);
@@ -353,11 +371,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double sse_decode_box_autoadd_f_64(SseDeserializer deserializer);
 
   @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
   LiteRtSession sse_decode_box_autoadd_lite_rt_session(
       SseDeserializer deserializer);
 
   @protected
   LumiAgent sse_decode_box_autoadd_lumi_agent(SseDeserializer deserializer);
+
+  @protected
+  SubscriptionInfo sse_decode_box_autoadd_subscription_info(
+      SseDeserializer deserializer);
 
   @protected
   TransactionSummary sse_decode_box_autoadd_transaction_summary(
@@ -453,6 +478,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer);
 
   @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  SubscriptionInfo? sse_decode_opt_box_autoadd_subscription_info(
+      SseDeserializer deserializer);
+
+  @protected
   int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
 
   @protected
@@ -470,7 +502,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   (String, double) sse_decode_record_string_f_64(SseDeserializer deserializer);
 
   @protected
+  SentinelHealth sse_decode_sentinel_health(SseDeserializer deserializer);
+
+  @protected
   SentinelReport sse_decode_sentinel_report(SseDeserializer deserializer);
+
+  @protected
+  SubscriptionInfo sse_decode_subscription_info(SseDeserializer deserializer);
 
   @protected
   TransactionSummary sse_decode_transaction_summary(
@@ -584,12 +622,20 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_i_64(
+      PlatformInt64 self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_lite_rt_session(
       LiteRtSession self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_lumi_agent(
       LumiAgent self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_subscription_info(
+      SubscriptionInfo self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_transaction_summary(
@@ -694,6 +740,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_i_64(
+      PlatformInt64? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_subscription_info(
+      SubscriptionInfo? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
 
   @protected
@@ -712,8 +766,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       (String, double) self, SseSerializer serializer);
 
   @protected
+  void sse_encode_sentinel_health(
+      SentinelHealth self, SseSerializer serializer);
+
+  @protected
   void sse_encode_sentinel_report(
       SentinelReport self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_subscription_info(
+      SubscriptionInfo self, SseSerializer serializer);
 
   @protected
   void sse_encode_transaction_summary(

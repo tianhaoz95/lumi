@@ -8,7 +8,7 @@ import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `DateTimeFromNaive`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`
 
 /// Run a sentinel scan against the provided SqlitePool and return a report.
 Future<SentinelReport> runSentinelScanWithPool({required SqlitePool pool}) =>
@@ -16,6 +16,39 @@ Future<SentinelReport> runSentinelScanWithPool({required SqlitePool pool}) =>
 
 Future<SentinelReport> runSentinelScan() =>
     RustLib.instance.api.crateSentinelRunSentinelScan();
+
+Future<void> updateLastSentinelBattery(
+        {PlatformInt64? batteryBefore, PlatformInt64? batteryAfter}) =>
+    RustLib.instance.api.crateSentinelUpdateLastSentinelBattery(
+        batteryBefore: batteryBefore, batteryAfter: batteryAfter);
+
+Future<SentinelHealth> getSentinelHealth() =>
+    RustLib.instance.api.crateSentinelGetSentinelHealth();
+
+class SentinelHealth {
+  final PlatformInt64? lastScanTs;
+  final double? avgBatteryDelta;
+  final PlatformInt64 scansLast24H;
+
+  const SentinelHealth({
+    this.lastScanTs,
+    this.avgBatteryDelta,
+    required this.scansLast24H,
+  });
+
+  @override
+  int get hashCode =>
+      lastScanTs.hashCode ^ avgBatteryDelta.hashCode ^ scansLast24H.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SentinelHealth &&
+          runtimeType == other.runtimeType &&
+          lastScanTs == other.lastScanTs &&
+          avgBatteryDelta == other.avgBatteryDelta &&
+          scansLast24H == other.scansLast24H;
+}
 
 class SentinelReport {
   final int untaggedCount;

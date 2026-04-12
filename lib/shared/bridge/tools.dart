@@ -8,7 +8,8 @@ import 'frb_generated.dart';
 import 'lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `freq_is_unknown`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// Insert a transaction into the provided SQLite pool.
 /// Returns the inserted (or existing) row id on success.
@@ -102,6 +103,11 @@ Future<List<TransactionSummary>> semanticSearch(
         {required String query, int? topK}) =>
     RustLib.instance.api.crateToolsSemanticSearch(query: query, topK: topK);
 
+/// Detect a subscription from arbitrary shared text.
+/// Returns Ok(Some(SubscriptionInfo)) if a subscription-like pattern is found, otherwise Ok(None).
+Future<SubscriptionInfo?> detectSubscription({required String text}) =>
+    RustLib.instance.api.crateToolsDetectSubscription(text: text);
+
 Future<FinancialSummary> getSummaryWithPool(
         {required SqlitePool pool, required String period}) =>
     RustLib.instance.api
@@ -169,6 +175,31 @@ class MileageLogResult {
           runtimeType == other.runtimeType &&
           id == other.id &&
           deductionAmount == other.deductionAmount;
+}
+
+class SubscriptionInfo {
+  final String serviceName;
+  final double amount;
+  final String frequency;
+
+  const SubscriptionInfo({
+    required this.serviceName,
+    required this.amount,
+    required this.frequency,
+  });
+
+  @override
+  int get hashCode =>
+      serviceName.hashCode ^ amount.hashCode ^ frequency.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SubscriptionInfo &&
+          runtimeType == other.runtimeType &&
+          serviceName == other.serviceName &&
+          amount == other.amount &&
+          frequency == other.frequency;
 }
 
 /// A compact summary of a transaction returned to callers.

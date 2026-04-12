@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1743548246;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -433731516;
 
 // Section: executor
 
@@ -681,6 +681,42 @@ fn wire__crate__db__db_init_with_pool_impl(
         },
     )
 }
+fn wire__crate__tools__detect_subscription_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "detect_subscription",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_text = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::tools::detect_subscription(api_text).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__embeddings__embed_text_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -1128,6 +1164,41 @@ fn wire__crate__vector_db__get_embedding_impl(
                     let output_ok = crate::vector_db::get_embedding(&api_db_path, &api_id)?;
                     Ok(output_ok)
                 })())
+            }
+        },
+    )
+}
+fn wire__crate__sentinel__get_sentinel_health_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_sentinel_health",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::sentinel::get_sentinel_health().await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
@@ -2227,6 +2298,47 @@ fn wire__crate__model_registry__start_background_download_impl(
         },
     )
 }
+fn wire__crate__sentinel__update_last_sentinel_battery_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "update_last_sentinel_battery",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_battery_before = <Option<i64>>::sse_decode(&mut deserializer);
+            let api_battery_after = <Option<i64>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || async move {
+                        let output_ok = crate::sentinel::update_last_sentinel_battery(
+                            api_battery_before,
+                            api_battery_after,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 fn wire__crate__vector_db__upsert_embedding_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2869,6 +2981,28 @@ impl SseDecode for Option<f64> {
     }
 }
 
+impl SseDecode for Option<i64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<i64>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::tools::SubscriptionInfo> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::tools::SubscriptionInfo>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<u32> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2926,6 +3060,20 @@ impl SseDecode for (String, f64) {
     }
 }
 
+impl SseDecode for crate::sentinel::SentinelHealth {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_lastScanTs = <Option<i64>>::sse_decode(deserializer);
+        let mut var_avgBatteryDelta = <Option<f64>>::sse_decode(deserializer);
+        let mut var_scansLast24H = <i64>::sse_decode(deserializer);
+        return crate::sentinel::SentinelHealth {
+            last_scan_ts: var_lastScanTs,
+            avg_battery_delta: var_avgBatteryDelta,
+            scans_last_24h: var_scansLast24H,
+        };
+    }
+}
+
 impl SseDecode for crate::sentinel::SentinelReport {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2936,6 +3084,20 @@ impl SseDecode for crate::sentinel::SentinelReport {
             untagged_count: var_untaggedCount,
             missing_days: var_missingDays,
             incomplete_mileage: var_incompleteMileage,
+        };
+    }
+}
+
+impl SseDecode for crate::tools::SubscriptionInfo {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_serviceName = <String>::sse_decode(deserializer);
+        let mut var_amount = <f64>::sse_decode(deserializer);
+        let mut var_frequency = <String>::sse_decode(deserializer);
+        return crate::tools::SubscriptionInfo {
+            service_name: var_serviceName,
+            amount: var_amount,
+            frequency: var_frequency,
         };
     }
 }
@@ -3050,108 +3212,116 @@ fn pde_ffi_dispatcher_primary_impl(
         12 => wire__crate__crate_version_impl(port, ptr, rust_vec_len, data_len),
         13 => wire__crate__db__db_init_impl(port, ptr, rust_vec_len, data_len),
         14 => wire__crate__db__db_init_with_pool_impl(port, ptr, rust_vec_len, data_len),
-        15 => wire__crate__embeddings__embed_text_impl(port, ptr, rust_vec_len, data_len),
-        16 => wire__crate__embeddings__embed_transaction_impl(port, ptr, rust_vec_len, data_len),
-        17 => wire__crate__embeddings__embed_transaction_from_summary_impl(
+        15 => wire__crate__tools__detect_subscription_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__crate__embeddings__embed_text_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__embeddings__embed_transaction_impl(port, ptr, rust_vec_len, data_len),
+        18 => wire__crate__embeddings__embed_transaction_from_summary_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__model_registry__frb_check_model_ready_impl(
+        19 => wire__crate__model_registry__frb_check_model_ready_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__model_registry__frb_get_download_progress_impl(
+        20 => wire__crate__model_registry__frb_get_download_progress_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        20 => wire__crate__inference__frb_load_model_impl(port, ptr, rust_vec_len, data_len),
-        21 => wire__crate__inference__frb_select_model_tier_impl(port, ptr, rust_vec_len, data_len),
-        22 => wire__crate__model_registry__frb_start_background_download_impl(
+        21 => wire__crate__inference__frb_load_model_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__inference__frb_select_model_tier_impl(port, ptr, rust_vec_len, data_len),
+        23 => wire__crate__model_registry__frb_start_background_download_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        23 => wire__crate__vendor_fence__get_all_fences_impl(port, ptr, rust_vec_len, data_len),
-        24 => wire__crate__vendor_fence__get_all_fences_with_pool_impl(
+        24 => wire__crate__vendor_fence__get_all_fences_impl(port, ptr, rust_vec_len, data_len),
+        25 => wire__crate__vendor_fence__get_all_fences_with_pool_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        25 => wire__crate__model_registry__get_download_progress_impl(
+        26 => wire__crate__model_registry__get_download_progress_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        26 => wire__crate__vector_db__get_embedding_impl(port, ptr, rust_vec_len, data_len),
-        27 => wire__crate__tools__get_summary_impl(port, ptr, rust_vec_len, data_len),
-        28 => wire__crate__tools__get_summary_with_pool_impl(port, ptr, rust_vec_len, data_len),
-        29 => wire__crate__vendor_fence__increment_visit_impl(port, ptr, rust_vec_len, data_len),
-        30 => wire__crate__vendor_fence__increment_visit_with_pool_impl(
+        27 => wire__crate__vector_db__get_embedding_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__sentinel__get_sentinel_health_impl(port, ptr, rust_vec_len, data_len),
+        29 => wire__crate__tools__get_summary_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__tools__get_summary_with_pool_impl(port, ptr, rust_vec_len, data_len),
+        31 => wire__crate__vendor_fence__increment_visit_impl(port, ptr, rust_vec_len, data_len),
+        32 => wire__crate__vendor_fence__increment_visit_with_pool_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        31 => wire__crate__inference__infer_stream_impl(port, ptr, rust_vec_len, data_len),
-        32 => wire__crate__inference__inference_engine_from_strings_impl(
+        33 => wire__crate__inference__infer_stream_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__inference__inference_engine_from_strings_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        33 => wire__crate__inference__inference_engine_load_impl(port, ptr, rust_vec_len, data_len),
-        34 => wire__crate__inference__inference_engine_new_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__inference__lite_rt_session_new_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__tools__log_mileage_impl(port, ptr, rust_vec_len, data_len),
-        37 => wire__crate__tools__log_mileage_with_pool_impl(port, ptr, rust_vec_len, data_len),
-        38 => wire__crate__tools__log_transaction_impl(port, ptr, rust_vec_len, data_len),
-        39 => wire__crate__tools__log_transaction_with_pool_impl(port, ptr, rust_vec_len, data_len),
-        40 => wire__crate__agent__lumi_agent_complete_impl(port, ptr, rust_vec_len, data_len),
-        41 => wire__crate__agent__lumi_agent_new_impl(port, ptr, rust_vec_len, data_len),
-        42 => wire__crate__ping_impl(port, ptr, rust_vec_len, data_len),
-        43 => {
+        35 => wire__crate__inference__inference_engine_load_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__inference__inference_engine_new_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__inference__lite_rt_session_new_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__tools__log_mileage_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__tools__log_mileage_with_pool_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__tools__log_transaction_impl(port, ptr, rust_vec_len, data_len),
+        41 => wire__crate__tools__log_transaction_with_pool_impl(port, ptr, rust_vec_len, data_len),
+        42 => wire__crate__agent__lumi_agent_complete_impl(port, ptr, rust_vec_len, data_len),
+        43 => wire__crate__agent__lumi_agent_new_impl(port, ptr, rust_vec_len, data_len),
+        44 => wire__crate__ping_impl(port, ptr, rust_vec_len, data_len),
+        45 => {
             wire__crate__receipt__prepare_receipt_ocr_prompt_impl(port, ptr, rust_vec_len, data_len)
         }
-        44 => wire__crate__receipt__process_receipt_image_impl(port, ptr, rust_vec_len, data_len),
-        45 => wire__crate__tools__query_transactions_impl(port, ptr, rust_vec_len, data_len),
-        46 => {
+        46 => wire__crate__receipt__process_receipt_image_impl(port, ptr, rust_vec_len, data_len),
+        47 => wire__crate__tools__query_transactions_impl(port, ptr, rust_vec_len, data_len),
+        48 => {
             wire__crate__tools__query_transactions_with_pool_impl(port, ptr, rust_vec_len, data_len)
         }
-        47 => wire__crate__sentinel__run_sentinel_scan_impl(port, ptr, rust_vec_len, data_len),
-        48 => wire__crate__sentinel__run_sentinel_scan_with_pool_impl(
+        49 => wire__crate__sentinel__run_sentinel_scan_impl(port, ptr, rust_vec_len, data_len),
+        50 => wire__crate__sentinel__run_sentinel_scan_with_pool_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        49 => wire__crate__inference__select_model_tier_from_hints_impl(
+        51 => wire__crate__inference__select_model_tier_from_hints_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        50 => wire__crate__tools__semantic_search_impl(port, ptr, rust_vec_len, data_len),
-        51 => wire__crate__model_registry__start_background_download_impl(
+        52 => wire__crate__tools__semantic_search_impl(port, ptr, rust_vec_len, data_len),
+        53 => wire__crate__model_registry__start_background_download_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        52 => wire__crate__vector_db__upsert_embedding_impl(port, ptr, rust_vec_len, data_len),
-        53 => wire__crate__validators__validate_email_impl(port, ptr, rust_vec_len, data_len),
-        54 => wire__crate__validators__validate_password_impl(port, ptr, rust_vec_len, data_len),
-        55 => wire__crate__validators__validate_terms_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__vector_db__vector_db_init_impl(port, ptr, rust_vec_len, data_len),
-        57 => wire__crate__vector_db__vector_search_impl(port, ptr, rust_vec_len, data_len),
+        54 => wire__crate__sentinel__update_last_sentinel_battery_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        55 => wire__crate__vector_db__upsert_embedding_impl(port, ptr, rust_vec_len, data_len),
+        56 => wire__crate__validators__validate_email_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__validators__validate_password_impl(port, ptr, rust_vec_len, data_len),
+        58 => wire__crate__validators__validate_terms_impl(port, ptr, rust_vec_len, data_len),
+        59 => wire__crate__vector_db__vector_db_init_impl(port, ptr, rust_vec_len, data_len),
+        60 => wire__crate__vector_db__vector_search_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -3417,6 +3587,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::receipt::ReceiptData>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::sentinel::SentinelHealth {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.last_scan_ts.into_into_dart().into_dart(),
+            self.avg_battery_delta.into_into_dart().into_dart(),
+            self.scans_last_24h.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::sentinel::SentinelHealth
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::sentinel::SentinelHealth>
+    for crate::sentinel::SentinelHealth
+{
+    fn into_into_dart(self) -> crate::sentinel::SentinelHealth {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::sentinel::SentinelReport {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -3435,6 +3627,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::sentinel::SentinelReport>
     for crate::sentinel::SentinelReport
 {
     fn into_into_dart(self) -> crate::sentinel::SentinelReport {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::tools::SubscriptionInfo {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.service_name.into_into_dart().into_dart(),
+            self.amount.into_into_dart().into_dart(),
+            self.frequency.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::tools::SubscriptionInfo
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::tools::SubscriptionInfo>
+    for crate::tools::SubscriptionInfo
+{
+    fn into_into_dart(self) -> crate::tools::SubscriptionInfo {
         self
     }
 }
@@ -3843,6 +4057,26 @@ impl SseEncode for Option<f64> {
     }
 }
 
+impl SseEncode for Option<i64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <i64>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::tools::SubscriptionInfo> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::tools::SubscriptionInfo>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<u32> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3889,12 +4123,30 @@ impl SseEncode for (String, f64) {
     }
 }
 
+impl SseEncode for crate::sentinel::SentinelHealth {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<i64>>::sse_encode(self.last_scan_ts, serializer);
+        <Option<f64>>::sse_encode(self.avg_battery_delta, serializer);
+        <i64>::sse_encode(self.scans_last_24h, serializer);
+    }
+}
+
 impl SseEncode for crate::sentinel::SentinelReport {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.untagged_count, serializer);
         <Vec<String>>::sse_encode(self.missing_days, serializer);
         <Vec<u64>>::sse_encode(self.incomplete_mileage, serializer);
+    }
+}
+
+impl SseEncode for crate::tools::SubscriptionInfo {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.service_name, serializer);
+        <f64>::sse_encode(self.amount, serializer);
+        <String>::sse_encode(self.frequency, serializer);
     }
 }
 
