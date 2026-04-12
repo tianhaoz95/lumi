@@ -164,7 +164,7 @@
 
 ### 4.2 Heartbeat Duration Budget
 
-- [ ] **4.2.1** Enforce a 30-second maximum for `run_sentinel_scan()` using a Rust `tokio::time::timeout`.
+- [x] **4.2.1** Enforce a 30-second maximum for `run_sentinel_scan()` using a Rust `tokio::time::timeout`.
 - [ ] **4.2.2** If scan exceeds 30 s, cancel it and log a warning. The iOS background task must complete within its allotted time to avoid being penalized by the system scheduler.
 
 **Tests:**

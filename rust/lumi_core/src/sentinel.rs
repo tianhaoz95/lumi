@@ -70,27 +70,68 @@ pub async fn run_sentinel_scan() -> anyhow::Result<SentinelReport> {
     // Ensure schema exists
     crate::db::db_init_with_pool(&pool).await.map_err(|e| anyhow::anyhow!(format!("db_init failed: {}", e)))?;
 
-    let report = run_sentinel_scan_with_pool(&pool).await.map_err(|e| anyhow::anyhow!(format!("scan failed: {}", e)))?;
+    // Run the scan but enforce a 30-second maximum using tokio::time::timeout
+    match run_with_timeout(run_sentinel_scan_with_pool(&pool), std::time::Duration::from_secs(30)).await {
+        Ok(report) => {
+            // Persist a lightweight record of the scan to sentinel_logs for auditing and battery monitoring
+            match serde_json::to_string(&report) {
+                Ok(report_json) => {
+                    // Insert a row summarizing counts and the full JSON blob
+                    let _ = sqlx::query("INSERT INTO sentinel_logs (ts, report_json, untagged_count, missing_days_count, incomplete_mileage_count) VALUES (?1, ?2, ?3, ?4, ?5)")
+                        .bind(Utc::now().timestamp())
+                        .bind(report_json)
+                        .bind(report.untagged_count as i64)
+                        .bind(report.missing_days.len() as i64)
+                        .bind(report.incomplete_mileage.len() as i64)
+                        .execute(&pool)
+                        .await;
+                }
+                Err(e) => {
+                    eprintln!("failed to serialize sentinel report for logging: {}", e);
+                }
+            }
 
-    // Persist a lightweight record of the scan to sentinel_logs for auditing and battery monitoring
-    match serde_json::to_string(&report) {
-        Ok(report_json) => {
-            // Insert a row summarizing counts and the full JSON blob
-            let _ = sqlx::query("INSERT INTO sentinel_logs (ts, report_json, untagged_count, missing_days_count, incomplete_mileage_count) VALUES (?1, ?2, ?3, ?4, ?5)")
-                .bind(Utc::now().timestamp())
-                .bind(report_json)
-                .bind(report.untagged_count as i64)
-                .bind(report.missing_days.len() as i64)
-                .bind(report.incomplete_mileage.len() as i64)
-                .execute(&pool)
-                .await;
+            Ok(report)
         }
         Err(e) => {
-            eprintln!("failed to serialize sentinel report for logging: {}", e);
+            // Bubble up timeout or scan errors as anyhow errors
+            Err(e)
         }
     }
+}
 
-    Ok(report)
+// Helper that wraps a future returning Result<T, sqlx::Error> and enforces a timeout in seconds.
+async fn run_with_timeout<Fut, T>(fut: Fut, dur: std::time::Duration) -> Result<T, anyhow::Error>
+where
+    Fut: std::future::Future<Output = Result<T, sqlx::Error>>,
+{
+    match tokio::time::timeout(dur, fut).await {
+        Ok(Ok(v)) => Ok(v),
+        Ok(Err(e)) => Err(anyhow::anyhow!(format!("scan failed: {}", e))),
+        Err(_) => {
+            eprintln!("run_sentinel_scan timed out after {:?}", dur);
+            Err(anyhow::anyhow!("scan timed out"))
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::Duration;
+
+    #[tokio::test]
+    async fn run_with_timeout_times_out() {
+        // Use small durations so the unit test runs quickly without relying on tokio test utilities
+        let fut = run_with_timeout(async {
+            tokio::time::sleep(Duration::from_millis(200)).await;
+            Ok::<SentinelReport, sqlx::Error>(SentinelReport { untagged_count: 0, missing_days: vec![], incomplete_mileage: vec![] })
+        }, Duration::from_millis(100));
+
+        let res = fut.await;
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err().to_string(), "scan timed out");
+    }
 }
 
 #[rig_macros::tool(description = "Update last sentinel log with battery levels")]
