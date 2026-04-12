@@ -155,7 +155,7 @@
 
 ### 4.1 Battery Impact Instrumentation
 
-- [ ] **4.1.1** Add `battery_plus` package to `pubspec.yaml`.
+- [x] **4.1.1** Add `battery_plus` package to `pubspec.yaml`.
 - [ ] **4.1.2** Create a `BatteryMonitor` in `lib/features/sentinel/battery_monitor.dart` that logs battery level before and after each `onHeartbeat()` invocation to the `sentinel_logs` table.
 - [ ] **4.1.3** In the Settings screen, add a **Sentinel Health** section (dev mode only) showing:
   - Last scan timestamp.
