@@ -88,8 +88,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
 
-      // Verify that Home screen is shown by checking for the chat input widget.
-      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+      // Verify that Dashboard is shown by checking for the bento grid (app now redirects to /dashboard after auth).
+      expect(find.byKey(const Key('bento_grid')), findsOneWidget);
 
       // Sanity: ensure fake account recorded operations.
       expect(fake.created, isTrue);
@@ -126,8 +126,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
 
-      // Verify that Home is shown by presence of chat input
-      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+      // Verify that Dashboard is shown by presence of bento grid (app now redirects to /dashboard after auth)
+      expect(find.byKey(const Key('bento_grid')), findsOneWidget);
 
       // Ensure fake account recorded session creation
       expect(fake.sessionCreated, isTrue);
