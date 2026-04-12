@@ -5,6 +5,7 @@ import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/bridge/lumi_core_bridge.dart' as lumi_bridge;
 import '../../shared/bridge/receipt.dart';
 import '../transactions/widgets/transaction_card.dart';
+import '../../shared/widgets/glass_modal.dart';
 
 // Dev-only diagnostics screen that shows ping() result from Rust core.
 class DiagnosticsScreen extends StatefulWidget {
@@ -131,7 +132,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                   final amountCtrl = TextEditingController(text: _receiptData!.totalAmount.toString());
                   final currencyCtrl = TextEditingController(text: _receiptData!.currency);
 
-                  final saved = await showDialog<bool>(
+                  final saved = await showGlassDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(
                       title: const Text('Edit transaction'),

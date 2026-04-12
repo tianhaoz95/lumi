@@ -56,3 +56,42 @@ Future<T?> showGlassModalBottomSheet<T>({
     ),
   );
 }
+
+/// Helper to show a glassmorphism dialog (centered).
+Future<T?> showGlassDialog<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool barrierDismissible = true,
+  Color barrierColor = Colors.black54,
+  Duration transitionDuration = const Duration(milliseconds: 200),
+}) {
+  return showGeneralDialog<T>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: barrierColor,
+    transitionDuration: transitionDuration,
+    pageBuilder: (ctx, anim1, anim2) {
+      return SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: GlassModal(
+              child: builder(ctx),
+            ),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (ctx, anim, secAnim, child) {
+      final curved = Curves.easeOut.transform(anim.value);
+      return Opacity(
+        opacity: anim.value,
+        child: Transform.translate(
+          offset: Offset(0, (1 - curved) * 20),
+          child: child,
+        ),
+      );
+    },
+  );
+}
