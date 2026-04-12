@@ -38,7 +38,7 @@ class SettingsScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         decoration: BoxDecoration(
-                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7),
+                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7), // ignore: deprecated_member_use
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Row(
@@ -236,7 +236,7 @@ class _SettingsRow extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: LumiColors.primaryContainer.withOpacity(0.12),
+                    color: LumiColors.primaryContainer.withOpacity(0.12), // ignore: deprecated_member_use
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: LumiColors.primary),

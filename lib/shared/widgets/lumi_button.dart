@@ -59,7 +59,7 @@ class _LumiButtonState extends State<LumiButton> with SingleTickerProviderStateM
               borderRadius: BorderRadius.circular(LumiRadius.fullRadius),
               boxShadow: [
                 BoxShadow(
-                  color: LumiColors.onSurface.withOpacity(0.04),
+                  color: LumiColors.onSurface.withOpacity(0.04), // ignore: deprecated_member_use
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import 'dart:convert';
@@ -152,7 +151,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         decoration: BoxDecoration(
-                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7),
+                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7), // ignore: deprecated_member_use
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Row(
@@ -271,7 +270,7 @@ class _ChatArea extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                           decoration: BoxDecoration(
-                            color: LumiColors.primary.withOpacity(0.12),
+                            color: LumiColors.primary.withOpacity(0.12), // ignore: deprecated_member_use
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Row(

@@ -18,7 +18,7 @@ class FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = const Color(0xFFF5FAFC).withOpacity(0.7); // surface at 70%
+    final backgroundColor = const Color(0xFFF5FAFC).withOpacity(0.7); // ignore: deprecated_member_use // surface at 70%
 
     return Center(
       child: ConstrainedBox(
@@ -36,7 +36,7 @@ class FloatingNavBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF171C1E).withOpacity(0.05),
+                      color: const Color(0xFF171C1E).withOpacity(0.05), // ignore: deprecated_member_use
                       blurRadius: 40,
                       offset: const Offset(0, 12),
                     ),

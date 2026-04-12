@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'receipt.dart';
 import 'db.dart' as frb_db;
@@ -63,7 +62,7 @@ class LumiCoreBridge {
 
   /// Pass raw image bytes to the native Rust `process_receipt_image` via FRB/MethodChannel.
   /// Returns parsed ReceiptData on success or throws a descriptive exception.
-  static Future<ReceiptData> processReceiptImage(Uint8List imageBytes) async {
+  static Future<ReceiptData> processReceiptImage(List<int> imageBytes) async {
     try {
       final res = await _channel.invokeMethod<dynamic>(
           'process_receipt_image', <String, dynamic>{'bytes': imageBytes});

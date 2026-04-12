@@ -70,7 +70,7 @@ class _LumiSecondaryButtonState extends State<LumiSecondaryButton> {
                 child: Container(
                   padding: widget.padding,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.40),
+                    color: Colors.white.withOpacity(0.40), // ignore: deprecated_member_use
                     borderRadius: BorderRadius.circular(widget.radius),
                   ),
                   child: DefaultTextStyle(

@@ -28,7 +28,7 @@ class KitGhost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final iconColor = color ?? theme.colorScheme.onSurface.withOpacity(0.6);
+    final iconColor = color ?? theme.colorScheme.onSurface.withOpacity(0.6); // ignore: deprecated_member_use
 
     Widget icon = Icon(
       Icons.pets,

@@ -33,11 +33,11 @@ class LumiCard extends StatelessWidget {
             child: Container(
               padding: padding,
               decoration: BoxDecoration(
-                color: LumiColors.surfaceContainerLowest.withOpacity(0.70),
+                color: LumiColors.surfaceContainerLowest.withOpacity(0.70), // ignore: deprecated_member_use
                 borderRadius: BorderRadius.circular(radius),
                 boxShadow: [
                   BoxShadow(
-                    color: LumiColors.onSurface.withOpacity(0.04),
+                    color: LumiColors.onSurface.withOpacity(0.04), // ignore: deprecated_member_use
                     blurRadius: 40,
                     offset: const Offset(0, 12),
                   ),

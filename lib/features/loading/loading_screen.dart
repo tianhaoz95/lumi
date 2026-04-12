@@ -66,7 +66,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
               Icon(
                 Icons.ac_unit,
                 size: 96,
-                color: Theme.of(context).primaryColor.withOpacity(0.7),
+                color: Theme.of(context).primaryColor.withOpacity(0.7), // ignore: deprecated_member_use
               ),
               const SizedBox(height: 20),
               Text(

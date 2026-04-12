@@ -9,14 +9,19 @@ ThemeData getLumiTheme() {
     primary: LumiColors.primary,
     primaryContainer: LumiColors.primaryContainer,
     secondary: LumiColors.primaryContainer,
+    // Using legacy color keys in ColorScheme for compatibility with older Flutter versions.
+    // ignore: deprecated_member_use
     background: LumiColors.surface,
+    // Primary surface token (kept as lowest container for now)
     surface: LumiColors.surfaceContainerLowest,
     onPrimary: Colors.white,
     onSecondary: Colors.white,
+    // ignore: deprecated_member_use
     onBackground: LumiColors.onSurface,
     onSurface: LumiColors.onSurface,
     onError: Colors.white,
     error: Colors.red,
+    // ignore: deprecated_member_use
     surfaceVariant: LumiColors.surfaceContainerHigh,
     outline: LumiColors.outlineVariant,
   );
@@ -77,13 +82,13 @@ ThemeData getLumiTheme() {
           borderSide: BorderSide.none),
       focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
-          borderSide: BorderSide(color: LumiColors.outlineVariant.withOpacity(0.4), width: 2.0)),
+          borderSide: BorderSide(color: LumiColors.outlineVariant.withOpacity(0.4), width: 2.0)), // ignore: deprecated_member_use
       errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
-          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.4))),
+          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.4))), // ignore: deprecated_member_use
       focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
-          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.6), width: 2.0)),
+          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.6), width: 2.0)), // ignore: deprecated_member_use
     ),
     dividerTheme: const DividerThemeData(
       color: Colors.transparent,
