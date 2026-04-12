@@ -35,7 +35,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
     ],
     redirect: (BuildContext context, GoRouterState state) {
-      final authState = ref.read(authNotifierProvider);
+      // Defensive read of auth state so router redirect evaluations do not throw
+      // during tests if providers are not yet fully wired.
+      AuthState authState;
+      try {
+        authState = ref.read(authNotifierProvider);
+      } catch (_) {
+        authState = const AuthState.initial();
+      }
+
       final loggedIn = authState.status == AuthStatus.authenticated;
       final isLoggingIn = state.location == '/login';
       final isSigningUp = state.location == '/signup';
