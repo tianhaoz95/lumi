@@ -189,7 +189,7 @@
   - **Current Expenses**: `FinancialSummary.total_expenses`
   - **Working Hours**: future placeholder (not yet tracked; show `--`)
   - **Mileage Tracking**: `FinancialSummary.total_miles` + `estimated_deduction`
-- [ ] **4.1.2** Replace mock **Recent Activity** list with a live query: `query_transactions(limit: 5)`.
+- [x] **4.1.2** Replace mock **Recent Activity** list with a live query: `query_transactions(limit: 5)`.
 - [ ] **4.1.3** Add a pull-to-refresh gesture that re-queries the Rust core.
 
 **Tests:**
