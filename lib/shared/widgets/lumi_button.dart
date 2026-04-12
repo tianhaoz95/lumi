@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 
@@ -33,8 +34,7 @@ class _LumiButtonState extends State<LumiButton> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     final gradient = widget.gradient ?? LinearGradient(
       colors: [LumiColors.primary, LumiColors.primaryContainer],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      transform: GradientRotation(135 * math.pi / 180),
     );
 
     return MouseRegion(
