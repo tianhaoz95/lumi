@@ -11,7 +11,7 @@
 ### 1.1 Global Theme Completion
 
 - [x] **1.1.1** Audit every screen against the approved HTML mockups in `design/ui_design/`. File a task for each deviation (use the `design_debt` SQLite table below).
-- [ ] **1.1.2** Create `design_debt` SQLite table (dev-only, not shipped):
+- [x] **1.1.2** Create `design_debt` SQLite table (dev-only, not shipped):
   ```sql
   CREATE TABLE design_debt (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
