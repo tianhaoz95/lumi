@@ -55,7 +55,7 @@
 ### 1.3 Local Notifications
 
 - [x] **1.3.1** Add `flutter_local_notifications` to `pubspec.yaml`.
-- [ ] **1.3.2** Create `NotificationService` in `lib/features/sentinel/notification_service.dart`:
+- [x] **1.3.2** Create `NotificationService` in `lib/features/sentinel/notification_service.dart`:
   - `initialize()` — request permission, configure notification channels.
   - `showSentinelAlert(SentinelReport report)` — dispatches appropriate notification copy:
     - Untagged: *"You have 3 untagged transactions. Tap to review with Lumi."*

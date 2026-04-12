@@ -88,4 +88,42 @@ class NotificationService {
 
     await _plugin.show(9002, title, body, NotificationDetails(android: androidDetails), payload: payload);
   }
+
+  // Exposed helper to build the sentinel notification body (useful for unit tests)
+  String buildSentinelBody(Map<String, dynamic> report) {
+    final int untagged = (report['untagged_count'] is int) ? report['untagged_count'] as int : (report['untagged_count'] is num ? (report['untagged_count'] as num).toInt() : 0);
+    final int missing = (report['missing_days'] is List) ? (report['missing_days'] as List).length : 0;
+    final int incomplete = (report['incomplete_mileage'] is List) ? (report['incomplete_mileage'] as List).length : 0;
+
+    final List<String> parts = [];
+    if (untagged > 0) parts.add('$untagged untagged transaction${untagged==1? '':'s'}');
+    if (missing > 0) parts.add('$missing missing day${missing==1? '':'s'}');
+    if (incomplete > 0) parts.add('$incomplete incomplete mileage log${incomplete==1? '':'s'}');
+
+    return parts.isNotEmpty ? parts.join('; ') : 'No issues detected.';
+  }
+
+  // Exposed helper to build the sentinel notification title
+  String buildSentinelTitle(Map<String, dynamic> report) {
+    final body = buildSentinelBody(report);
+    return body == 'No issues detected.' ? 'Lumi: Scan complete' : 'Lumi: Action needed';
+  }
+
+  /// Parse a notification payload JSON and return a routing map suitable for deep-link handling.
+  /// Returns: { 'route': String, 'params': Map<String,dynamic>? }
+  static Map<String, dynamic> parsePayloadToRoute(String payloadJson) {
+    try {
+      final Map<String, dynamic> payload = jsonDecode(payloadJson) as Map<String, dynamic>;
+      final String? type = payload['type'] as String?;
+      if (type == 'sentinel') {
+        return {'route': '/dashboard', 'params': null};
+      } else if (type == 'geofence') {
+        final String vendor = payload['vendor'] as String? ?? '';
+        return {'route': '/home', 'params': {'openCamera': true, 'vendor': vendor}};
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[NotificationService] parsePayloadToRoute failed: $e');
+    }
+    return {'route': '/', 'params': null};
+  }
 }
