@@ -216,7 +216,7 @@
 ### 4.3 Chat — Context-Aware Responses
 
 - [x] **4.3.1** Update `HomeScreen` to use `agent_chat()` (Rig-backed) instead of raw `infer_stream()`.
-- [ ] **4.3.2** When the agent calls a tool and returns data, render the result as an **InsightCard** in the chat:
+- [x] **4.3.2** When the agent calls a tool and returns data, render the result as an **InsightCard** in the chat:
   - A `LumiCard`-styled widget with a summary table or chart.
   - For `get_summary` results: mini bar chart of top spending categories.
   - For `query_transactions` results: compact `TransactionCard` list.

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
+import 'dart:convert';
 
 import '../../core/theme.dart';
 import '../../shared/widgets/atmospheric_background.dart';
@@ -14,6 +15,7 @@ import '../../widgets/floating_nav_bar.dart';
 import '../../shared/chat/chat_service.dart';
 import '../../shared/chat/chat_providers.dart';
 import '../../core/model_router.dart';
+import '../chat/widgets/insight_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -293,7 +295,19 @@ class _ChatArea extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(child: Text(m.text, style: TextStyle(color: textColor))),
+                      Flexible(
+                        child: Builder(builder: (context) {
+                          try {
+                            final parsed = jsonDecode(m.text);
+                            if (parsed is Map && parsed.containsKey('insight_type')) {
+                              return InsightCard.fromMap(Map<String, dynamic>.from(parsed));
+                            }
+                          } catch (_) {
+                            // not JSON — fall through to plain text
+                          }
+                          return Text(m.text, style: TextStyle(color: textColor));
+                        }),
+                      ),
                       if (m.isStreaming) ...[
                         const SizedBox(width: 8),
                         // breathing dot
