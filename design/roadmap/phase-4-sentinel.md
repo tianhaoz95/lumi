@@ -105,7 +105,7 @@
   - `add_vendor_fence(name, lat, lng) -> Result<String>` — inserts and returns ID.
   - `get_all_fences() -> Result<Vec<VendorFence>>` — returns all registered fences.
   - `increment_visit(fence_id: String)` — updates `visit_count` and `last_visited`.
-- [ ] **2.2.3** On app start, call `get_all_fences()` and register all with `GeofenceService`.
+- [x] **2.2.3** On app start, call `get_all_fences()` and register all with `GeofenceService`.
 - [ ] **2.2.4** Allow users to add fences manually from Settings → "Known Locations" (placeholder UI in Phase 4; full UI in Phase 5).
 
 **Tests:**

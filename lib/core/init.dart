@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
+import '../features/sentinel/geofence_service.dart';
 import '../shared/bridge/lumi_core_bridge.dart';
 import '../shared/bridge/frb_generated.dart';
 import '../shared/bridge/inference.dart';
@@ -48,6 +50,40 @@ Future<void> initializeApp() async {
 
     // Initialize on-device DB
     await LumiCoreBridge.dbInit(dbPath);
+
+    // Load and register vendor fences from the native DB so geofences are active at app start.
+    try {
+      // Ensure GeofenceService is initialized and listening for geofence events.
+      await GeofenceService.instance.initialize();
+
+      // Ask native core for all fences. If FRB binding isn't available, this may throw; fail quietly.
+      try {
+        final List<dynamic>? res = await MethodChannel('lumi_core_bridge').invokeMethod<List<dynamic>>('get_all_fences');
+        if (res != null) {
+          for (final item in res) {
+            if (item is Map) {
+              final fence = VendorFence(
+                id: (item['id'] ?? item['vendor_id'] ?? '') as String,
+                vendorName: (item['vendor_name'] ?? item['vendorName'] ?? '') as String,
+                lat: (item['lat'] as num?)?.toDouble() ?? 0.0,
+                lng: (item['lng'] as num?)?.toDouble() ?? 0.0,
+                radiusMeters: (item['radius_meters'] as num?)?.toDouble() ?? 150.0,
+              );
+              try {
+                await GeofenceService.instance.addFence(fence);
+              } catch (e) {
+                stderr.writeln('Geofence addFence failed for ${fence.vendorName}: $e');
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Non-fatal: native binding may not expose get_all_fences via MethodChannel; log for reviewer.
+        stderr.writeln('get_all_fences invocation failed (non-fatal): $e');
+      }
+    } catch (e) {
+      stderr.writeln('Geofence registration at startup failed (non-fatal): $e');
+    }
 
     // Initialize local inference model (Phase 2) — start asynchronously so tests and UI won't block.
     // Fire-and-forget: load model in background and log errors, but don't await here to avoid blocking initialization.
