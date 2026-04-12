@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:lumi/core/colors.dart';
 
@@ -88,26 +89,44 @@ class _Orb extends StatelessWidget {
 }
 
 class _GrainPainter extends CustomPainter {
-  static const int _seed = 12345;
+  static const int _seed = atmosphericGrainSeed;
+  // Cache pictures per integer-sized key (width<<16 | height) to avoid expensive per-frame draws.
+  static final Map<int, ui.Picture> _grainCache = {};
   const _GrainPainter();
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = LumiColors.onSurface.withOpacity(atmosphericGrainOpacity); // ignore: deprecated_member_use
+  ui.Picture _buildPicture(Size size) {
+    final int key = (size.width.toInt() << 16) | size.height.toInt();
+    final cached = _grainCache[key];
+    if (cached != null) return cached;
+
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final paint = Paint()..color = LumiColors.onSurface.withOpacity(atmosphericGrainOpacity);
     final rand = Random(_seed);
-    // Number of grains scaled by area, clamped for performance
-    final total = (size.width * size.height / 2000).clamp(100, 600).toInt();
+    final total = computeGrainTotal(size);
     for (int i = 0; i < total; i++) {
       final x = rand.nextDouble() * size.width;
       final y = rand.nextDouble() * size.height;
-      // Draw a 1x1 rect for a grain dot
       canvas.drawRect(Rect.fromLTWH(x, y, 1.0, 1.0), paint);
     }
+
+    final picture = recorder.endRecording();
+    _grainCache[key] = picture;
+    return picture;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final picture = _buildPicture(size);
+    canvas.drawPicture(picture);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+// Expose a debug helper so tests can assert the cache is being populated.
+int getAtmosphericGrainCacheSize() => _GrainPainter._grainCache.length;
 
 // Public helpers for testing and verification
 int computeGrainTotal(Size size) => (size.width * size.height / 2000).clamp(100, 600).toInt();

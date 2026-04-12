@@ -16,7 +16,7 @@ fi
 
 echo "Starting profile run on device $device"
 # Run app in profile mode and capture trace-skia output.
-tracefile="$outdir/grain_perf_trace.json"
+tracefile="$outdir/grain_perf.timeline"
 logfile="$outdir/grain_perf.log"
 
 # Run flutter with trace-skia enabled; user should exercise the app (scroll dashboard, trigger animations)
@@ -34,7 +34,7 @@ sleep 2
 if grep -q "Timeline" "$logfile"; then
   echo "Trace output detected in log. Copying to $tracefile"
   # extract approximate trace snippets (best-effort)
-  grep -n "TraceEvent" -n "$logfile" > "$tracefile" || true
+  grep "TraceEvent" "$logfile" > "$tracefile" || true
 else
   echo "No trace found in log. Please use Flutter DevTools Timeline to capture a full profile."
 fi
