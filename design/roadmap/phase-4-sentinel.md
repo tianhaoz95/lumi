@@ -106,7 +106,7 @@
   - `get_all_fences() -> Result<Vec<VendorFence>>` — returns all registered fences.
   - `increment_visit(fence_id: String)` — updates `visit_count` and `last_visited`.
 - [x] **2.2.3** On app start, call `get_all_fences()` and register all with `GeofenceService`.
-- [ ] **2.2.4** Allow users to add fences manually from Settings → "Known Locations" (placeholder UI in Phase 4; full UI in Phase 5).
+- [x] **2.2.4** Allow users to add fences manually from Settings → "Known Locations" (placeholder UI in Phase 4; full UI in Phase 5).
 
 **Tests:**
 - Rust unit test: `add_vendor_fence` inserts correctly and returns a non-empty ID.

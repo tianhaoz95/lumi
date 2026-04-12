@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../shared/widgets/atmospheric_background.dart';
+import '../../features/sentinel/known_locations.dart';
 import '../../features/auth/auth_notifier.dart';
 
 /// Settings screen implemented to match design/ui_design/settings/code.html
@@ -172,6 +173,14 @@ class SettingsScreen extends ConsumerWidget {
                                   child: const Text('3 New', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                                 ),
                                 onTap: () {},
+                              ),
+                              const SizedBox(height: 8),
+                              _SettingsRow(
+                                icon: Icons.location_on,
+                                label: 'Known Locations',
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const KnownLocationsScreen()));
+                                },
                               ),
                             ],
                           ),

@@ -128,4 +128,16 @@ class LumiCoreBridge {
   static Future<frb_tools.FinancialSummary> getSummary(String period) async {
     return await frb_tools.getSummary(period: period);
   }
+
+  /// Add a vendor fence via native bridge. Returns the inserted fence ID.
+  static Future<String> addVendorFence(String name, double lat, double lng) async {
+    try {
+      final res = await _channel.invokeMethod<dynamic>('add_vendor_fence', <String, dynamic>{'name': name, 'lat': lat, 'lng': lng});
+      if (res is String) return res;
+      if (res is Map && res['id'] != null) return res['id'] as String;
+      return res.toString();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -332,3 +332,20 @@ Notes:
 - App Store review may require a more detailed justification string; reviewer may request edits to the description for policy compliance.
 - Runtime permission prompts still need implementation in Dart for full UX (separate task).
 
+---
+
+Actions performed (2026-04-12T16:30:00Z):
+
+1. Implemented placeholder Known Locations UI at lib/features/sentinel/known_locations.dart: a simple form (name, latitude, longitude, radius) with an Add button that calls LumiCoreBridge.addVendorFence.
+2. Added LumiCoreBridge.addVendorFence to lib/shared/bridge/lumi_core_bridge.dart which invokes MethodChannel 'lumi_core_bridge' with method 'add_vendor_fence' and returns the inserted ID string.
+3. Updated lib/features/settings/settings.dart to add a 'Known Locations' row that navigates to KnownLocationsScreen.
+4. Marked roadmap task 2.2.4 as complete in design/roadmap/phase-4-sentinel.md.
+
+Verifiable deliverables:
+- File lib/features/sentinel/known_locations.dart exists and declares KnownLocationsScreen with a functional Add button.
+- lib/shared/bridge/lumi_core_bridge.dart contains addVendorFence method and invokeMethod('add_vendor_fence') usage.
+- lib/features/settings/settings.dart references KnownLocationsScreen and contains a row labeled 'Known Locations'.
+- design/roadmap/phase-4-sentinel.md shows 2.2.4 checked (- [x]).
+
+Timestamp: 2026-04-12T16:30:00Z
+
