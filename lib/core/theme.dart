@@ -92,9 +92,20 @@ ThemeData getLumiTheme() {
       filled: true,
       fillColor: LumiColors.surfaceContainerHigh,
       border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius)),
+          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+          borderSide: BorderSide.none),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+          borderSide: BorderSide.none),
       focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0x66BEC8C9))),
+          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+          borderSide: BorderSide(color: LumiColors.outlineVariant.withOpacity(0.4), width: 2.0)),
+      errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.4))),
+      focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+          borderSide: BorderSide(color: colorScheme.error.withOpacity(0.6), width: 2.0)),
     ),
     dividerTheme: const DividerThemeData(
       color: Colors.transparent,
