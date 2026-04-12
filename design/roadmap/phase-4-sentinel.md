@@ -89,7 +89,7 @@
 
 ### 2.2 Vendor Fence Registry
 
-- [ ] **2.2.1** Add a `vendor_fences` table to SQLite schema (migration):
+- [x] **2.2.1** Add a `vendor_fences` table to SQLite schema (migration):
   ```sql
   CREATE TABLE vendor_fences (
     id TEXT PRIMARY KEY,

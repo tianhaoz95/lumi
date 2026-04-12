@@ -82,6 +82,23 @@ pub async fn db_init_with_pool(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await?;
 
+    // vendor_fences table: registry of known vendor geofences
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS vendor_fences (
+            id TEXT PRIMARY KEY,
+            vendor_name TEXT NOT NULL,
+            lat REAL NOT NULL,
+            lng REAL NOT NULL,
+            radius_meters REAL NOT NULL DEFAULT 150.0,
+            visit_count INTEGER DEFAULT 0,
+            last_visited TEXT
+        );
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     Ok(())
 }
 

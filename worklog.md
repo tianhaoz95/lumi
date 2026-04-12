@@ -198,6 +198,21 @@ Notes & manual verification steps (reviewer):
 Actions performed (2026-04-12T15:26:28Z):
 
 1. Implemented Rust `run_sentinel_scan()` and exposed it as a rig tool (rig_macros::tool). Added sentinel.rs with SentinelReport struct and run_sentinel_scan runner.
+
+## Current Task: Add vendor_fences table to SQLite schema (Phase 4 — Sentinel)
+
+Actions performed:
+
+1. Updated `rust/lumi_core/src/db.rs` to create `vendor_fences` table in `db_init_with_pool`.
+2. Built the Rust crate: `cd rust/lumi_core && cargo build` (succeeded).
+3. Updated `design/roadmap/phase-4-sentinel.md` to mark 2.2.1 as done.
+
+Verifiable deliverables (this run):
+- `rust/lumi_core/src/db.rs` contains `CREATE TABLE IF NOT EXISTS vendor_fences`.
+- `cargo build` in `rust/lumi_core` exited with code 0.
+- `design/roadmap/phase-4-sentinel.md` shows 2.2.1 as `- [x]`.
+
+Timestamp: 2026-04-12T16:17:54Z
 2. Updated Dart `lib/features/sentinel/background_guard.dart` to attempt invoking `run_sentinel_scan` via the existing `lumi_core_bridge` MethodChannel and log results for reviewer verification.
 3. Ran `cargo test --lib` in `rust/lumi_core` — all unit tests passed (52 tests).
 
@@ -301,4 +316,19 @@ Verifiable deliverables added/validated in this run:
 - Running `flutter analyze --no-pub` exits with code 0 (no analyzer issues).
 
 Notes: Runtime permission requests (prompting the user at app runtime) are still required for ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION and for ACCESS_BACKGROUND_LOCATION on Android 10+. This change only adds the manifest entries required for geofence behavior. If desired, a follow-up task can implement an in-app permission request flow that explains background location usage and requests permissions at runtime (handling the Play Store policy flow for background location).
+
+Actions performed (2026-04-12T16:10:00Z):
+
+1. Implemented Phase 4 — Geofencing iOS Info.plist entries (2.1.3):
+   - Added `NSLocationWhenInUseUsageDescription` and `NSLocationAlwaysAndWhenInUseUsageDescription` to `ios/Runner/Info.plist` with user-facing explanatory strings describing on-device background location usage for vendor detection.
+2. Updated roadmap: marked 2.1.3 as completed in design/roadmap/phase-4-sentinel.md.
+
+Verifiable deliverables:
+- ios/Runner/Info.plist contains NSLocationWhenInUseUsageDescription and NSLocationAlwaysAndWhenInUseUsageDescription.
+- design/roadmap/phase-4-sentinel.md shows 2.1.3 marked done (- [x]).
+- Running `flutter pub get && flutter analyze --no-pub` exits with code 0.
+
+Notes:
+- App Store review may require a more detailed justification string; reviewer may request edits to the description for policy compliance.
+- Runtime permission prompts still need implementation in Dart for full UX (separate task).
 
