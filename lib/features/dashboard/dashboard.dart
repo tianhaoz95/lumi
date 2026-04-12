@@ -17,6 +17,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  static const double kRecentActivityVerticalSpacing = 24.0;
+
   FinancialSummary? _summary;
   bool _loading = false;
   List<TransactionSummary>? _recentTransactions;
@@ -126,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _recentTransactions!.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    separatorBuilder: (_, __) => SizedBox(height: kRecentActivityVerticalSpacing),
                     itemBuilder: (context, index) {
                       final t = _recentTransactions![index];
                       // Simple category -> icon mapping
@@ -149,6 +151,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       final amountText = (t.amount >= 0) ? '+\$${t.amount.toStringAsFixed(2)}' : '-\$${t.amount.abs().toStringAsFixed(2)}';
 
                       return LumiCard(
+                        opacity: index.isEven ? 0.70 : 0.85,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

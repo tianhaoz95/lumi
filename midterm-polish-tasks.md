@@ -43,7 +43,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 - [x] **Metrics Cards**:
     - [x] Replace standard cards with Glassmorphism containers if floating.
     - [x] Ensure tonal shifts (`surface` vs `surface-container-low`) provide structure without borders.
-- [ ] **Recent Activity**:
+- [x] **Recent Activity**:
     - [ ] Increase vertical spacing between items to 1.5rem–2rem.
     - [ ] Implement alternating backgrounds for list items.
 
