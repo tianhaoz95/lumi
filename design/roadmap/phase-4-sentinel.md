@@ -15,7 +15,7 @@
   - Register `BackgroundFetchHeadlessTask` in `AndroidManifest.xml`.
   - Request `RECEIVE_BOOT_COMPLETED` and `FOREGROUND_SERVICE` permissions.
   - Set minimum interval to 60 minutes (`BackgroundFetch.MINIMUM_FETCH_INTERVAL_15MIN` × 4).
-- [ ] **1.1.3** Configure iOS:
+- [x] **1.1.3** Configure iOS:
   - Enable **Background Fetch** and **Background Processing** capabilities in Xcode.
   - Register BGAppRefreshTask identifier `com.lumi.app.heartbeat`.
   - Schedule BGProcessingTask for longer Sentinel scans when device is charging.

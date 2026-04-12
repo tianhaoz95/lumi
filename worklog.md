@@ -150,3 +150,32 @@ Reviewer actions: please inspect `build/visual_audit/test.png` to verify Impelle
 
 ---
 
+Actions performed (2026-04-12T15:15:00Z):
+
+1. Verified AtmosphericBackground visual overlay via widget test:
+   - Command: `flutter test test/widgets/atmospheric_background_test.dart`
+   - Result: All tests passed (exit code 0).
+2. Confirmed `lib/shared/widgets/atmospheric_background.dart` exists and the widget test asserts presence of `CustomPaint` grain overlay and `Opacity` orbs.
+
+Reviewer note: The automated widget test verifies the overlay; for a physical-device visual audit, please run `./scripts/visual_audit_android.sh` and inspect `build/visual_audit/*.png` as previously described.
+
+---
+
+Actions performed (2026-04-12T15:16:00Z):
+
+1. Implemented iOS background task configuration for Phase 4 Sentinel (1.1.3):
+   - Updated `ios/Runner/Info.plist` to include `UIBackgroundModes` (fetch) and `BGTaskSchedulerPermittedIdentifiers` with `com.lumi.app.heartbeat`.
+   - Modified `ios/Runner/AppDelegate.swift` to import `BackgroundTasks`, register `com.lumi.app.heartbeat` and add handlers for `BGAppRefreshTask` and `BGProcessingTask`.
+   - Added Dart scaffold `lib/features/sentinel/background_guard.dart` (initialize, onHeartbeat) to provide the Flutter-side callback surface.
+2. Verified presence of changes:
+   - `ios/Runner/Info.plist` contains `com.lumi.app.heartbeat`.
+   - `ios/Runner/AppDelegate.swift` contains BGTask registration and scheduling code.
+   - `lib/features/sentinel/background_guard.dart` exists and provides `initialize` and `onHeartbeat` stubs.
+
+Notes & Next steps:
+- Xcode: enable Background Fetch and Background Processing capabilities in the Runner target (Capabilities tab) to fully activate BGProcessing in device builds.
+- Native → Dart bridge: a MethodChannel or FRB hook should be added later to invoke `BackgroundGuard.onHeartbeat()` from native handlers; placeholders were left in the Swift handlers.
+
+---
+
+
