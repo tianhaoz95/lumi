@@ -5,7 +5,7 @@ This task list outlines the steps to stabilize Project Lumi's core functionality
 ## 1. Stabilize Core: E2E Integration Testing
 Establish a "Golden Path" test to ensure the app is functional from first launch to data entry.
 
-- [ ] **Create `integration_test/golden_path_test.dart`**:
+- [x] **Create `integration_test/golden_path_test.dart`**:
     - [ ] **Onboarding/SignUp**: User creates a new account.
     - [ ] **Login**: User logs in with existing credentials.
     - [ ] **Dashboard Load**: Verify summary cards and recent activity appear.
