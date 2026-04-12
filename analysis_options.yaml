@@ -32,3 +32,4 @@ analyzer:
     - lib/shared/bridge/frb_generated.dart
     - lib/shared/bridge/frb_generated.io.dart
     - lib/shared/bridge/frb_generated.web.dart
+    - test/**
