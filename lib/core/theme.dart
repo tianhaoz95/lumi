@@ -62,12 +62,15 @@ ThemeData getLumiTheme() {
     colorScheme: colorScheme,
     primaryColor: LumiColors.primary,
     scaffoldBackgroundColor: LumiColors.surface,
+    // Default body/label fontFamily is Inter. Headline/display/title styles explicitly use Manrope via GoogleFonts above.
+    fontFamily: 'Inter',
     textTheme: textTheme,
+    primaryTextTheme: textTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-        // Use Manrope via google_fonts to ensure the font is loaded correctly.
+        // Use Manrope via google_fonts to ensure the font is loaded correctly for prominent buttons.
         textStyle: GoogleFonts.manrope(fontWeight: FontWeight.w600),
       ),
     ),

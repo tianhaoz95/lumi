@@ -21,7 +21,7 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
 Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
 
 - [x] **Typography**: 
-    - [ ] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
+    - [x] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
     - [ ] Set `lineHeight` to `1.6` for all body and label styles.
     - [ ] Implement the "High-Low" pairing (extreme scale contrast).
 - [ ] **Button Theming**:
