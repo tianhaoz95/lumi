@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/features/auth/sign_up_screen.dart';
-import 'package:lumi/features/home/home.dart';
+import 'package:lumi/features/auth/auth_notifier.dart';
+import 'package:lumi/features/auth/appwrite_service.dart';
+
+class FakeAccountSuccess {
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+  }
+  Future<void> create({required String userId, required String email, required String password, String? name}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+  }
+}
 
 void main() {
-  testWidgets('On successful sign up auto-navigates to HomeScreen', (WidgetTester tester) async {
-    var called = false;
+  testWidgets('On successful sign up auto-login succeeds', (WidgetTester tester) async {
+    final svc = AppwriteService.instance;
+    svc.setAccountForTest(FakeAccountSuccess());
 
-    Future<void> fakeOnSignUp(String name, String email, String password) async {
-      called = true;
-      // simulate network latency
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-    }
-
-    await tester.pumpWidget(MaterialApp(home: SignUpScreen(onSignUp: fakeOnSignUp)));
+    await tester.pumpWidget(const ProviderScope(
+      child: MaterialApp(
+        home: SignUpScreen(),
+      ),
+    ));
 
     // Fill valid fields
     await tester.enterText(find.byKey(const Key('name_field')), 'Test User');
@@ -24,10 +34,14 @@ void main() {
 
     // Tap sign up
     await tester.tap(find.byKey(const Key('signup_button')));
+    // Wait for the async operation
+    await tester.pump(); // Start loading
+    await tester.pump(const Duration(milliseconds: 100)); // Finish loading
     await tester.pumpAndSettle();
 
-    expect(called, isTrue);
-    // HomeScreen builds a Center with Text('Home') per implementation.
-    expect(find.text('Home'), findsOneWidget);
+    // Verify that the state is now authenticated (via the provider)
+    final BuildContext context = tester.element(find.byType(SignUpScreen));
+    final container = ProviderScope.containerOf(context);
+    expect(container.read(authNotifierProvider).status, AuthStatus.authenticated);
   });
 }

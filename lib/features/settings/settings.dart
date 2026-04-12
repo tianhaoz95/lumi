@@ -1,23 +1,25 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../shared/widgets/atmospheric_background.dart';
-import '../../features/auth/appwrite_service.dart';
+import '../../features/auth/auth_notifier.dart';
 
 /// Settings screen implemented to match design/ui_design/settings/code.html
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
-  void _onLogout(BuildContext context) async {
-    // Attempt to logout via AppwriteService and navigate to login route.
-    await AppwriteService.instance.logout();
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  void _onLogout(BuildContext context, WidgetRef ref) async {
+    // Attempt to logout via AuthNotifier.
+    await ref.read(authNotifierProvider.notifier).logout();
+    // GoRouter will handle redirection via auth state change.
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: LumiColors.surface,
       body: Stack(
@@ -43,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.arrow_back),
-                              onPressed: () => Navigator.of(context).pop(),
+                              onPressed: () => context.pop(),
                               tooltip: 'Back',
                             ),
                             Expanded(
@@ -166,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: OutlinedButton.icon(
-                                onPressed: () => _onLogout(context),
+                                onPressed: () => _onLogout(context, ref),
                                 icon: const Icon(Icons.logout),
                                 label: const Text('Log Out'),
                                 style: OutlinedButton.styleFrom(

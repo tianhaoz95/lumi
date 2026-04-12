@@ -13,6 +13,7 @@ class LumiTextField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String>? validator;
   final TextInputType keyboardType;
+  final bool enabled;
 
   const LumiTextField({
     Key? key,
@@ -23,6 +24,7 @@ class LumiTextField extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.keyboardType = TextInputType.text,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class LumiTextField extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       keyboardType: keyboardType,
+      enabled: enabled,
       decoration: InputDecoration(
         prefixIcon: leading,
         hintText: hintText,

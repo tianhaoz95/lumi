@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/features/auth/login_screen.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
+import 'package:lumi/features/auth/auth_notifier.dart';
 
-// Existing validation test for onLogin callback
 void main() {
-  testWidgets('LoginScreen validates and calls onLogin', (WidgetTester tester) async {
-    String? capturedEmail;
-    String? capturedPassword;
-
-    await tester.pumpWidget(MaterialApp(
-      home: LoginScreen(
-        onLogin: (email, password) {
-          capturedEmail = email;
-          capturedPassword = password;
-        },
+  testWidgets('LoginScreen validates fields', (WidgetTester tester) async {
+    await tester.pumpWidget(const ProviderScope(
+      child: MaterialApp(
+        home: LoginScreen(),
       ),
     ));
 
@@ -24,27 +19,20 @@ void main() {
     await tester.tap(find.byKey(const Key('login_button')));
     await tester.pumpAndSettle();
 
-    // Should not call onLogin because validation fails
-    expect(capturedEmail, isNull);
-    expect(capturedPassword, isNull);
-
-    // Enter valid values
-    await tester.enterText(find.byKey(const Key('email_field')), 'test@lumi.com');
-    await tester.enterText(find.byKey(const Key('password_field')), 'VerySecret123');
-    await tester.tap(find.byKey(const Key('login_button')));
-    await tester.pumpAndSettle();
-
-    expect(capturedEmail, 'test@lumi.com');
-    expect(capturedPassword, 'VerySecret123');
+    expect(find.text('Enter a valid email'), findsOneWidget);
+    expect(find.text('Password must be at least 8 characters'), findsOneWidget);
   });
 
-  // New tests: success and failure flows using AppwriteService injection
   group('Login flow with AppwriteService', () {
-    testWidgets('Login success navigates to HomeScreen', (WidgetTester tester) async {
-      // Arrange: inject fake success account
-      AppwriteService.instance.setAccountForTest(_FakeAccountSuccess());
+    testWidgets('Login success sets authenticated state', (WidgetTester tester) async {
+      final svc = AppwriteService.instance;
+      svc.setAccountForTest(_FakeAccountSuccess());
 
-      await tester.pumpWidget(MaterialApp(home: LoginScreen()));
+      await tester.pumpWidget(const ProviderScope(
+        child: MaterialApp(
+          home: LoginScreen(),
+        ),
+      ));
 
       // Enter valid email/password
       await tester.enterText(find.byKey(const Key('email_field')), 'test@lumi.com');
@@ -52,22 +40,31 @@ void main() {
 
       // Tap login button
       await tester.tap(find.byKey(const Key('login_button')));
+      await tester.pump(); // Start loading
+      await tester.pump(const Duration(milliseconds: 100)); // Finish loading
       await tester.pumpAndSettle();
 
-      // Assert: HomeScreen content is shown
-      expect(find.text('Home'), findsOneWidget);
+      final BuildContext context = tester.element(find.byType(LoginScreen));
+      final container = ProviderScope.containerOf(context);
+      expect(container.read(authNotifierProvider).status, AuthStatus.authenticated);
     });
 
     testWidgets('Login failure shows snackbar', (WidgetTester tester) async {
-      AppwriteService.instance.setAccountForTest(_FakeAccountFail());
+      final svc = AppwriteService.instance;
+      svc.setAccountForTest(_FakeAccountFail());
 
-      await tester.pumpWidget(MaterialApp(home: LoginScreen()));
+      await tester.pumpWidget(const ProviderScope(
+        child: MaterialApp(
+          home: LoginScreen(),
+        ),
+      ));
 
       await tester.enterText(find.byKey(const Key('email_field')), 'bad@lumi.com');
       await tester.enterText(find.byKey(const Key('password_field')), 'badpass12');
 
       await tester.tap(find.byKey(const Key('login_button')));
-      // Allow async tasks to complete and show snackbar
+      await tester.pump(); // Start loading
+      await tester.pump(const Duration(milliseconds: 100)); // Finish loading
       await tester.pumpAndSettle();
 
       expect(find.byType(SnackBar), findsOneWidget);
@@ -78,13 +75,14 @@ void main() {
 
 // Fake account implementations
 class _FakeAccountSuccess {
-  Future<void> createSession({required String email, required String password}) async {
-    return Future<void>.value();
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
   }
 }
 
 class _FakeAccountFail {
-  Future<void> createSession({required String email, required String password}) async {
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     throw Exception('Invalid credentials');
   }
 }

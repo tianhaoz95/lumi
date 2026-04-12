@@ -33,6 +33,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> signup(String name, String email, String password) async {
+    state = const AuthState.loading();
+    try {
+      await AppwriteService.instance.signup(name, email, password);
+      await AppwriteService.instance.login(email, password);
+      state = const AuthState.authenticated();
+    } catch (e) {
+      state = AuthState.error(e?.toString() ?? 'Unknown error');
+    }
+  }
+
   Future<void> logout() async {
     state = const AuthState.loading();
     try {

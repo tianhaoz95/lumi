@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/core/theme.dart';
 import 'package:lumi/features/dashboard/dashboard.dart';
 
 void main() {
   testWidgets('bento grid renders 3 columns on wide viewport', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: getLumiTheme(),
-      home: Center(
-        child: SizedBox(
-          width: 1200,
-          child: MediaQuery(
-            data: const MediaQueryData(size: Size(1200, 800)),
-            child: const DashboardScreen(),
+    await tester.pumpWidget(const ProviderScope(
+      child: MaterialApp(
+        home: Center(
+          child: SizedBox(
+            width: 1200,
+            child: MediaQuery(
+              data: MediaQueryData(size: Size(1200, 800)),
+              child: DashboardScreen(),
+            ),
           ),
         ),
       ),
@@ -31,14 +33,15 @@ void main() {
   });
 
   testWidgets('bento grid renders 1 column on narrow viewport', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: getLumiTheme(),
-      home: Center(
-        child: SizedBox(
-          width: 320,
-          child: MediaQuery(
-            data: const MediaQueryData(size: Size(320, 800)),
-            child: const DashboardScreen(),
+    await tester.pumpWidget(const ProviderScope(
+      child: MaterialApp(
+        home: Center(
+          child: SizedBox(
+            width: 320,
+            child: MediaQuery(
+              data: MediaQueryData(size: Size(320, 800)),
+              child: DashboardScreen(),
+            ),
           ),
         ),
       ),

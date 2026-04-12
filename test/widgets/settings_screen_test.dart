@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/features/settings/settings.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
+import 'package:lumi/features/auth/auth_notifier.dart';
 
 class _FakeAccount {
   bool deleted = false;
-  Future<void> deleteSession(String id) async {
+  Future<void> deleteSession({required String sessionId}) async {
     deleted = true;
   }
 }
@@ -16,11 +18,10 @@ void main() {
     final fake = _FakeAccount();
     AppwriteService.instance.setAccountForTest(fake);
 
-    await tester.pumpWidget(MaterialApp(
-      routes: {
-        '/login': (_) => const Scaffold(body: Center(child: Text('Login'))),
-      },
-      home: const SettingsScreen(),
+    await tester.pumpWidget(const ProviderScope(
+      child: MaterialApp(
+        home: SettingsScreen(),
+      ),
     ));
 
     await tester.pumpAndSettle();
@@ -35,12 +36,16 @@ void main() {
     final logoutFinder = find.widgetWithIcon(OutlinedButton, Icons.logout);
     expect(logoutFinder, findsOneWidget);
     await tester.tap(logoutFinder);
+    await tester.pump(); // Start logout
+    await tester.pump(const Duration(milliseconds: 100)); // Finish logout
     await tester.pumpAndSettle();
 
     // fake account should have deleted session
     expect(fake.deleted, isTrue);
-
-    // Navigator should have pushed to /login (replaced)
-    expect(find.text('Login'), findsOneWidget);
+    
+    // Auth state should be initial
+    final BuildContext context = tester.element(find.byType(SettingsScreen));
+    final container = ProviderScope.containerOf(context);
+    expect(container.read(authNotifierProvider).status, AuthStatus.initial);
   });
 }

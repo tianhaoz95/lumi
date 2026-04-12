@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
-import '../home/home.dart';
-import 'package:lumi/features/auth/appwrite_service.dart';
+import 'auth_notifier.dart';
 
 /// SignUpScreen
 /// - Matches design/ui_design/sign_up/code.html (structure & spacing)
 /// - Fields: Full Name, Email, Password, Terms checkbox
-/// - Exposes an [onSignUp] callback for higher-layer implementation (AppwriteService)
-class SignUpScreen extends StatefulWidget {
-  final Future<void> Function(String name, String email, String password)? onSignUp;
-
-  const SignUpScreen({Key? key, this.onSignUp}) : super(key: key);
+class SignUpScreen extends ConsumerStatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _submitting = false;
   bool _termsChecked = false;
 
   @override
@@ -52,7 +49,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   bool get _canSubmit {
-    // Enable CTA only when terms are checked and basic non-empty checks pass
     return _termsChecked &&
         _nameController.text.trim().isNotEmpty &&
         _emailController.text.trim().isNotEmpty &&
@@ -64,60 +60,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (form == null) return;
     if (!form.validate()) return;
     if (!_termsChecked) return;
-    setState(() => _submitting = true);
-    try {
-      final name = _nameController.text.trim();
-      final email = _emailController.text.trim();
-      final password = _passwordController.text;
 
-      if (widget.onSignUp != null) {
-        await widget.onSignUp!(name, email, password);
-        if (mounted) Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
-        return;
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    await ref.read(authNotifierProvider.notifier).signup(name, email, password);
+
+    if (mounted) {
+      final authState = ref.read(authNotifierProvider);
+      if (authState.status == AuthStatus.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authState.error ?? 'Sign up failed')),
+        );
       }
-
-      // Default: attempt to use AppwriteService Account API. Tests can inject a fake account.
-      try {
-        final account = AppwriteService.instance.account;
-        // Try common Appwrite method names. Wrap in try/catch.
-        try {
-          // Some SDKs expose createAccount or create; try both patterns.
-          if (account.createAccount != null) {
-            await account.createAccount(name: name, email: email, password: password);
-          } else if (account.create != null) {
-            await account.create(userId: 'unique-${DateTime.now().millisecondsSinceEpoch}', email: email, password: password, name: name);
-          } else {
-            // Fallback: attempt createEmailPassword (older SDKs)
-            if (account.createEmailPassword != null) {
-              await account.createEmailPassword(email: email, password: password);
-            } else {
-              throw StateError('Account create method not available');
-            }
-          }
-        } catch (e) {
-          // If dynamic invocation fails because the method is missing, rethrow to outer catch
-          rethrow;
-        }
-
-        // After account creation, attempt to auto-login so the new user is immediately authenticated.
-        try {
-          await AppwriteService.instance.login(email, password);
-        } catch (e) {
-          // If login fails, surface a snackbar but still navigate so the user can continue and manually login.
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Account created but auto-login failed: ${e.toString()}')));
-        }
-
-        if (mounted) Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
-      } catch (e) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e?.toString() ?? 'Sign up failed')));
-      }
-    } finally {
-      if (mounted) setState(() => _submitting = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+    final isSubmitting = authState.status == AuthStatus.loading;
+
     return Scaffold(
       backgroundColor: LumiColors.surface,
       body: SafeArea(
@@ -126,70 +90,80 @@ class _SignUpScreenState extends State<SignUpScreen> {
             constraints: const BoxConstraints(maxWidth: 520),
             child: Padding(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text('Create an account', style: Theme.of(context).textTheme.headlineLarge),
-                  const SizedBox(height: 12),
-                  Text('Join the sanctuary — all your data stays on device.', style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(height: 24),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        LumiTextField(
-                          key: const Key('name_field'),
-                          controller: _nameController,
-                          hintText: 'Full name',
-                          validator: _validateName,
-                        ),
-                        const SizedBox(height: 12),
-                        LumiTextField(
-                          key: const Key('email_field'),
-                          controller: _emailController,
-                          hintText: 'Email',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: _validateEmail,
-                        ),
-                        const SizedBox(height: 12),
-                        LumiTextField(
-                          key: const Key('password_field'),
-                          controller: _passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
-                          validator: _validatePassword,
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Checkbox(
-                              key: const Key('terms_checkbox'),
-                              value: _termsChecked,
-                              onChanged: (v) => setState(() => _termsChecked = v ?? false),
-                            ),
-                            const Expanded(child: Text('I agree to the Terms of Service and Privacy Policy')),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            key: const Key('signup_button'),
-                            onPressed: (_submitting || !_canSubmit) ? null : _submit,
-                            child: _submitting
-                                ? const SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
-                                : const Text('Create account'),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text('Create an account', style: Theme.of(context).textTheme.headlineLarge),
+                    const SizedBox(height: 12),
+                    Text('Join the sanctuary — all your data stays on device.', style: Theme.of(context).textTheme.bodyLarge),
+                    const SizedBox(height: 24),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          LumiTextField(
+                            key: const Key('name_field'),
+                            controller: _nameController,
+                            hintText: 'Full name',
+                            validator: _validateName,
+                            enabled: !isSubmitting,
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                          const SizedBox(height: 12),
+                          LumiTextField(
+                            key: const Key('email_field'),
+                            controller: _emailController,
+                            hintText: 'Email',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: _validateEmail,
+                            enabled: !isSubmitting,
+                          ),
+                          const SizedBox(height: 12),
+                          LumiTextField(
+                            key: const Key('password_field'),
+                            controller: _passwordController,
+                            hintText: 'Password',
+                            obscureText: true,
+                            validator: _validatePassword,
+                            enabled: !isSubmitting,
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Checkbox(
+                                key: const Key('terms_checkbox'),
+                                value: _termsChecked,
+                                onChanged: isSubmitting ? null : (v) => setState(() => _termsChecked = v ?? false),
+                              ),
+                              const Expanded(child: Text('I agree to the Terms of Service and Privacy Policy')),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              key: const Key('signup_button'),
+                              onPressed: (isSubmitting || !_canSubmit) ? null : _submit,
+                              child: isSubmitting
+                                  ? const SizedBox(
+                                      height: 16,
+                                      width: 16,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    )
+                                  : const Text('Create account'),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: isSubmitting ? null : () => context.go('/login'),
+                            child: const Text('Already have an account? Sign in'),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

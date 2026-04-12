@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/features/auth/sign_up_screen.dart';
 
 void main() {
   testWidgets('Sign up CTA disabled until terms checked and basic fields filled', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SignUpScreen()));
+    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: SignUpScreen())));
 
     final signupFinder = find.byKey(const Key('signup_button'));
     expect(signupFinder, findsOneWidget);
@@ -30,7 +31,7 @@ void main() {
   });
 
   testWidgets('Sign up shows password validation error for short password', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SignUpScreen()));
+    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: SignUpScreen())));
 
     // Fill fields with short password
     await tester.enterText(find.byKey(const Key('name_field')), 'Test User');
