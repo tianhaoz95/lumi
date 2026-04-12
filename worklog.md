@@ -59,3 +59,46 @@ Verifiable deliverables:
 
 Reviewer: please verify the widget file exists and that a visual overlay appears when wrapping a scaffold with AtmosphericBackground.
 
+---
+
+Actions performed by this run (2026-04-12T10:58Z):
+
+1. Verified AtmosphericBackground implementation:
+   - Confirmed lib/shared/widgets/atmospheric_background.dart exists and implements a _GrainPainter using a deterministic seed and ~2% opacity.
+   - Ran `flutter analyze` — no analyzer issues.
+
+2. Addressed integration-test reviewer feedback and attempted to run the Golden Path:
+   - Added a reusable FakeAccount test shim (integration_test/helpers/test_fixtures.dart) to allow Appwrite-independent auth flows in CI.
+   - Updated integration_test/auth/login_test.dart to inject FakeAccount for auth tests to avoid relying on an Appwrite admin API key.
+   - Re-ran `make test-integration DEVICE=linux`:
+     - Auth tests ran (login flow and invalid-password behaviour validated against the FakeAccount shim).
+     - Golden Path integration test (integration_test/golden_path_test.dart) failed to start the app on the Linux device: "Error waiting for a debug connection: The log reader stopped unexpectedly, or never started." This appears to be an environment/device startup issue rather than a test assertion failure.
+
+Verifiable deliverables completed in this run:
+- lib/shared/widgets/atmospheric_background.dart exists and contains AtmosphericBackground.
+- Modified file integration_test/helpers/test_fixtures.dart now contains FakeAccount with credential-checking behavior.
+- integration_test/auth/login_test.dart now injects FakeAccount for auth tests (grep finds "FakeAccount" and AppwriteService.setAccountForTest).
+- `flutter analyze` exited with code 0 after changes.
+- Ran `make test-integration DEVICE=linux`; auth tests executed, Golden Path startup failed (environment issue).
+
+Next steps (recommended):
+- Investigate Golden Path startup crash by running the golden test with verbose logging and examining native stdout/stderr. (Already saved verbose logs at /tmp/golden_verbose.txt.)
+- If the crash is environment-specific, re-run the Golden Path on a physical Android device or CI runner configured with the Appwrite MCP bootstrap (see scripts/BOOTSTRAP.md).
+
+Reviewer notes: Please verify the visual overlay by wrapping a Scaffold with AtmosphericBackground in a device build, and review the verbose golden run log at /tmp/golden_verbose.txt to help triage the debug-connection failure.
+
+## Follow-up actions (2026-04-12T11:04:00Z):
+
+1. Implemented a per-file integration test runner to avoid intermittent debug-connection failures when multiple integration test files start apps in the same `flutter test` session.
+   - Modified `Makefile` (test-integration target) to run each `integration_test/*.dart` individually with a short pause between runs.
+2. Re-ran the full integration suite using the updated Makefile target:
+   - Command: `make test-integration DEVICE=linux`
+   - Logs saved: `/tmp/make_test_integration_run2.log`.
+   - Outcome: All integration tests passed; Golden Path completed successfully.
+
+Verifiable deliverables added by this change:
+- Makefile contains the per-file loop (grep for "for f in integration_test/*.dart" in Makefile).
+- `/tmp/make_test_integration_run2.log` demonstrates a successful run (contains "All tests passed!").
+
+Notes: This is a minimal, targeted change to the test runner only. If CI prefers a single-process approach, consider ensuring tests fully stop the app between files or using a dedicated test device.
+

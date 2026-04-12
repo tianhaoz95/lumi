@@ -40,9 +40,12 @@ test-unit:
 # TODO: Integration tests require a running local Appwrite and a populated .env.test produced by the Appwrite bootstrap script.
 # In CI this is handled by scripts/ci-appwrite-bootstrap.sh and a pre-provisioned Appwrite instance.
 test-integration: services-up
-	flutter test integration_test/ \
-	  --dart-define-from-file=.env.test \
-	  -d $(DEVICE)
+	@echo "Running integration tests per-file to avoid debug-connection conflicts"
+	@for f in integration_test/*.dart; do \
+	  echo "==> $$f"; \
+	  flutter test "$$f" --dart-define-from-file=.env.test -d $(DEVICE) || exit $$?; \
+	  sleep 2; \
+	done
 
 appwrite-reset: services-reset
 	@echo ""

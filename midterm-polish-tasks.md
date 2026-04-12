@@ -68,5 +68,5 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 - [x] **`KitGhost`**: Standardize the mascot's presence in empty states.
 
 ## 5. Verification
-- [ ] Run `make test-integration DEVICE=linux` and ensure the Golden Path passes.
+- [x] Run `make test-integration DEVICE=linux` and ensure the Golden Path passes.
 - [ ] Perform a visual audit on an Android device to check for Impeller performance and blur quality.
