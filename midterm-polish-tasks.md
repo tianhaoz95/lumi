@@ -57,7 +57,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 
 ### 3.4 Settings (`lib/features/settings/`)
 - [x] **"The Cabin" Header**:
-    - [ ] Match the glassmorphism top bar from the design.
+    - [x] Match the glassmorphism top bar from the design.
     - [ ] Use the circular gradient profile placeholder.
 - [ ] **List Items**:
     - [ ] Remove dividers. Use tonal background cards for grouping.

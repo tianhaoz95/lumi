@@ -38,7 +38,7 @@ class SettingsScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         decoration: BoxDecoration(
-                          color: LumiColors.surfaceContainerLowest.withOpacity(0.70),
+                          color: const Color(0xB3FFFFFF),
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         child: Row(
@@ -63,7 +63,7 @@ class SettingsScreen extends ConsumerWidget {
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                border: Border.all(color: LumiColors.surface.withOpacity(0.08), width: 1.0),
+                                border: Border.all(color: const Color(0x14F5FAFC), width: 1.0),
                               ),
                               child: const Icon(Icons.person, color: Colors.white, size: 20),
                             ),
