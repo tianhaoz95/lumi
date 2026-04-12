@@ -239,3 +239,22 @@ Verifiable deliverables added/validated:
 
 Notes:
 - Manual verification on physical devices (notification tap routing when app is backgrounded or cold-started) is recommended by reviewer for final acceptance.
+
+---
+
+Actions performed (2026-04-12T16:02:00Z):
+
+1. Implemented notification grouping summarization in lib/features/sentinel/notification_service.dart:
+   - Added in-memory recent alert buffer and public helper processSentinelReport(report) to compute summary title/body and expose lastSummaryCount/lastSummaryLines for tests.
+   - Individual sentinel alerts are posted with groupKey 'lumi_sentinel_group' and a summary notification (id 9001) is posted with InboxStyleInformation showing recent lines and a summary count.
+2. Added unit test to verify grouping logic: test/notification_service_test.dart now contains a test that calls processSentinelReport twice and asserts the summary count increments and lines are recorded.
+3. Ran `flutter test test/notification_service_test.dart` — All tests passed (exit code 0).
+
+Verifiable deliverables added/validated in this run:
+- lib/features/sentinel/notification_service.dart now implements grouping and exposes processSentinelReport, lastSummaryCount, lastSummaryLines.
+- test/notification_service_test.dart includes grouping unit test and passes locally (flutter test exit code 0).
+- phase-4-sentinel.md updated to mark 1.3.4 as completed.
+
+Reviewer notes:
+- For full end-to-end grouping behavior on Android, verify on a physical device that multiple sentinel alerts within a short window produce grouped notification with summary count visible in the shade. The unit test covers the grouping logic deterministically.
+
