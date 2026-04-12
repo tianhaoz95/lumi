@@ -132,7 +132,7 @@
 
 ### 3.1 Share Extension Setup
 
-- [ ] **3.1.1** Add `receive_sharing_intent` package (or native share extension implementation).
+- [x] **3.1.1** Add `receive_sharing_intent` package (or native share extension implementation).
 - [ ] **3.1.2** Configure Android: add intent filter for `ACTION_SEND` with `image/*` and `text/plain` MIME types in `AndroidManifest.xml`.
 - [ ] **3.1.3** Configure iOS: create a Share Extension target in Xcode; use App Groups to pass the shared content to the main app.
 - [ ] **3.1.4** On receiving a shared image or screenshot, route to `process_receipt_image()` in Rust (Phase 2 pipeline).

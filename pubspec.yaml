@@ -21,6 +21,7 @@ dependencies:
   background_fetch: ^1.0.0
   flutter_background_geolocation: ^4.8.0
   flutter_local_notifications: ^18.0.1
+  receive_sharing_intent: ^1.4.5
 
 flutter:
   uses-material-design: true

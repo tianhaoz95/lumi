@@ -238,6 +238,24 @@ Verifiable deliverables added/updated in this run:
 - `rust/lumi_core/src/db.rs` creates `sentinel_logs` table.
 - `rust/lumi_core/src/sentinel.rs` inserts a `sentinel_logs` row (ts, report_json, counts) on each scan.
 - `flutter analyze --no-pub` returned "No issues found!".
+
+---
+
+Actions performed (2026-04-12T16:40:00Z):
+
+1. Added `receive_sharing_intent` to `pubspec.yaml` dependencies to enable OS share integration (Phase 4 — Sentinel, task 3.1.1).
+2. Ran `flutter pub get` to fetch the new dependency (exit code 0).
+3. Executed `make codegen` to run `flutter_rust_bridge_codegen` and regenerate FRB Dart bindings for new/native tools; command exited with code 0 (bindings written to `lib/shared/bridge/`).
+4. Updated roadmap `design/roadmap/phase-4-sentinel.md` to mark 3.1.1 as completed.
+
+Verifiable deliverables (this run):
+- `pubspec.yaml` contains the line `receive_sharing_intent: ^1.4.5` under `dependencies`.
+- `flutter pub get` completed successfully (see console logs saved during the run).
+- `make codegen` completed successfully and generated FRB bindings under `lib/shared/bridge/`.
+- `design/roadmap/phase-4-sentinel.md` shows 3.1.1 as `- [x]`.
+
+Notes: The next steps for full OS Share integration (3.1.2–3.1.4) include Android/iOS native manifest/extension changes and routing shared content to `process_receipt_image()` in Rust; those remain pending and are separate tasks.
+
 - `cd rust/lumi_core && cargo test --lib` returned all tests passed.
 
 
