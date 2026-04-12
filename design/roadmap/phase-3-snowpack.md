@@ -185,7 +185,7 @@
 
 ### 4.1 Dashboard — Real Metrics
 
-- [x] **4.1.1** Replace hardcoded mock values in `DashboardScreen` with data from `agent_chat` or direct FRB calls to `get_summary("this_month")`:
+- [x] **4.1.1** Replace hardcoded mock values in `DashboardScreen` with data from `agent_chat` or direct FRB calls to `get_summary("this_month")`: 
   - **Current Expenses**: `FinancialSummary.total_expenses`
   - **Working Hours**: future placeholder (not yet tracked; show `--`)
   - **Mileage Tracking**: `FinancialSummary.total_miles` + `estimated_deduction`
