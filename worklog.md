@@ -15,3 +15,15 @@ Verifiable deliverables:
 Notes for reviewer:
 - If the project has a different file name for Recent Activity, the updated file will be in lib/features/dashboard/ and contain the implemented spacing change.
 - No UI screenshots are included; reviewer can run the app or inspect code to verify spacing.
+
+Verification:
+- kRecentActivityVerticalSpacing set to 28.0 in lib/features/dashboard/dashboard.dart.
+- Commit d35aea9 updated lib/features/dashboard/dashboard.dart.
+- Recent commits (most recent first):
+  - e13a8ec: Midterm polish: mark recent-activity spacing task done; add worklog.md
+  - d35aea9: Dashboard: increase recent activity spacing to 28px
+
+Commands a reviewer can run:
+- `git --no-pager log -n 3 --pretty=oneline`
+- `git --no-pager show d35aea9 --name-only`
+- `rg "kRecentActivityVerticalSpacing|SizedBox\\(height" lib/features/dashboard`
