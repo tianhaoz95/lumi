@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LumiColors {
   static const primary = Color(0xFF00464A);
@@ -33,16 +34,27 @@ ThemeData getLumiTheme() {
     outline: LumiColors.outlineVariant,
   );
 
-  final textTheme = TextTheme(
-    displayLarge: TextStyle(fontFamily: 'Manrope', fontSize: 48, fontWeight: FontWeight.w700, letterSpacing: -0.02),
-    headlineLarge: TextStyle(fontFamily: 'Manrope', fontSize: 32, fontWeight: FontWeight.w600, letterSpacing: -0.02),
-    titleLarge: TextStyle(fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.02),
-    bodyLarge: TextStyle(fontFamily: 'Inter', fontSize: 16, height: 1.6),
-    bodyMedium: TextStyle(fontFamily: 'Inter', fontSize: 14, height: 1.6),
-    bodySmall: TextStyle(fontFamily: 'Inter', fontSize: 12, height: 1.6),
-    labelLarge: TextStyle(fontFamily: 'Inter', fontSize: 14, height: 1.6),
-    labelMedium: TextStyle(fontFamily: 'Inter', fontSize: 13, height: 1.6),
-    labelSmall: TextStyle(fontFamily: 'Inter', fontSize: 12, height: 1.6),
+  // Base text theme using Inter for body and labels with specified line height.
+  final base = GoogleFonts.interTextTheme().copyWith(
+    bodyLarge: GoogleFonts.inter(fontSize: 16, height: 1.6),
+    bodyMedium: GoogleFonts.inter(fontSize: 14, height: 1.6),
+    bodySmall: GoogleFonts.inter(fontSize: 12, height: 1.6),
+    labelLarge: GoogleFonts.inter(fontSize: 14, height: 1.6),
+    labelMedium: GoogleFonts.inter(fontSize: 13, height: 1.6),
+    labelSmall: GoogleFonts.inter(fontSize: 12, height: 1.6),
+  );
+
+  // Apply Manrope to all headline/display/title styles to ensure consistent editorial typography.
+  final textTheme = base.copyWith(
+    displayLarge: GoogleFonts.manrope(fontSize: 48, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    displayMedium: GoogleFonts.manrope(fontSize: 40, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    displaySmall: GoogleFonts.manrope(fontSize: 36, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    headlineLarge: GoogleFonts.manrope(fontSize: 32, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    headlineMedium: GoogleFonts.manrope(fontSize: 28, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    headlineSmall: GoogleFonts.manrope(fontSize: 24, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    titleLarge: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    titleMedium: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    titleSmall: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: -0.02),
   );
 
   return ThemeData(
@@ -55,7 +67,8 @@ ThemeData getLumiTheme() {
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-        textStyle: const TextStyle(fontFamily: 'Manrope', fontWeight: FontWeight.w600),
+        // Use Manrope via google_fonts to ensure the font is loaded correctly.
+        textStyle: GoogleFonts.manrope(fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
