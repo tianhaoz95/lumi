@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/home/home.dart';
+import '../features/dashboard/dashboard.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/sign_up_screen.dart';
 import '../features/auth/auth_notifier.dart';
@@ -32,6 +33,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
+      GoRoute(path: '/dashboard', builder: (context, state) => const DashboardScreen()),
       GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
     ],
     redirect: (BuildContext context, GoRouterState state) {
@@ -49,7 +51,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isSigningUp = state.location == '/signup';
 
       if (!loggedIn && !isLoggingIn && !isSigningUp) return '/login';
-      if (loggedIn && (isLoggingIn || isSigningUp)) return '/';
+      // After successful login/signup, navigate to the user's Dashboard instead of Home
+      if (loggedIn && (isLoggingIn || isSigningUp)) return '/dashboard';
       return null;
     },
   );
