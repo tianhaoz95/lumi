@@ -45,14 +45,19 @@ ThemeData getLumiTheme() {
   );
 
   // Apply Manrope to all headline/display/title styles to ensure consistent editorial typography.
+  // High-Low pairing implemented: display styles are intentionally large to create extreme scale contrast
+  // with compact body text (Inter at 16sp). This enforces the "High-Low" editorial pairing described in DESIGN.md.
   final textTheme = base.copyWith(
-    displayLarge: GoogleFonts.manrope(fontSize: 48, fontWeight: FontWeight.w700, letterSpacing: -0.02),
-    displayMedium: GoogleFonts.manrope(fontSize: 40, fontWeight: FontWeight.w700, letterSpacing: -0.02),
-    displaySmall: GoogleFonts.manrope(fontSize: 36, fontWeight: FontWeight.w700, letterSpacing: -0.02),
-    headlineLarge: GoogleFonts.manrope(fontSize: 32, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    // High (display) — prominent, editorial-first sizes
+    displayLarge: GoogleFonts.manrope(fontSize: 64, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    displayMedium: GoogleFonts.manrope(fontSize: 48, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    displaySmall: GoogleFonts.manrope(fontSize: 40, fontWeight: FontWeight.w700, letterSpacing: -0.02),
+    // Low (headline/title) — scaled down relative to displays but still prominent
+    headlineLarge: GoogleFonts.manrope(fontSize: 34, fontWeight: FontWeight.w600, letterSpacing: -0.02),
     headlineMedium: GoogleFonts.manrope(fontSize: 28, fontWeight: FontWeight.w600, letterSpacing: -0.02),
-    headlineSmall: GoogleFonts.manrope(fontSize: 24, fontWeight: FontWeight.w600, letterSpacing: -0.02),
-    titleLarge: GoogleFonts.manrope(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    headlineSmall: GoogleFonts.manrope(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.02),
+    // Titles closer to body scale
+    titleLarge: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: -0.02),
     titleMedium: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: -0.02),
     titleSmall: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: -0.02),
   );
