@@ -1,25 +1,27 @@
-Task: Button Theming — Implement LumiPrimaryButton and LumiSecondaryButton
+Task: Implement LumiSecondaryButton (Glassmorphism) — midterm polish
 
-Planned steps:
-1. Inspect existing theme tokens in lib/core/theme.dart to identify primary and primaryContainer colors.
-2. Create a new widget file at lib/widgets/lumi_buttons.dart that defines:
-   - LumiPrimaryButton: a reusable Elevated-like button with a 135-degree linear gradient from `primary` to `primaryContainer`, full-pill radius, and consistent padding.
-   - LumiSecondaryButton: a glassmorphism-styled button with 40% white overlay, 12px backdrop blur, semi-transparent border, and pill shape.
-3. Wire the new widgets by exporting them from lib/widgets/widgets.dart (create file if missing) and import in places that may use them later.
-4. Run a quick `flutter analyze` (if available) or `dart pub get` to surface obvious errors.
-5. Ensure files compile by running `flutter analyze` locally (reviewer will run full build).
+Plan (step-by-step):
+1. Locate existing button implementations and theme files (search for "LumiPrimaryButton", "button", and theme files under lib/).
+2. Add a new widget `LumiSecondaryButton` in `lib/shared/widgets/` or next to existing button widgets following repo structure; style it to use glassmorphism: white at 40% opacity background with a 12px backdrop blur and rounded pill shape.
+3. Wire the button into theme or examples where appropriate (add a small usage example in `lib/core/theme.dart` or a demo screen if one exists).
+4. Run available Flutter analyzer or tests (make test or flutter analyze) to ensure no errors.
+5. Run `flutter build apk` (or `make test` if configured) if CI/build scripts exist, or at minimum `flutter analyze` and `flutter test` if present.
 
 Verifiable deliverables:
-- worklog.md exists and contains the planned steps and deliverables (this file).
-- File lib/shared/widgets/lumi_buttons.dart exists and defines classes `LumiPrimaryButton` and `LumiSecondaryButton`.
-- File lib/core/theme.dart contains color tokens `primary` and `primaryContainer` (or equivalent names) for the gradient to reference.
-- A small static example widget is present in lib/shared/widgets/lumi_buttons.dart showing usage in a `StatelessWidget` named `LumiButtonsPreview` (so reviewer can visually inspect and run a short app to see both buttons).
-- The duplicate file `lib/widgets/lumi_buttons.dart` has been removed; `lib/widgets/widgets.dart` now re-exports the shared implementation.
-- `lib/shared/widgets/lumi_button.dart` default gradient has been corrected to a 135-degree gradient (Alignment.topLeft → Alignment.bottomRight).
-- Changes have been committed to git (see commit message referencing this work).
+- File `lib/shared/widgets/lumi_buttons.dart` exists and defines `LumiSecondaryButton` class (the project groups buttons together in this file).
+- `LumiSecondaryButton` uses a translucent white background (opacity 40%) and backdrop blur of 12px (uses `BackdropFilter` / `ImageFilter.blur`).
+- `LumiSecondaryButton` has pill shape (default radius 9999.0) and accepts `onPressed`, `child`, `padding` parameters.
+- Static checks: confirmed via source inspection that blur sigma is 12.0 and background color uses `Colors.white.withOpacity(0.40)`.
+- Environment note: Attempted to run `flutter analyze` and `dart analyze` in CI environment but the analysis server failed with "Too many open files (errno = 24)". Commands run:
+  - `flutter analyze --no-pub` (failed with OS Error: Too many open files)
+  - `flutter analyze lib --no-pub` (failed with OS Error: Too many open files)
+  - `dart analyze lib/shared/widgets/lumi_buttons.dart` (failed with same error)
+  Saved analyzer output snippets are available in the agent run logs.
 
-## Reviewer Findings (resolved)
-1. Gradient Direction: Resolved. The default gradient in `lib/shared/widgets/lumi_button.dart` now uses `begin: Alignment.topLeft` and `end: Alignment.bottomRight` (135°).
-2. Duplicate Implementation Files: Resolved. Removed `lib/widgets/lumi_buttons.dart` and updated export in `lib/widgets/widgets.dart` to re-export `../shared/widgets/lumi_buttons.dart`.
-3. Stale Information: Addressed. This worklog has been updated to reflect the current repository state and actions taken.
-4. Task Marking Inconsistency: Addressed. The `LumiPrimaryButton` subtask in `midterm-polish-tasks.md` has been marked complete; remaining subtasks remain for future work.
+Alternative verifiable step for reviewer (local):
+- Run `flutter analyze` locally to confirm no analyzer errors (environment limitation prevented in-container analysis).
+- Inspect `lib/shared/widgets/lumi_buttons.dart` to verify the three key properties above.
+
+Notes:
+- Do not delete or overwrite other files. Keep changes minimal and targeted to add the new widget and any necessary exports.
+- Reviewer will verify by checking the file and running analyzer/tests locally if desired.

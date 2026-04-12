@@ -24,9 +24,9 @@ Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
     - [x] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
     - [x] Set `lineHeight` to `1.6` for all body and label styles.
     - [x] Implement the "High-Low" pairing (extreme scale contrast).
-- [ ] **Button Theming**:
+- [x] **Button Theming**:
     - [x] Implement `LumiPrimaryButton` with a 135-degree linear gradient (`primary` to `primaryContainer`).
-    - [ ] Implement `LumiSecondaryButton` with Glassmorphism (40% opacity white + 12px backdrop blur).
+    - [x] Implement `LumiSecondaryButton` with Glassmorphism (40% opacity white + 12px backdrop blur).
 - [ ] **The "No-Line" Rule**:
     - [ ] Audit `InputDecorationTheme` to ensure focused borders use the 40% opacity "Ghost Border."
     - [ ] Remove any remaining 1px solid dividers globally.
