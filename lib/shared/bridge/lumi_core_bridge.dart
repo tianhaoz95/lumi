@@ -25,6 +25,34 @@ class LumiCoreBridge {
     }
   }
 
+  /// Attempt to call the native Rust `get_summary` tool via MethodChannel/FRB.
+  /// Returns a decoded Map<String,dynamic> representing the FinancialSummary.
+  /// Falls back by throwing if native binding is not available.
+  static Future<Map<String, dynamic>> getSummary(String period) async {
+    try {
+      final res = await _channel.invokeMethod<dynamic>('get_summary', <String, dynamic>{'period': period});
+      if (res is Map) return Map<String, dynamic>.from(res);
+      if (res is String) return Map<String, dynamic>.from(json.decode(res) as Map<String, dynamic>);
+      throw Exception('Unsupported response for get_summary');
+    } catch (e) {
+      // Re-throw so callers can decide whether to fallback to shimmed implementations.
+      rethrow;
+    }
+  }
+
+  /// Attempt to call the native Rust `query_transactions` tool via MethodChannel/FRB.
+  /// Returns a decoded List<Map<String,dynamic>> representing TransactionSummary items.
+  static Future<List<Map<String, dynamic>>> queryTransactions({int limit = 5}) async {
+    try {
+      final res = await _channel.invokeMethod<dynamic>('query_transactions', <String, dynamic>{'limit': limit});
+      if (res is List) return res.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      if (res is String) return (json.decode(res) as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      throw Exception('Unsupported response for query_transactions');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Initialize the on-device database.
   /// In production this forwards to the Rust `db_init` via FRB.
   /// For Phase 1 this shim creates a local file at the provided path.

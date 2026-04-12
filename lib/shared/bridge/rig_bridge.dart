@@ -5,7 +5,6 @@
 /// implementation in `summary_bridge.dart` so callers can rely on a single
 /// typed API.
 
-import 'package:flutter/foundation.dart';
 import '../models/financial_summary.dart';
 import 'summary_bridge.dart' as shim;
 import '../models/transaction_summary.dart';
@@ -13,11 +12,17 @@ import 'transactions_bridge.dart' as txshim;
 
 /// Attempts to call the Rust FRB binding. If not available, falls back to
 /// the shimbed `fetchMonthlySummary` implementation.
+import 'lumi_core_bridge.dart' as frb;
+
 Future<FinancialSummary> fetchMonthlySummary() async {
-  // TODO: Replace with FRB call when bindings are available. Example:
-  //   return await RigBindings.getSummary("this_month");
-  // For now delegate to the shim.
-  return shim.fetchMonthlySummary();
+  try {
+    final res = await frb.LumiCoreBridge.getSummary('this_month');
+    // Convert to the app's FinancialSummary model
+    return FinancialSummary.fromJson(res);
+  } catch (e) {
+    // FRB/native binding not available — fall back to shim for development and tests
+    return shim.fetchMonthlySummary();
+  }
 }
 
 /// Query recent transactions (typed). In production this should call into
@@ -25,10 +30,32 @@ Future<FinancialSummary> fetchMonthlySummary() async {
 /// transactions shim so the UI can be tested end-to-end.
 Future<List<TransactionSummary>> queryTransactions({int limit = 5}) async {
   try {
+    // Try native FRB binding first
+    final res = await frb.LumiCoreBridge.queryTransactions(limit: limit);
+    if (res is List) {
+      final List<TransactionSummary> mapped = res.map((e) {
+        final m = Map<String, dynamic>.from(e as Map);
+        // Convert timestamp (seconds) to ISO date string if present
+        if (m.containsKey('timestamp') && (m['timestamp'] is int || m['timestamp'] is num)) {
+          final ts = (m['timestamp'] as num).toInt();
+          m['date'] = DateTime.fromMillisecondsSinceEpoch(ts * 1000).toIso8601String();
+        }
+        // Map Rust naming to Dart model expectations
+        if (m.containsKey('is_tagged')) m['isCredit'] = m['is_tagged'];
+        // amount should already be in dollars; ensure it's a number
+        return TransactionSummary.fromMap(m);
+      }).toList();
+      return mapped;
+    }
+    // Unexpected response shape — fall back to shim
     return await txshim.fetchRecentTransactions(limit: limit);
   } catch (e) {
-    // On error, return empty list to avoid crashing the UI.
-    return <TransactionSummary>[];
+    // FRB/native binding not available — fall back to shim for development and tests
+    try {
+      return await txshim.fetchRecentTransactions(limit: limit);
+    } catch (e2) {
+      return <TransactionSummary>[];
+    }
   }
 }
 
