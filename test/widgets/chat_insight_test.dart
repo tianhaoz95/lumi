@@ -21,7 +21,7 @@ void main() {
 
     final overrideService = ChatService(streamProvider: ({required String prompt, required ModelTier modelTier}) => mockAgentChat(prompt: prompt, modelTier: modelTier));
 
-    await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(overrideService)], child: const MaterialApp(home: HomeScreen())));
+    await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(overrideService)], child: MaterialApp(home: HomeScreen())));
 
     // Enter text and tap send
     await tester.enterText(find.byKey(const Key('chat_input')), 'Show me my summary');

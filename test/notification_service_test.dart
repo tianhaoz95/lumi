@@ -21,13 +21,14 @@ void main() {
     expect(map['params'], isNull);
   });
 
-  test('parsePayloadToRoute geofence -> /home with openCamera', () {
+  test('parsePayloadToRoute geofence -> /home with openChat and prefill', () {
     final payload = jsonEncode({'type': 'geofence', 'vendor': 'Cafe', 'lat': 1.0, 'lng': 2.0});
     final map = NotificationService.parsePayloadToRoute(payload);
     expect(map['route'], '/home');
     expect(map['params'], isNotNull);
-    expect(map['params']['openCamera'], true);
+    expect(map['params']['openChat'], true);
     expect(map['params']['vendor'], 'Cafe');
+    expect((map['params']['prefill'] as String).contains('Cafe'), true);
   });
 
   test('notification grouping summary increments and contains lines', () {

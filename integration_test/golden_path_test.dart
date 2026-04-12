@@ -195,7 +195,7 @@ void main() {
       );
 
       // Launch HomeScreen directly with chatServiceProvider overridden to use fakeChatService.
-      await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(fakeChatService)], child: const MaterialApp(home: HomeScreen())));
+      await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(fakeChatService)], child: MaterialApp(home: HomeScreen())));
       await tester.pumpAndSettle();
 
       // Ensure chat input is present

@@ -15,6 +15,7 @@ class LumiTextField extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final TextInputType keyboardType;
   final bool enabled;
+  final FocusNode? focusNode;
 
   const LumiTextField({
     Key? key,
@@ -26,6 +27,7 @@ class LumiTextField extends StatefulWidget {
     this.validator,
     this.keyboardType = TextInputType.text,
     this.enabled = true,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class LumiTextField extends StatefulWidget {
 class _LumiTextFieldState extends State<LumiTextField> {
   late FocusNode _focusNode;
   bool _focused = false;
+  bool _ownFocusNode = false;
 
   static const Duration _animDuration = Duration(milliseconds: 300);
   static const Curve _animCurve = Curves.easeOut;
@@ -42,7 +45,13 @@ class _LumiTextFieldState extends State<LumiTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    if (widget.focusNode != null) {
+      _focusNode = widget.focusNode!;
+      _ownFocusNode = false;
+    } else {
+      _focusNode = FocusNode();
+      _ownFocusNode = true;
+    }
     _focusNode.addListener(_handleFocusChange);
   }
 
@@ -53,7 +62,9 @@ class _LumiTextFieldState extends State<LumiTextField> {
   @override
   void dispose() {
     _focusNode.removeListener(_handleFocusChange);
-    _focusNode.dispose();
+    if (_ownFocusNode) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 

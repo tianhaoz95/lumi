@@ -376,3 +376,43 @@ Notes & reviewer guidance:
 
 Reviewer: after verifying the deliverables, please confirm and then mark roadmap 2.3.1 as accepted if behavior is correct.
 
+
+---
+
+## Actions (2026-04-12T16:40:00Z): Implemented 2.3.2 — notification tap deep-link for geofence exits
+
+Changes made:
+
+- Updated `lib/features/sentinel/notification_service.dart`:
+  - `parsePayloadToRoute` now maps geofence payloads to `{'route': '/home', 'params': {'openChat': true, 'prefill': 'Just left {vendorName}. What did you buy?', 'vendor': vendor}}` so the Home screen can prefill the chat input.
+
+- Updated `lib/core/router.dart`:
+  - The root route now passes `state.extra` to `HomeScreen` as `initialChatParams` so deep-link params are delivered to the screen.
+
+- Updated `lib/features/home/home_impl.dart`:
+  - `HomeScreen` accepts `initialChatParams` and pre-fills the chat input when `openChat == true`.
+  - Added a FocusNode (`_inputFocus`) and set the LumiTextField's focusNode so the input can be focused after navigation.
+
+- Updated `lib/shared/widgets/lumi_text_field.dart`:
+  - Accepts an optional `focusNode` so external callers can control focus.
+
+- Updated tests:
+  - `test/notification_service_test.dart` now asserts geofence payload parsing yields `openChat` and a `prefill` string containing the vendor name.
+  - Adjusted widget tests to remove `const` where `HomeScreen` is constructed (constructor is now non-const).
+
+Verification performed (automated):
+- `dart/flutter test test/notification_service_test.dart` — All tests in that file passed (exit code 0).
+- `flutter analyze --no-pub` — No analyzer issues found (exit code 0).
+
+Remaining manual verifications (reviewer):
+- Physical device test: Tap a geofence notification on a device/emulator and confirm the Home Chat input is prefilled with "Just left {vendorName}. What did you buy?" and focused.
+- Integration test: Ensure navigation via notification payload (app launched from terminated state) correctly routes into Home with prefill (may require verifying getNotificationAppLaunchDetails handling on platform and router readiness).
+
+Verifiable deliverables added:
+- `lib/features/sentinel/notification_service.dart` now maps geofence notifications to `/home` with `openChat` and `prefill` params.
+- `lib/core/router.dart` passes `state.extra` into `HomeScreen(initialChatParams: ...)`.
+- `lib/features/home/home_impl.dart` uses `initialChatParams` to prefill chat input and focus it.
+- `lib/shared/widgets/lumi_text_field.dart` accepts an optional `focusNode`.
+- `test/notification_service_test.dart` updated and passes (`flutter test` exit code 0 for that file).
+
+Timestamp: 2026-04-12T16:40:00Z

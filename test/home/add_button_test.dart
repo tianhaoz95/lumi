@@ -5,7 +5,7 @@ import 'package:lumi/features/home/home_impl.dart';
 
 void main() {
   testWidgets('Add button shows bottom sheet with Camera and Photo Library', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: HomeScreen())));
+    await tester.pumpWidget(ProviderScope(child: MaterialApp(home: HomeScreen())));
 
     // Ensure the add button exists
     final addButton = find.byTooltip('Add');

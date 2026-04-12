@@ -44,7 +44,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: notifier,
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+      GoRoute(path: '/', builder: (context, state) => HomeScreen(initialChatParams: state.extra as Map<String, dynamic>?)),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
       GoRoute(path: '/dashboard', builder: (context, state) => const DashboardScreen()),

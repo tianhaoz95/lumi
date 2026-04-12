@@ -14,7 +14,7 @@ void main() {
 
     final mockService = ChatService(streamProvider: ({required String prompt, required ModelTier modelTier}) => controller.stream);
 
-    await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(mockService)], child: const MaterialApp(home: HomeScreen())));
+    await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(mockService)], child: MaterialApp(home: HomeScreen())));
 
     // Enter text
     await tester.enterText(find.byKey(const Key('chat_input')), 'Hello');

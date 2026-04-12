@@ -259,7 +259,8 @@ class NotificationService {
         return {'route': '/dashboard', 'params': null};
       } else if (type == 'geofence') {
         final String vendor = payload['vendor'] as String? ?? '';
-        return {'route': '/home', 'params': {'openCamera': true, 'vendor': vendor}};
+        final String prefill = 'Just left $vendor. What did you buy?';
+        return {'route': '/home', 'params': {'openChat': true, 'prefill': prefill, 'vendor': vendor}};
       }
     } catch (e) {
       if (kDebugMode) debugPrint('[NotificationService] parsePayloadToRoute failed: $e');

@@ -24,7 +24,7 @@ void main() {
       ],
       child: MaterialApp(
         theme: getLumiTheme(),
-        home: const HomeScreen(),
+        home: HomeScreen(),
       ),
     ));
 

@@ -18,7 +18,8 @@ import 'package:go_router/go_router.dart';
 import '../chat/widgets/insight_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic>? initialChatParams;
+  HomeScreen({Key? key, this.initialChatParams}) : super(key: key);
 
   static const _chatHint = 'Whisper to Lumi…';
 
@@ -29,6 +30,26 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _controller = TextEditingController();
   final List<_ChatMessage> _messages = [];
+  final _inputFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Handle deep-linking params to prefill chat input when navigated via notification
+    final params = widget.initialChatParams;
+    if (params != null && params['openChat'] == true) {
+      final prefill = params['prefill'] as String? ?? '';
+      if (prefill.isNotEmpty) {
+        // Defer to next frame so controller and focus are available
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _controller.text = prefill;
+          try {
+            FocusScope.of(context).requestFocus(_inputFocus);
+          } catch (_) {}
+        });
+      }
+    }
+  }
   StreamSubscription<InferenceChunk>? _streamSub;
   bool _isStreaming = false;
   double? _tokensPerSecond;
@@ -197,6 +218,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         key: const Key('chat_input'),
                         controller: _controller,
                         hintText: HomeScreen._chatHint,
+                        focusNode: _inputFocus,
                       ),
                     ),
                     IconButton(

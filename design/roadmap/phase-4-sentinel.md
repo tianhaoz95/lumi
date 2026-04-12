@@ -119,7 +119,7 @@
   1. Call `VendorFenceService.increment_visit(fence.id)`.
   2. Call `NotificationService.showGeofenceAlert(fence.vendorName)`.
   3. The notification payload carries `vendorName` and `lat/lng` as metadata.
-- [ ] **2.3.2** If the user taps the notification, open the Home Chat screen pre-loaded with the message: `"Just left {vendorName}. What did you buy?"`.
+- [x] **2.3.2** If the user taps the notification, open the Home Chat screen pre-loaded with the message: "Just left {vendorName}. What did you buy?".
 
 **Tests:**
 - Dart unit test: `onGeofenceExit` calls `increment_visit` and `showGeofenceAlert`.
