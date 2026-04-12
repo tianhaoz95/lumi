@@ -258,3 +258,25 @@ Verifiable deliverables added/validated in this run:
 Reviewer notes:
 - For full end-to-end grouping behavior on Android, verify on a physical device that multiple sentinel alerts within a short window produce grouped notification with summary count visible in the shade. The unit test covers the grouping logic deterministically.
 
+---
+
+Actions performed (2026-04-12T16:03:00Z):
+
+1. Task: Phase 4 — Geofencing plugin install (2.1.1)
+
+Planned steps executed:
+- Added flutter_background_geolocation dependency to pubspec.yaml.
+- Created a reusable GeofenceService skeleton at lib/features/sentinel/geofence_service.dart with initialize(), addFence(), removeFence(), and onGeofenceExit callback wiring to the plugin's onGeofence handler.
+- Marked task 2.1.1 complete in design/roadmap/phase-4-sentinel.md.
+- Ran flutter pub get and flutter analyze to verify dependency resolution and analyzer status.
+
+Verifiable deliverables (completed):
+- pubspec.yaml contains "flutter_background_geolocation: ^4.8.0" under dependencies.
+- File lib/features/sentinel/geofence_service.dart exists and declares GeofenceService, VendorFence, and required methods.
+- design/roadmap/phase-4-sentinel.md has 2.1.1 marked as done (- [x]).
+- Running `flutter pub get` succeeded and `flutter analyze --no-pub` exited with code 0 (no analyzer issues).
+
+Notes & remaining reviewer items:
+- Physical-device visual audit for AtmosphericBackground and Impeller quality remains outstanding and requires a reviewer with a connected Android device to run ./scripts/visual_audit_android.sh (already present) and inspect build/visual_audit/*.png.
+- The FRB Dart binding codegen (flutter_rust_bridge_codegen) may be needed when new Rust -> Dart tools are added; no new FRB bindings were required by this change.
+
