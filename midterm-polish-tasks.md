@@ -9,7 +9,7 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
     - [x] **Onboarding/SignUp**: User creates a new account.
     - [x] **Login**: User logs in with existing credentials.
     - [x] **Dashboard Load**: Verify summary cards and recent activity appear.
-    - [ ] **Chat Interaction**: Send a message to Lumi and receive a non-echo response.
+    - [x] **Chat Interaction**: Send a message to Lumi and receive a non-echo response.
     - [ ] **Receipt Logging**: Use diagnostics or a mock to simulate a receipt extraction and verify it appears in the dashboard.
     - [ ] **Logout**: Ensure session is cleared and user returns to login.
 - [ ] **Fix Functional Blockers**:

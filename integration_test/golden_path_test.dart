@@ -7,6 +7,10 @@ import 'package:lumi/core/app.dart';
 import 'package:lumi/core/init.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
 import 'package:lumi/features/dashboard/dashboard.dart';
+import 'package:lumi/shared/chat/chat_service.dart';
+import 'package:lumi/shared/chat/chat_providers.dart';
+import 'package:lumi/shared/bridge/inference.dart' as bridge;
+import 'package:lumi/features/home/home_impl.dart';
 
 // Golden Path integration test scaffold for Project Lumi.
 // These tests are scaffolded and skipped by default because they require
@@ -154,11 +158,53 @@ void main() {
     }, skip: false);
 
     testWidgets('Chat Interaction', (WidgetTester tester) async {
-      // Steps:
-      // 1. Open chat screen, send a message to Lumi.
-      // 2. Wait for a non-echo response (mock or real model).
-      // 3. Assert that the response is displayed and not identical to the sent message.
-    }, skip: true);
+      // Lightweight init for test environments.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // ignore
+      }
+
+      // Use fake account to avoid network dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Create a fake ChatService that returns a non-echo response stream.
+      final fakeChatService = ChatService(
+        streamProvider: ({required String prompt, required bridge.ModelTier modelTier}) {
+          // Simulate streaming tokens for a friendly non-echo reply.
+          final chunks = [
+            bridge.InferenceChunk(token: 'Hi, ', isFinal: false, tokensPerSecond: 0.0),
+            bridge.InferenceChunk(token: 'I am Lumi.', isFinal: true, tokensPerSecond: 0.0),
+          ];
+          // Emit with a small delay between chunks so the UI streaming code updates.
+          return Stream<bridge.InferenceChunk>.fromIterable(chunks);
+        },
+      );
+
+      // Launch HomeScreen directly with chatServiceProvider overridden to use fakeChatService.
+      await tester.pumpWidget(ProviderScope(overrides: [chatServiceProvider.overrideWithValue(fakeChatService)], child: const MaterialApp(home: HomeScreen())));
+      await tester.pumpAndSettle();
+
+      // Ensure chat input is present
+      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+
+      // Enter a user message and send
+      await tester.enterText(find.byKey(const Key('chat_input')), 'Hello Lumi');
+      await tester.tap(find.byKey(const Key('send_button')));
+
+      // Allow stream handling and UI updates
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pumpAndSettle();
+
+      // Verify user message shown
+      expect(find.text('Hello Lumi'), findsOneWidget);
+
+      // Verify assistant replied with the non-echo message
+      expect(find.text('Hi, I am Lumi.'), findsOneWidget);
+    }, skip: false);
 
     testWidgets('Receipt Logging', (WidgetTester tester) async {
       // Steps:
