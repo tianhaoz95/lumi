@@ -27,7 +27,7 @@ Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
 - [x] **Button Theming**:
     - [x] Implement `LumiPrimaryButton` with a 135-degree linear gradient (`primary` to `primaryContainer`).
     - [x] Implement `LumiSecondaryButton` with Glassmorphism (40% opacity white + 12px backdrop blur).
-- [ ] **The "No-Line" Rule**:
+- [x] **The "No-Line" Rule**:
     - [ ] Audit `InputDecorationTheme` to ensure focused borders use the 40% opacity "Ghost Border."
     - [ ] Remove any remaining 1px solid dividers globally.
 

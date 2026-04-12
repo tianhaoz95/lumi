@@ -1,27 +1,22 @@
-Task: Implement LumiSecondaryButton (Glassmorphism) — midterm polish
+Task: The "No-Line" Rule
 
-Plan (step-by-step):
-1. Locate existing button implementations and theme files (search for "LumiPrimaryButton", "button", and theme files under lib/).
-2. Add a new widget `LumiSecondaryButton` in `lib/shared/widgets/` or next to existing button widgets following repo structure; style it to use glassmorphism: white at 40% opacity background with a 12px backdrop blur and rounded pill shape.
-3. Wire the button into theme or examples where appropriate (add a small usage example in `lib/core/theme.dart` or a demo screen if one exists).
-4. Run available Flutter analyzer or tests (make test or flutter analyze) to ensure no errors.
-5. Run `flutter build apk` (or `make test` if configured) if CI/build scripts exist, or at minimum `flutter analyze` and `flutter test` if present.
+Description:
+Audit and enforce the "No-Line" rule from midterm-polish-tasks.md: ensure focused input borders use the 40% opacity "Ghost Border" (outline-variant) and remove global 1px solid dividers in the UI.
+
+Planned steps:
+1. Search the codebase for uses of InputDecorationTheme, Divider, DividerTheme, and any hard-coded 1px borders.
+2. Update lib/core/theme.dart to set InputDecorationTheme.focusedBorder to use outline-variant at 40% opacity and adjust divider theming globally.
+3. If any explicit Divider widgets or 1px borders remain, update them to use tonal background containers or remove the stroke.
+4. Run Flutter analyzer/tests (if available) or at least run a quick `flutter format`/`dart analyze` equivalent to ensure no syntax errors.
+5. Verify deliverables and mark task done in midterm-polish-tasks.md.
 
 Verifiable deliverables:
-- File `lib/shared/widgets/lumi_buttons.dart` exists and defines `LumiSecondaryButton` class (the project groups buttons together in this file).
-- `LumiSecondaryButton` uses a translucent white background (opacity 40%) and backdrop blur of 12px (uses `BackdropFilter` / `ImageFilter.blur`).
-- `LumiSecondaryButton` has pill shape (default radius 9999.0) and accepts `onPressed`, `child`, `padding` parameters.
-- Static checks: confirmed via source inspection that blur sigma is 12.0 and background color uses `Colors.white.withOpacity(0.40)`.
-- Environment note: Attempted to run `flutter analyze` and `dart analyze` in CI environment but the analysis server failed with "Too many open files (errno = 24)". Commands run:
-  - `flutter analyze --no-pub` (failed with OS Error: Too many open files)
-  - `flutter analyze lib --no-pub` (failed with OS Error: Too many open files)
-  - `dart analyze lib/shared/widgets/lumi_buttons.dart` (failed with same error)
-  Saved analyzer output snippets are available in the agent run logs.
-
-Alternative verifiable step for reviewer (local):
-- Run `flutter analyze` locally to confirm no analyzer errors (environment limitation prevented in-container analysis).
-- Inspect `lib/shared/widgets/lumi_buttons.dart` to verify the three key properties above.
+- worklog.md exists and lists the task, plan, and deliverables (this file).
+- lib/core/theme.dart updated: InputDecorationTheme.focusedBorder uses outline-variant color at 40% opacity.
+- lib/core/theme.dart updated: DividerThemeData configured to remove default 1px solid dividers (thickness: 0, color: transparent) or use tonal alternatives.
+- No syntax errors after edits (dart analyzer or successful `flutter analyze` if available).
+- midterm-polish-tasks.md line for "The \"No-Line\" Rule" marked as done (- [x]).
 
 Notes:
-- Do not delete or overwrite other files. Keep changes minimal and targeted to add the new widget and any necessary exports.
-- Reviewer will verify by checking the file and running analyzer/tests locally if desired.
+- Changes scoped to theme.dart and minimal targeted edits elsewhere if explicit Dividers are present.
+- Do not delete worklog.md; reviewer will verify outputs.
