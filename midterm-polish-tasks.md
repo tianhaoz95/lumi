@@ -51,9 +51,9 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 - [x] **Input Bar**:
     - [x] Convert the bottom chat bar into a floating "pill" using Glassmorphism.
     - [x] Ensure it does not span full width (leave "snow" on the sides).
-- [ ] **Chat Bubbles**:
-    - [ ] Use `surface-container-lowest` for Lumi and `surface-container-high` for User.
-    - [ ] Apply `DEFAULT` (16px) roundedness to all corners.
+- [x] **Chat Bubbles**:
+    - [x] Use `surface-container-lowest` for Lumi and `surface-container-high` for User.
+    - [x] Apply `DEFAULT` (16px) roundedness to all corners.
 
 ### 3.4 Settings (`lib/features/settings/`)
 - [ ] **"The Cabin" Header**:

@@ -249,8 +249,8 @@ class _ChatArea extends StatelessWidget {
       itemBuilder: (context, index) {
         final m = messages[index];
 
-        final bgColor = m.author == _Author.user ? LumiColors.primary : LumiColors.surfaceContainerLowest;
-        final textColor = m.author == _Author.user ? Colors.white : LumiColors.onSurface;
+        final bgColor = m.author == _Author.kit ? LumiColors.surfaceContainerLowest : LumiColors.surfaceContainerHigh;
+        final textColor = LumiColors.onSurface;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 6.0),
