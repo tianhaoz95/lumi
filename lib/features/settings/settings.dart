@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
@@ -286,7 +285,7 @@ class _SettingsRow extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: LumiColors.primaryContainer.withOpacity(0.12), // ignore: deprecated_member_use
+                    color: LumiColors.primaryContainer.withAlpha(31),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(icon, color: LumiColors.primary),

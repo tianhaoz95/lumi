@@ -26,7 +26,7 @@ class GlassModal extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
           child: Container(
             decoration: BoxDecoration(
-              color: LumiColors.surfaceContainerLowest.withOpacity(0.70),
+              color: LumiColors.surfaceContainerLowest.withAlpha(179),
               borderRadius: radius,
             ),
             child: child,

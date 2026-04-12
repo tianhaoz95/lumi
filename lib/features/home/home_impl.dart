@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:ui';
 import 'dart:convert';
 
 import '../../core/theme.dart';
@@ -286,7 +285,7 @@ class _ChatArea extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                           decoration: BoxDecoration(
-                            color: LumiColors.primary.withOpacity(0.12), // ignore: deprecated_member_use
+                            color: LumiColors.primary.withAlpha(31),
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: Row(

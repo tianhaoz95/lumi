@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import '../colors.dart';
 
@@ -16,7 +16,7 @@ class LumiTopAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: Container(
-          color: LumiColors.surfaceContainerLowest.withOpacity(0.7),
+          color: LumiColors.surfaceContainerLowest.withAlpha(179),
           child: AppBar(
             title: title,
             actions: actions,
