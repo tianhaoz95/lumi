@@ -5,7 +5,8 @@ import '../../core/theme.dart';
 /// - Filled with `LumiColors.surfaceContainerHigh`
 /// - Focused border: 2px `LumiColors.primary` at 40% opacity
 /// - Leading icon slot (prefix)
-class LumiTextField extends StatelessWidget {
+// Adds drifting ease-out animation on focus for input fields.
+class LumiTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? hintText;
   final Widget? leading;
@@ -28,30 +29,74 @@ class LumiTextField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _LumiTextFieldState createState() => _LumiTextFieldState();
+}
+
+class _LumiTextFieldState extends State<LumiTextField> {
+  late FocusNode _focusNode;
+  bool _focused = false;
+
+  static const Duration _animDuration = Duration(milliseconds: 300);
+  static const Curve _animCurve = Curves.easeOut;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    setState(() => _focused = _focusNode.hasFocus);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      onChanged: onChanged,
-      obscureText: obscureText,
-      validator: validator,
-      keyboardType: keyboardType,
-      enabled: enabled,
-      decoration: InputDecoration(
-        prefixIcon: leading,
-        hintText: hintText,
-        filled: true,
-        fillColor: LumiColors.surfaceContainerHigh,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
-          borderSide: BorderSide(color: Colors.transparent),
-        ),
+    return AnimatedContainer(
+      duration: _animDuration,
+      curve: _animCurve,
+      transform: _focused ? Matrix4.translationValues(0, -4, 0) : Matrix4.identity(),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: LumiColors.onSurface.withAlpha(((_focused ? 0.06 : 0.02) * 255).round()),
+            blurRadius: _focused ? 18 : 8,
+            offset: Offset(0, _focused ? 8 : 4),
+          ),
+        ],
       ),
-      style: Theme.of(context).textTheme.bodyLarge,
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: widget.controller,
+        onChanged: widget.onChanged,
+        obscureText: widget.obscureText,
+        validator: widget.validator,
+        keyboardType: widget.keyboardType,
+        enabled: widget.enabled,
+        decoration: InputDecoration(
+          prefixIcon: widget.leading,
+          hintText: widget.hintText,
+          filled: true,
+          fillColor: LumiColors.surfaceContainerHigh,
+          contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+        ),
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
     );
   }
 }

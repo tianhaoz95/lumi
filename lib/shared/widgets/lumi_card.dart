@@ -11,6 +11,8 @@ class LumiCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
   final double radius;
+  final double blur;
+  final double opacity;
 
   const LumiCard({
     super.key,
@@ -18,6 +20,8 @@ class LumiCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16),
     this.onTap,
     this.radius = LumiRadius.defaultRadius,
+    this.blur = 24.0,
+    this.opacity = 0.70,
   });
 
   @override
@@ -25,7 +29,7 @@ class LumiCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -33,11 +37,11 @@ class LumiCard extends StatelessWidget {
             child: Container(
               padding: padding,
               decoration: BoxDecoration(
-                color: LumiColors.surfaceContainerLowest.withOpacity(0.70), // ignore: deprecated_member_use
+                color: LumiColors.surfaceContainerLowest.withAlpha((opacity * 255).round()),
                 borderRadius: BorderRadius.circular(radius),
                 boxShadow: [
                   BoxShadow(
-                    color: LumiColors.onSurface.withOpacity(0.04), // ignore: deprecated_member_use
+                    color: LumiColors.onSurface.withAlpha((0.04 * 255).round()),
                     blurRadius: 40,
                     offset: const Offset(0, 12),
                   ),
