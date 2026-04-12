@@ -33,13 +33,26 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     }
   }
 
+  Map<String, dynamic> _receiptDataToJson(ReceiptData data) {
+    return {
+      'vendorName': data.vendorName,
+      'totalAmount': data.totalAmount,
+      'currency': data.currency,
+      'date': data.date,
+      'lineItems': data.lineItems.map((li) => {
+        'description': li.description,
+        'amount': li.amount,
+      }).toList(),
+    };
+  }
+
   Future<void> _processSampleReceipt() async {
     final sampleJson = jsonEncode({
-      'vendor_name': 'Corner Store',
-      'total_amount': 12.34,
+      'vendorName': 'Corner Store',
+      'totalAmount': 12.34,
       'currency': 'USD',
       'date': '2026-04-01',
-      'line_items': [
+      'lineItems': [
         {'description': 'Coffee', 'amount': 3.5},
         {'description': 'Sandwich', 'amount': 8.84}
       ]
@@ -47,11 +60,11 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     try {
       // Dev diagnostics: parse sample JSON directly instead of relying on native bridge
       final map = json.decode(sampleJson) as Map<String, dynamic>;
-      final res = ReceiptData.fromJson(map);
-      debugPrint('Diagnostics: parsed sample receipt into ReceiptData: ${res.toJson()}');
+      final res = lumi_bridge.ReceiptDataJson.fromJson(map);
+      debugPrint('Diagnostics: parsed sample receipt into ReceiptData: ${res.vendorName}');
       setState(() {
         _receiptData = res;
-        _receiptJson = jsonEncode(res.toJson());
+        _receiptJson = jsonEncode(_receiptDataToJson(res));
       });
       debugPrint('Diagnostics: _receiptData set to ${res.vendorName}');
     } catch (e) {
@@ -96,13 +109,17 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                       date: _receiptData!.date,
                       receiptPath: null,
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
-                    setState(() {
-                      _receiptData = null;
-                      _receiptJson = null;
-                    });
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
+                      setState(() {
+                        _receiptData = null;
+                        _receiptJson = null;
+                      });
+                    }
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                    }
                   }
                 },
                 onEdit: () async {
@@ -140,7 +157,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                     ),
                   );
 
-                  if (saved == true) {
+                  if (saved == true && mounted) {
                     try {
                       final parsedAmount = double.tryParse(amountCtrl.text) ?? _receiptData!.totalAmount;
                       final id = await lumi_bridge.LumiCoreBridge.logTransaction(
@@ -151,13 +168,17 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                         date: dateCtrl.text,
                         receiptPath: null,
                       );
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
-                      setState(() {
-                        _receiptData = null;
-                        _receiptJson = null;
-                      });
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logged transaction id: $id')));
+                        setState(() {
+                          _receiptData = null;
+                          _receiptJson = null;
+                        });
+                      }
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to log transaction: $e')));
+                      }
                     }
                   }
                 },

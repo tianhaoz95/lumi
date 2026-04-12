@@ -7,15 +7,20 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
+import 'agent.dart';
+import 'agent_frb.dart';
 import 'build_support.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'db.dart';
+import 'embeddings.dart';
 import 'frb_generated.dart';
 import 'inference.dart';
 import 'lib.dart';
 import 'model_registry.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+import 'receipt.dart';
+import 'tools.dart';
 import 'validators.dart';
 import 'vector_db.dart';
 
@@ -30,11 +35,7 @@ import 'vector_db.dart';
                     required super.portManager,
                   });
 
-                  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_BoxErrorPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError;
-
-CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_BoxErrorPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync;
-
-CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ModelRegistryPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry;
+                  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ModelRegistryPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry;
 
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_PathPtr => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPath;
 
@@ -47,10 +48,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 
                   @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
-
-@protected BoxError dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(dynamic raw);
-
-@protected BoxError dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(dynamic raw);
 
 @protected ModelRegistry dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(dynamic raw);
 
@@ -66,10 +63,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(dynamic raw);
 
-@protected BoxError dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(dynamic raw);
-
-@protected BoxError dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(dynamic raw);
-
 @protected ModelRegistry dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(dynamic raw);
 
 @protected Path dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPath(dynamic raw);
@@ -80,33 +73,67 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(dynamic raw);
 
+@protected RustStreamSink<AgentChunk> dco_decode_StreamSink_agent_chunk_Sse(dynamic raw);
+
 @protected RustStreamSink<InferenceChunk> dco_decode_StreamSink_inference_chunk_Sse(dynamic raw);
 
 @protected String dco_decode_String(dynamic raw);
+
+@protected AgentChunk dco_decode_agent_chunk(dynamic raw);
 
 @protected bool dco_decode_bool(dynamic raw);
 
 @protected Str dco_decode_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(dynamic raw);
 
+@protected double dco_decode_box_autoadd_f_64(dynamic raw);
+
 @protected LiteRtSession dco_decode_box_autoadd_lite_rt_session(dynamic raw);
+
+@protected LumiAgent dco_decode_box_autoadd_lumi_agent(dynamic raw);
+
+@protected TransactionSummary dco_decode_box_autoadd_transaction_summary(dynamic raw);
+
+@protected int dco_decode_box_autoadd_u_32(dynamic raw);
 
 @protected double dco_decode_f_32(dynamic raw);
 
+@protected double dco_decode_f_64(dynamic raw);
+
+@protected FinancialSummary dco_decode_financial_summary(dynamic raw);
+
 @protected int dco_decode_i_32(dynamic raw);
+
+@protected PlatformInt64 dco_decode_i_64(dynamic raw);
 
 @protected InferenceChunk dco_decode_inference_chunk(dynamic raw);
 
 @protected InferenceEngine dco_decode_inference_engine(dynamic raw);
 
+@protected LineItem dco_decode_line_item(dynamic raw);
+
 @protected List<String> dco_decode_list_String(dynamic raw);
+
+@protected List<LineItem> dco_decode_list_line_item(dynamic raw);
 
 @protected List<double> dco_decode_list_prim_f_32_loose(dynamic raw);
 
 @protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
 
+@protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
+
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
+@protected List<(String,double,String)> dco_decode_list_record_string_f_32_string(dynamic raw);
+
+@protected List<(String,double)> dco_decode_list_record_string_f_64(dynamic raw);
+
+@protected List<TransactionSummary> dco_decode_list_transaction_summary(dynamic raw);
+
 @protected LiteRtSession dco_decode_lite_rt_session(dynamic raw);
+
+@protected LumiAgent dco_decode_lumi_agent(dynamic raw);
+
+@protected MileageLogResult dco_decode_mileage_log_result(dynamic raw);
 
 @protected ModelId dco_decode_model_id(dynamic raw);
 
@@ -116,7 +143,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str? dco_decode_opt_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(dynamic raw);
 
+@protected double? dco_decode_opt_box_autoadd_f_64(dynamic raw);
+
+@protected int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+
+@protected ReceiptData dco_decode_receipt_data(dynamic raw);
+
 @protected (Float32List,String) dco_decode_record_list_prim_f_32_strict_string(dynamic raw);
+
+@protected (String,double,String) dco_decode_record_string_f_32_string(dynamic raw);
+
+@protected (String,double) dco_decode_record_string_f_64(dynamic raw);
+
+@protected TransactionSummary dco_decode_transaction_summary(dynamic raw);
+
+@protected int dco_decode_u_32(dynamic raw);
 
 @protected int dco_decode_u_8(dynamic raw);
 
@@ -125,10 +166,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 @protected BigInt dco_decode_usize(dynamic raw);
 
 @protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
-
-@protected BoxError sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(SseDeserializer deserializer);
-
-@protected BoxError sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(SseDeserializer deserializer);
 
 @protected ModelRegistry sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(SseDeserializer deserializer);
 
@@ -144,10 +181,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(SseDeserializer deserializer);
 
-@protected BoxError sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(SseDeserializer deserializer);
-
-@protected BoxError sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(SseDeserializer deserializer);
-
 @protected ModelRegistry sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(SseDeserializer deserializer);
 
 @protected Path sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPath(SseDeserializer deserializer);
@@ -158,33 +191,67 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(SseDeserializer deserializer);
 
+@protected RustStreamSink<AgentChunk> sse_decode_StreamSink_agent_chunk_Sse(SseDeserializer deserializer);
+
 @protected RustStreamSink<InferenceChunk> sse_decode_StreamSink_inference_chunk_Sse(SseDeserializer deserializer);
 
 @protected String sse_decode_String(SseDeserializer deserializer);
+
+@protected AgentChunk sse_decode_agent_chunk(SseDeserializer deserializer);
 
 @protected bool sse_decode_bool(SseDeserializer deserializer);
 
 @protected Str sse_decode_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(SseDeserializer deserializer);
 
+@protected double sse_decode_box_autoadd_f_64(SseDeserializer deserializer);
+
 @protected LiteRtSession sse_decode_box_autoadd_lite_rt_session(SseDeserializer deserializer);
+
+@protected LumiAgent sse_decode_box_autoadd_lumi_agent(SseDeserializer deserializer);
+
+@protected TransactionSummary sse_decode_box_autoadd_transaction_summary(SseDeserializer deserializer);
+
+@protected int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
 @protected double sse_decode_f_32(SseDeserializer deserializer);
 
+@protected double sse_decode_f_64(SseDeserializer deserializer);
+
+@protected FinancialSummary sse_decode_financial_summary(SseDeserializer deserializer);
+
 @protected int sse_decode_i_32(SseDeserializer deserializer);
+
+@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
 
 @protected InferenceChunk sse_decode_inference_chunk(SseDeserializer deserializer);
 
 @protected InferenceEngine sse_decode_inference_engine(SseDeserializer deserializer);
 
+@protected LineItem sse_decode_line_item(SseDeserializer deserializer);
+
 @protected List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+@protected List<LineItem> sse_decode_list_line_item(SseDeserializer deserializer);
 
 @protected List<double> sse_decode_list_prim_f_32_loose(SseDeserializer deserializer);
 
 @protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer);
 
+@protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
+
 @protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
+@protected List<(String,double,String)> sse_decode_list_record_string_f_32_string(SseDeserializer deserializer);
+
+@protected List<(String,double)> sse_decode_list_record_string_f_64(SseDeserializer deserializer);
+
+@protected List<TransactionSummary> sse_decode_list_transaction_summary(SseDeserializer deserializer);
+
 @protected LiteRtSession sse_decode_lite_rt_session(SseDeserializer deserializer);
+
+@protected LumiAgent sse_decode_lumi_agent(SseDeserializer deserializer);
+
+@protected MileageLogResult sse_decode_mileage_log_result(SseDeserializer deserializer);
 
 @protected ModelId sse_decode_model_id(SseDeserializer deserializer);
 
@@ -194,7 +261,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Str? sse_decode_opt_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(SseDeserializer deserializer);
 
+@protected double? sse_decode_opt_box_autoadd_f_64(SseDeserializer deserializer);
+
+@protected int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+
+@protected ReceiptData sse_decode_receipt_data(SseDeserializer deserializer);
+
 @protected (Float32List,String) sse_decode_record_list_prim_f_32_strict_string(SseDeserializer deserializer);
+
+@protected (String,double,String) sse_decode_record_string_f_32_string(SseDeserializer deserializer);
+
+@protected (String,double) sse_decode_record_string_f_64(SseDeserializer deserializer);
+
+@protected TransactionSummary sse_decode_transaction_summary(SseDeserializer deserializer);
+
+@protected int sse_decode_u_32(SseDeserializer deserializer);
 
 @protected int sse_decode_u_8(SseDeserializer deserializer);
 
@@ -203,10 +284,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 @protected BigInt sse_decode_usize(SseDeserializer deserializer);
 
 @protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
-
-@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(BoxError self, SseSerializer serializer);
-
-@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(BoxError self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(ModelRegistry self, SseSerializer serializer);
 
@@ -222,10 +299,6 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(Str self, SseSerializer serializer);
 
-@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(BoxError self, SseSerializer serializer);
-
-@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(BoxError self, SseSerializer serializer);
-
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(ModelRegistry self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerPath(Path self, SseSerializer serializer);
@@ -236,33 +309,67 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(Str self, SseSerializer serializer);
 
+@protected void sse_encode_StreamSink_agent_chunk_Sse(RustStreamSink<AgentChunk> self, SseSerializer serializer);
+
 @protected void sse_encode_StreamSink_inference_chunk_Sse(RustStreamSink<InferenceChunk> self, SseSerializer serializer);
 
 @protected void sse_encode_String(String self, SseSerializer serializer);
+
+@protected void sse_encode_agent_chunk(AgentChunk self, SseSerializer serializer);
 
 @protected void sse_encode_bool(bool self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(Str self, SseSerializer serializer);
 
+@protected void sse_encode_box_autoadd_f_64(double self, SseSerializer serializer);
+
 @protected void sse_encode_box_autoadd_lite_rt_session(LiteRtSession self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_lumi_agent(LumiAgent self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_transaction_summary(TransactionSummary self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
 @protected void sse_encode_f_32(double self, SseSerializer serializer);
 
+@protected void sse_encode_f_64(double self, SseSerializer serializer);
+
+@protected void sse_encode_financial_summary(FinancialSummary self, SseSerializer serializer);
+
 @protected void sse_encode_i_32(int self, SseSerializer serializer);
+
+@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
 
 @protected void sse_encode_inference_chunk(InferenceChunk self, SseSerializer serializer);
 
 @protected void sse_encode_inference_engine(InferenceEngine self, SseSerializer serializer);
 
+@protected void sse_encode_line_item(LineItem self, SseSerializer serializer);
+
 @protected void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+@protected void sse_encode_list_line_item(List<LineItem> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_f_32_loose(List<double> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
+@protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
+
 @protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
+@protected void sse_encode_list_record_string_f_32_string(List<(String,double,String)> self, SseSerializer serializer);
+
+@protected void sse_encode_list_record_string_f_64(List<(String,double)> self, SseSerializer serializer);
+
+@protected void sse_encode_list_transaction_summary(List<TransactionSummary> self, SseSerializer serializer);
+
 @protected void sse_encode_lite_rt_session(LiteRtSession self, SseSerializer serializer);
+
+@protected void sse_encode_lumi_agent(LumiAgent self, SseSerializer serializer);
+
+@protected void sse_encode_mileage_log_result(MileageLogResult self, SseSerializer serializer);
 
 @protected void sse_encode_model_id(ModelId self, SseSerializer serializer);
 
@@ -272,7 +379,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected void sse_encode_opt_box_autoadd_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerstr(Str? self, SseSerializer serializer);
 
+@protected void sse_encode_opt_box_autoadd_f_64(double? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+
+@protected void sse_encode_receipt_data(ReceiptData self, SseSerializer serializer);
+
 @protected void sse_encode_record_list_prim_f_32_strict_string((Float32List,String) self, SseSerializer serializer);
+
+@protected void sse_encode_record_string_f_32_string((String,double,String) self, SseSerializer serializer);
+
+@protected void sse_encode_record_string_f_64((String,double) self, SseSerializer serializer);
+
+@protected void sse_encode_transaction_summary(TransactionSummary self, SseSerializer serializer);
+
+@protected void sse_encode_u_32(int self, SseSerializer serializer);
 
 @protected void sse_encode_u_8(int self, SseSerializer serializer);
 
@@ -288,15 +409,7 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 class RustLibWire implements BaseWire {
             RustLibWire.fromExternalLibrary(ExternalLibrary lib);
 
-            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(ptr);
-
-void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(ptr);
-
-void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(ptr);
-
-void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(ptr);
-
-void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(ptr);
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr) => wasmModule.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(ptr);
 
 void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr) => wasmModule.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(ptr);
 
@@ -319,15 +432,7 @@ void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generated
         @JS('wasm_bindgen') external RustLibWasmModule get wasmModule;
 
         @JS() @anonymous extension type RustLibWasmModule._(JSObject _) implements JSObject {
-            external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(int ptr);
-
-external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxError(int ptr);
-
-external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(int ptr);
-
-external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerBoxErrorSendSync(int ptr);
-
-external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr);
+            external void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr);
 
 external void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerModelRegistry(int ptr);
 

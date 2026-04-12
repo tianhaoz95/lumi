@@ -10,8 +10,8 @@ setup:
 # Codegen: runs flutter_rust_bridge_codegen to generate Dart bindings from Rust
 # Note: flutter_rust_bridge_codegen must be installed (cargo install flutter_rust_bridge_codegen)
 codegen:
-	@echo "Running flutter_rust_bridge_codegen (if available)"
-	flutter_rust_bridge_codegen generate --rust-input rust/lumi_core/src/lib.rs --dart-output lib/shared/bridge || true
+	@echo "Running flutter_rust_bridge_codegen"
+	flutter_rust_bridge_codegen generate --rust-input "crate" --rust-root rust/lumi_core/ --dart-output lib/shared/bridge/
 
 run:
 	flutter run
@@ -33,10 +33,6 @@ services-down:
 services-reset:
 	docker compose -f docker-compose.appwrite.yml down -v
 	$(MAKE) services-up
-
-# Additional targets for CI and developer convenience
-codegen:
-	flutter_rust_bridge_codegen generate
 
 test-unit:
 	flutter test test/

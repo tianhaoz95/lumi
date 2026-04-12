@@ -82,7 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisCount: crossAxisCount,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        childAspectRatio: isWide ? 3 : 3,
+                        childAspectRatio: isWide ? 3 : 2.2,
                       ),
                       children: [
                         _MetricCard(
@@ -150,18 +150,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                CircleAvatar(child: Icon(icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(t.vendor, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                    Text('${t.category} • ${t.date}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                                  ],
-                                ),
-                              ],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  CircleAvatar(child: Icon(icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(t.vendor, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+                                        Text('${t.category} • ${t.date}', style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             Text(amountText, style: const TextStyle(fontWeight: FontWeight.w600)),
                           ],

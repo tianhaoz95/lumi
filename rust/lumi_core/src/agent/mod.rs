@@ -99,8 +99,9 @@ mod tests {
         assert!(res.is_ok());
         let text = res.unwrap();
         // Since inference tokenization splits on whitespace, ensure expected words present
-        assert!(text.contains("hello"));
-        assert!(text.contains("lumi"));
+        let lower = text.to_lowercase();
+        assert!(lower.contains("hello"));
+        assert!(lower.contains("lumi"));
     }
 
     #[tokio::test]

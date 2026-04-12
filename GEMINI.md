@@ -35,6 +35,7 @@ Commands are managed via the root `Makefile`:
 | `make setup` | Install Flutter dependencies and check for Rust toolchain. |
 | `make codegen` | Generate Dart bindings from Rust code using FRB. |
 | `make run` | Run the Flutter application. |
+| `./scripts/launch-android.sh` | Run the app on a connected Android device using local Appwrite. |
 | `make test` | Run both Rust and Flutter unit tests. |
 | `make services-up` | Start local Appwrite services using Docker Compose. |
 | `make services-down` | Stop local Appwrite services. |
@@ -141,6 +142,23 @@ make test-integration DEVICE=linux
 
 ---
 
+## Manual Testing on Android Device
+
+To test the application manually on a physical Android device while connected to your local Appwrite instance:
+
+1.  **Ensure your device is connected:**
+    ```bash
+    flutter devices
+    ```
+2.  **Run the launch script:**
+    ```bash
+    ./scripts/launch-android.sh
+    ```
+
+This script automatically detects your machine's local network IP, ensures the Android platform is registered in your local Appwrite project, and starts the app with the necessary `--dart-define` flags for connectivity.
+
+---
+
 ## Roadmap Phases
 1. **Phase 1: Permafrost** - Foundation, Flutter + Rust Bridge, SQLite/LanceDB setup.
 2. **Phase 2: Thaw** - On-device inference with LiteRT-LM and Gemma 4.
@@ -149,4 +167,4 @@ make test-integration DEVICE=linux
 5. **Phase 5: Aurora** - UX Polish, "Cozy Cabin" theme, and audit reports.
 
 ---
-*Last updated: April 10, 2026*
+*Last updated: April 11, 2026*

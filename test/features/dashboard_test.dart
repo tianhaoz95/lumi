@@ -6,17 +6,14 @@ import 'package:lumi/features/dashboard/dashboard.dart';
 
 void main() {
   testWidgets('bento grid renders 3 columns on wide viewport', (WidgetTester tester) async {
+    // Set wide viewport
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
     await tester.pumpWidget(const ProviderScope(
       child: MaterialApp(
-        home: Center(
-          child: SizedBox(
-            width: 1200,
-            child: MediaQuery(
-              data: MediaQueryData(size: Size(1200, 800)),
-              child: DashboardScreen(),
-            ),
-          ),
-        ),
+        home: DashboardScreen(),
       ),
     ));
 
@@ -33,17 +30,14 @@ void main() {
   });
 
   testWidgets('bento grid renders 1 column on narrow viewport', (WidgetTester tester) async {
+    // Set narrow viewport
+    tester.view.physicalSize = const Size(320, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() => tester.view.resetPhysicalSize());
+
     await tester.pumpWidget(const ProviderScope(
       child: MaterialApp(
-        home: Center(
-          child: SizedBox(
-            width: 320,
-            child: MediaQuery(
-              data: MediaQueryData(size: Size(320, 800)),
-              child: DashboardScreen(),
-            ),
-          ),
-        ),
+        home: DashboardScreen(),
       ),
     ));
 

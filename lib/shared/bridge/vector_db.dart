@@ -6,29 +6,40 @@
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These functions are ignored because they are not marked as `pub`: `cosine_similarity`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `EmbeddingRecord`
 
-            // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `EmbeddingRecord`
-
-
-            /// Initialize a simple on-disk vector DB placeholder for Lumi.
+/// Initialize a simple on-disk vector DB placeholder for Lumi.
 ///
 /// For Phase 1 this creates the directory and a sentinel file and provides a
 /// minimal "transaction_embeddings" table backed by JSON files so unit tests
 /// can run without pulling in LanceDB native dependencies.
-Future<void>  vectorDbInit({required String dbPath }) => RustLib.instance.api.crateVectorDbVectorDbInit(dbPath: dbPath);
+Future<void> vectorDbInit({required String dbPath}) =>
+    RustLib.instance.api.crateVectorDbVectorDbInit(dbPath: dbPath);
 
 /// Upsert an embedding record into the on-disk "transaction_embeddings" table.
-Future<void>  upsertEmbedding({required String dbPath , required String id , required List<double> embedding , required String metadata }) => RustLib.instance.api.crateVectorDbUpsertEmbedding(dbPath: dbPath, id: id, embedding: embedding, metadata: metadata);
+Future<void> upsertEmbedding(
+        {required String dbPath,
+        required String id,
+        required List<double> embedding,
+        required String metadata}) =>
+    RustLib.instance.api.crateVectorDbUpsertEmbedding(
+        dbPath: dbPath, id: id, embedding: embedding, metadata: metadata);
 
 /// Retrieve an embedding record by ID.
-Future<(Float32List,String)>  getEmbedding({required String dbPath , required String id }) => RustLib.instance.api.crateVectorDbGetEmbedding(dbPath: dbPath, id: id);
+Future<(Float32List, String)> getEmbedding(
+        {required String dbPath, required String id}) =>
+    RustLib.instance.api.crateVectorDbGetEmbedding(dbPath: dbPath, id: id);
 
-            
-                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box < Error >>>
-                abstract class BoxError implements RustOpaqueInterface {
-                    
+/// Perform a simple cosine-similarity based search across the on-disk embeddings.
+/// Returns a vector of (id, score, metadata) sorted by descending score.
+Future<List<(String, double, String)>> vectorSearch(
+        {required String dbPath,
+        required List<double> queryVector,
+        required int topK}) =>
+    RustLib.instance.api.crateVectorDbVectorSearch(
+        dbPath: dbPath, queryVector: queryVector, topK: topK);
 
-                    
-                }
-                
-            
+/// Build an IVF-PQ index for the transaction_embeddings collection.
+Future<void> buildIvfPqIndex({required String dbPath}) =>
+    RustLib.instance.api.crateVectorDbBuildIvfPqIndex(dbPath: dbPath);

@@ -34,9 +34,6 @@ Stream<InferenceChunk> inferStream(
     RustLib.instance.api
         .crateInferenceInferStream(prompt: prompt, modelTier: modelTier);
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Box < Error + Send + Sync >>>
-abstract class BoxError implements RustOpaqueInterface {}
-
 /// Chunk of inference output sent over FRB to Dart.
 class InferenceChunk {
   final String token;

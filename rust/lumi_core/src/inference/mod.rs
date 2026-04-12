@@ -129,13 +129,10 @@ impl InferenceEngine {
     /// Performs a simple existence check of the model file and chooses a
     /// preferred backend based on environment hints. This is a conservative
     ///, testable implementation; real delegate initialization happens later.
-    pub fn load(model_id: &str, model_path: &str) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn load(model_id: &str, model_path: &str) -> Result<Self, String> {
         use std::path::Path;
         let p = Path::new(model_path);
-        if !p.exists() {
-            return Err(format!("model file not found: {}", model_path).into());
-        }
-
+        
         let backend = if cfg!(target_os = "android") && std::env::var("LUMI_ENABLE_NPU").ok().as_deref() == Some("1") {
             "npu"
         } else if std::env::var("LUMI_ENABLE_GPU").ok().as_deref() == Some("1") {
@@ -144,6 +141,18 @@ impl InferenceEngine {
             "cpu"
         };
 
+        if !p.exists() {
+            // In dev mode (if LUMI_MODEL_DIR is set to a temp dir or similar), 
+            // allow a fallback to a dummy engine if the file is missing.
+            if std::env::var("LUMI_MODEL_DIR").is_ok() || std::env::var("LUMI_DEV").ok().as_deref() == Some("1") {
+                println!("Warning: model file not found at {}, using dummy {} backend for dev", model_path, backend);
+                let session = LiteRtSession::new(backend);
+                return Ok(InferenceEngine { model_id: ModelId::from(model_id), session });
+            }
+            return Err(format!("model file not found: {}", model_path));
+        }
+
+        println!("Loading model {} from {} using {} backend", model_id, model_path, backend);
         let session = LiteRtSession::new(backend);
         Ok(InferenceEngine { model_id: ModelId::from(model_id), session })
     }
@@ -228,12 +237,15 @@ pub struct InferenceChunk {
 /// Internal helper: stream prompt tokens to a vector of chunks. Used by both
 /// tests and the FRB-facing `infer_stream` function.
 async fn stream_prompt_to_chunks(prompt: String, _model_tier: ModelTier) -> Vec<InferenceChunk> {
-    // Simple tokenization: split on whitespace for Phase 2 scaffold.
-    let tokens: Vec<String> = if prompt.is_empty() {
-        vec!["".to_string()]
+    // Phase 2 mock response: instead of echoing, provide a helpful assistant message.
+    let response = if prompt.to_lowercase().contains("hello") {
+        "Hello! I am Lumi, your local-first financial assistant. How can I help you today?".to_string()
     } else {
-        prompt.split_whitespace().map(|s| s.to_string()).collect()
+        format!("Lumi AI: I've processed your request regarding '{}'. I'm currently running on the {} backend.", prompt, 
+            GLOBAL_ENGINE.lock().ok().and_then(|g| g.as_ref().map(|e| e.session.backend.clone())).unwrap_or_else(|| "unknown".to_string()))
     };
+
+    let tokens: Vec<String> = response.split_whitespace().map(|s| format!("{} ", s)).collect();
 
     let mut out: Vec<InferenceChunk> = Vec::new();
     let start = tokio::time::Instant::now();
@@ -247,7 +259,7 @@ async fn stream_prompt_to_chunks(prompt: String, _model_tier: ModelTier) -> Vec<
         };
         out.push(chunk);
         // Small delay to simulate streaming
-        tokio::time::sleep(tokio::time::Duration::from_millis(20)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(30)).await;
     }
 
     // Final chunk indicating completion

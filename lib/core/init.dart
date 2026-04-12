@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../shared/bridge/lumi_core_bridge.dart';
+import '../shared/bridge/frb_generated.dart';
+import '../shared/bridge/inference.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
 
 /// Application initialization steps that must run before the UI mounts.
@@ -8,6 +10,9 @@ import 'package:lumi/features/auth/appwrite_service.dart';
 /// Ensures the on-device DB exists by calling the bridge shim.
 /// Also initializes AppwriteService from dart-define env vars for integration tests.
 Future<void> initializeApp() async {
+  // Initialize flutter_rust_bridge
+  await RustLib.init();
+
   String dbPath;
   
   if (Platform.isAndroid || Platform.isIOS) {
@@ -24,6 +29,15 @@ Future<void> initializeApp() async {
 
   // Initialize on-device DB
   await LumiCoreBridge.dbInit(dbPath);
+
+  // Initialize local inference model (Phase 2)
+  try {
+    // Default to Sentinel model
+    await frbLoadModel(modelId: 'e2b');
+  } catch (e) {
+    // In dev, we might not have the model file yet; logging is handled in Rust.
+    stderr.writeln('Inference model load attempt finished: $e');
+  }
 
   // Initialize AppwriteService for tests and local dev if dart-defines are provided.
   try {
