@@ -48,8 +48,10 @@ class AtmosphericBackground extends StatelessWidget {
             if (showGrain)
               Positioned.fill(
                 child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: _GrainPainter(),
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: _GrainPainter(),
+                    ),
                   ),
                 ),
               ),

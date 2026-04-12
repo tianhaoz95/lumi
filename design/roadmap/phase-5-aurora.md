@@ -38,7 +38,7 @@
 
 - [x] **1.3.1** Implement the grain texture as an SVG-based background at 2–3% opacity, fixed in position.  <!-- Implemented: reintroduced feTurbulence filter; test-time fallback retained -->
 - [x] **1.3.2** Ensure `AtmosphericBackground` orbs are in place on Login, Sign Up, Forgot Password, Home, and Dashboard screens.
-- [ ] **1.3.3** Verify grain texture does not impact frame rate (use Flutter DevTools performance overlay).
+- [x] **1.3.3** Verify grain texture does not impact frame rate (use Flutter DevTools performance overlay).
 
 ---
 
