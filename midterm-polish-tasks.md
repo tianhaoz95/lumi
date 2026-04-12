@@ -22,7 +22,7 @@ Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
 
 - [x] **Typography**: 
     - [x] Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'.
-    - [ ] Set `lineHeight` to `1.6` for all body and label styles.
+    - [x] Set `lineHeight` to `1.6` for all body and label styles.
     - [ ] Implement the "High-Low" pairing (extreme scale contrast).
 - [ ] **Button Theming**:
     - [ ] Implement `LumiPrimaryButton` with a 135-degree linear gradient (`primary` to `primaryContainer`).

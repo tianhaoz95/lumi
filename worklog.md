@@ -1,17 +1,17 @@
-Task: Set typography fonts — Headlines to 'Manrope' and Body to 'Inter'
+Task: Set lineHeight to 1.6 for all body and label styles
 
-Planned steps:
-1. Inspect current theme file at lib/core/theme.dart to find where text styles are defined.
-2. Create this worklog.md documenting plan and verifiable deliverables.
-3. Modify ThemeData to explicitly set ThemeData.fontFamily to 'Inter' for body/labels and ensure headline/display/title styles use GoogleFonts.manrope.
-4. Run quick repository checks (grep) to confirm the changes are present.
-5. Update midterm-polish-tasks.md to mark the typography checkbox done once deliverables are verified.
+Plan (step-by-step):
+1. Inspect lib/core/theme.dart to find current body and label text styles.
+2. Ensure bodyLarge, bodyMedium, bodySmall, labelLarge, labelMedium, labelSmall include `height: 1.6`.
+3. If missing, update the file. (Observation: values already present.)
+4. Run a quick content check (grep) to verify `height: 1.6` appears the expected number of times.
+5. Mark the task done in midterm-polish-tasks.md.
 
 Verifiable deliverables:
-- File lib/core/theme.dart contains GoogleFonts.manrope calls for headline/display/title styles.
-- ThemeData in lib/core/theme.dart explicitly sets fontFamily: 'Inter'.
-- A grep search for "GoogleFonts.manrope" and "fontFamily: 'Inter'" in lib/core/theme.dart returns matches.
-- midterm-polish-tasks.md updated: the specific task line for "Explicitly set `fontFamily` for Headlines to 'Manrope' and Body to 'Inter'." is changed from "- [ ]" to "- [x]" after verification.
+- lib/core/theme.dart contains `height: 1.6` for bodyLarge, bodyMedium, bodySmall, labelLarge, labelMedium, labelSmall.
+- midterm-polish-tasks.md shows the task `Set `lineHeight` to `1.6` for all body and label styles.` marked as done (`- [x]`).
+- A content search for `height: 1.6` returns at least 6 matches.
 
 Notes for reviewer:
-- The project uses the google_fonts package; headlines are set via GoogleFonts.manrope which ensures Manrope is used for display and title styles. Setting ThemeData.fontFamily to 'Inter' makes body and label text default to Inter while preserving explicit Manrope headlines.
+- No runtime build required for this change; this is a theming adjustment inside lib/core/theme.dart.
+- If additional text styles need line-height adjustments, note them in worklog comments for follow-up.
