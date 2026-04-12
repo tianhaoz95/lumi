@@ -11,6 +11,14 @@ import '../../features/sentinel/known_locations.dart';
 import '../../features/auth/auth_notifier.dart';
 import '../../shared/bridge/sentinel.dart';
 
+Future<SentinelHealth?> _safeGetSentinelHealth() async {
+  try {
+    return await getSentinelHealth();
+  } catch (_) {
+    return null;
+  }
+}
+
 /// Settings screen implemented to match design/ui_design/settings/code.html
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -221,8 +229,8 @@ class SettingsScreen extends ConsumerWidget {
                         if (kDebugMode)
                           LumiCard(
                             padding: const EdgeInsets.all(12.0),
-                            child: FutureBuilder<SentinelHealth>(
-                              future: getSentinelHealth(),
+                            child: FutureBuilder<SentinelHealth?>(
+                              future: kDebugMode ? _safeGetSentinelHealth() : Future<SentinelHealth?>.value(null),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) return const Text('Loading Sentinel health...');
                                 if (snapshot.hasError) return Text('Sentinel health error: ${snapshot.error}');
