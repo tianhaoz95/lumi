@@ -18,6 +18,16 @@ void main() {
     final fake = _FakeAccount();
     AppwriteService.instance.setAccountForTest(fake);
 
+    // Ensure the test viewport is tall enough so the logout button is visible
+    tester.binding.window.physicalSizeTestValue = const Size(800, 1200);
+    tester.binding.window.devicePixelRatioTestValue = 1.0;
+
+    addTearDown(() {
+      // Reset test window values after the test
+      tester.binding.window.clearPhysicalSizeTestValue();
+      tester.binding.window.clearDevicePixelRatioTestValue();
+    });
+
     await tester.pumpWidget(const ProviderScope(
       child: MaterialApp(
         home: SettingsScreen(),
@@ -35,7 +45,8 @@ void main() {
     // Tap Logout
     final logoutFinder = find.widgetWithIcon(OutlinedButton, Icons.logout);
     expect(logoutFinder, findsOneWidget);
-    await tester.tap(logoutFinder);
+    // Use tapAt center to avoid hit-test issues when layout is slightly different
+    await tester.tapAt(tester.getCenter(logoutFinder));
     await tester.pump(); // Start logout
     await tester.pump(const Duration(milliseconds: 100)); // Finish logout
     await tester.pumpAndSettle();

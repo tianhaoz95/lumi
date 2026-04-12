@@ -36,7 +36,7 @@
 
 ### 1.3 Grain Texture & Atmospheric Orbs
 
-- [x] **1.3.1** Implement the grain texture as an SVG `<feTurbulence>` noise filter rendered via `flutter_svg` at 2–3% opacity, fixed in position.
+- [x] **1.3.1** Implement the grain texture as an SVG `<feTurbulence>` noise filter rendered via `flutter_svg` at 2–3% opacity, fixed in position.  <!-- implemented with test-time fallback; see worklog.md -->
 - [ ] **1.3.2** Ensure `AtmosphericBackground` orbs are in place on Login, Sign Up, Forgot Password, Home, and Dashboard screens.
 - [ ] **1.3.3** Verify grain texture does not impact frame rate (use Flutter DevTools performance overlay).
 
