@@ -17,6 +17,12 @@ Verifiable deliverables:
 - No syntax errors after edits (dart analyzer or successful `flutter analyze` if available).
 - midterm-polish-tasks.md line for "The \"No-Line\" Rule" marked as done (- [x]).
 
-Notes:
-- Changes scoped to theme.dart and minimal targeted edits elsewhere if explicit Dividers are present.
-- Do not delete worklog.md; reviewer will verify outputs.
+Reviewer Findings:
+1. **`LumiTextField` Overrides:** `lib/shared/widgets/lumi_text_field.dart` contains an explicit `InputDecoration` that overrides the global theme. It uses `LumiColors.primary.withOpacity(0.4)` for `focusedBorder` instead of the mandated `outline-variant` (Ghost Border).
+2. **Explicit 1px Borders Remaining:** Several components still have explicit `1px` borders that violate the "No-Line" rule's intent of removing strokes in favor of tonal shifts or negative space:
+    - `lib/widgets/floating_nav_bar.dart`: `Border.all(color: ..., width: 1)` at 8% opacity.
+    - `lib/shared/widgets/lumi_buttons.dart`: `LumiSecondaryButton` uses `Border.all(color: ..., width: 1)` (implicit width) at 12% opacity.
+    - `lib/features/settings/settings.dart`: `OutlinedButton` styles use `side: BorderSide(color: ..., width: 1)` (implicit width) at 10% opacity.
+3. **Ghost Border Color:** The "No-Line" rule specifically mentions using `outline-variant` for the Ghost Border. While `lib/core/theme.dart` was updated, the actual primary input field (`LumiTextField`) is not using it.
+
+Please update these components to remove the explicit 1px borders and ensure `LumiTextField` follows the Ghost Border specification (outline-variant at 40% opacity).

@@ -41,10 +41,7 @@ class FloatingNavBar extends StatelessWidget {
                       offset: const Offset(0, 12),
                     ),
                   ],
-                  border: Border.all(
-                    color: const Color(0xFFBEC8C9).withOpacity(0.08),
-                    width: 1,
-                  ),
+
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

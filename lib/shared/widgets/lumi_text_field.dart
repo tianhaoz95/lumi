@@ -53,7 +53,7 @@ class LumiTextField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LumiRadius.defaultRadius),
           borderSide: BorderSide(
-            color: LumiColors.primary.withOpacity(0.4),
+            color: LumiColors.outlineVariant.withOpacity(0.4),
             width: 2.0,
           ),
         ),

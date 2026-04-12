@@ -46,7 +46,7 @@ class LumiSecondaryButton extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.40),
                 borderRadius: BorderRadius.circular(radius),
-                border: Border.all(color: LumiColors.outlineVariant.withOpacity(0.12)),
+
               ),
               child: DefaultTextStyle(
                 style: const TextStyle(color: Color(0xFF171C1E), fontWeight: FontWeight.w600, fontFamily: 'Manrope'),

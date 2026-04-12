@@ -172,7 +172,7 @@ class SettingsScreen extends ConsumerWidget {
                                 icon: const Icon(Icons.logout),
                                 label: const Text('Log Out'),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: LumiColors.outlineVariant.withOpacity(0.1)),
+                                  side: BorderSide.none,
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   textStyle: const TextStyle(fontWeight: FontWeight.w600),
                                 ),
@@ -185,7 +185,7 @@ class SettingsScreen extends ConsumerWidget {
                                 icon: const Icon(Icons.delete_forever, color: Colors.red),
                                 label: const Text('Delete Account', style: TextStyle(color: Colors.red)),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Theme.of(context).colorScheme.error.withOpacity(0.1)),
+                                  side: BorderSide.none,
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                 ),
                               ),
