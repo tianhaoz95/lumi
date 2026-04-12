@@ -17,11 +17,11 @@ Future<List<TransactionSummary>> fetchRecentTransactions(
     {int limit = 5}) async {
   // If tests injected transactions, return them (respecting limit)
   if (_injectedTransactions != null) {
-    await Future.delayed(const Duration(milliseconds: 20));
+    await Future.delayed(const Duration(milliseconds: 20)); // micro-snap
     return _injectedTransactions!.take(limit).toList();
   }
 
-  await Future.delayed(const Duration(milliseconds: 50));
+  await Future.delayed(const Duration(milliseconds: 50)); // micro-snap
   // Deterministic development data matching the original mock list
   final items = <TransactionSummary>[
     TransactionSummary(

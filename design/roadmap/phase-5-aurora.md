@@ -54,7 +54,7 @@
   static const snapCurve = Curves.easeInOut;
   ```
 - [x] **2.1.2** Replace all `AnimatedContainer`, `AnimationController`, and `TweenAnimationBuilder` usages to reference `LumiAnimations` constants (no hardcoded durations).
-- [ ] **2.1.3** Verify: no animation duration < 300 ms (except micro-snaps ≤ 150 ms) and none > 500 ms.
+- [x] **2.1.3** Verify: no animation duration < 300 ms (except micro-snaps ≤ 150 ms) and none > 500 ms.
 
 ### 2.2 Kit the Fox — Animations
 
