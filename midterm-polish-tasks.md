@@ -35,7 +35,7 @@ Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
 Iterate through every screen to match the Nordic editorial aesthetic.
 
 ### 3.1 Login & Sign Up (`lib/features/auth/`)
-- [ ] **Layout**: Implement intentional asymmetry and generous negative space.
+- [x] **Layout**: Implement intentional asymmetry and generous negative space.
 - [ ] **Mascot**: Add `KitGhost` (5-10% opacity) to the background or header.
 - [ ] **Transitions**: Ensure field focus and button taps use "drifting" (ease-out) animations.
 
