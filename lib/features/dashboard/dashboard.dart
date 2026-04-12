@@ -62,127 +62,131 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: LumiTopAppBar(title: const Text('The Tundra')),
       backgroundColor: LumiColors.surface,
-      body: Stack(
-        children: [
-          const AtmosphericBackground(),
-          RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Bento grid
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final width = constraints.maxWidth;
-                    final isWide = width >= 800;
-                    final crossAxisCount = isWide ? 3 : 1;
-                    return GridView(
-                      key: const Key('bento_grid'),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: isWide ? 3 : 2.2,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            const AtmosphericBackground(),
+            RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Bento grid
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.maxWidth;
+                          final isWide = width >= 800;
+                          final crossAxisCount = isWide ? 3 : 1;
+                          return GridView(
+                            key: const Key('bento_grid'),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: isWide ? 3 : 2.2,
+                            ),
+                            children: [
+                              _MetricCard(
+                                key: const Key('metric_current_expenses'),
+                                title: 'Current Expenses',
+                                value: _summary != null ? '\$${_summary!.totalExpenses.toStringAsFixed(2)}' : '--',
+                                subtitle: _summary != null ? '' : (_loading ? 'Loading...' : ''),
+                              ),
+                              _MetricCard(
+                                key: const Key('metric_working_hours'),
+                                title: 'Working Hours',
+                                value: '--',
+                                subtitle: 'This week',
+                              ),
+                              _MetricCard(
+                                key: const Key('metric_mileage'),
+                                title: 'Mileage Tracking',
+                                value: _summary != null ? '${_summary!.totalMiles.toStringAsFixed(0)} mi' : '--',
+                                subtitle: _summary != null ? 'Est. \$${_summary!.estimatedDeduction.toStringAsFixed(2)}' : '',
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                      children: [
-                        _MetricCard(
-                          key: const Key('metric_current_expenses'),
-                          title: 'Current Expenses',
-                          value: _summary != null ? '\$${_summary!.totalExpenses.toStringAsFixed(2)}' : '--',
-                          subtitle: _summary != null ? '' : (_loading ? 'Loading...' : ''),
-                        ),
-                        _MetricCard(
-                          key: const Key('metric_working_hours'),
-                          title: 'Working Hours',
-                          value: '--',
-                          subtitle: 'This week',
-                        ),
-                        _MetricCard(
-                          key: const Key('metric_mileage'),
-                          title: 'Mileage Tracking',
-                          value: _summary != null ? '${_summary!.totalMiles.toStringAsFixed(0)} mi' : '--',
-                          subtitle: _summary != null ? 'Est. \$${_summary!.estimatedDeduction.toStringAsFixed(2)}' : '',
-                        ),
-                      ],
-                    );
-                  },
-                ),
 
-                const SizedBox(height: 18),
+                      const SizedBox(height: 18),
 
-                const Text('Recent Activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 8),
+                      const Text('Recent Activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
 
-                // Recent activity list (shrink-wrapped so the parent scroll view handles scrolling)
-                if (_loading && _recentTransactions == null)
-                  const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: CircularProgressIndicator()))
-                else if ((_recentTransactions ?? []).isEmpty)
-                  LumiCard(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('No transactions yet', style: Theme.of(context).textTheme.bodyMedium)))
-                else
-                  ListView.separated(
-                    key: const Key('recent_activity_list'),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _recentTransactions!.length,
-                    separatorBuilder: (_, __) => SizedBox(height: kRecentActivityVerticalSpacing),
-                    itemBuilder: (context, index) {
-                      final t = _recentTransactions![index];
-                      // Simple category -> icon mapping
-                      IconData icon;
-                      switch (t.category.toLowerCase()) {
-                        case 'food':
-                        case 'coffee':
-                          icon = Icons.local_cafe;
-                          break;
-                        case 'mileage':
-                          icon = Icons.directions_car;
-                          break;
-                        case 'utilities':
-                          icon = Icons.flash_on;
-                          break;
-                        default:
-                          icon = Icons.shopping_bag;
-                      }
+                      // Recent activity list (shrink-wrapped so the parent scroll view handles scrolling)
+                      if (_loading && _recentTransactions == null)
+                        const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 16.0), child: CircularProgressIndicator()))
+                      else if ((_recentTransactions ?? []).isEmpty)
+                        LumiCard(child: Padding(padding: const EdgeInsets.all(16.0), child: Text('No transactions yet', style: Theme.of(context).textTheme.bodyMedium)))
+                      else
+                        ListView.separated(
+                          key: const Key('recent_activity_list'),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _recentTransactions!.length,
+                          separatorBuilder: (_, __) => SizedBox(height: kRecentActivityVerticalSpacing),
+                          itemBuilder: (context, index) {
+                            final t = _recentTransactions![index];
+                            // Simple category -> icon mapping
+                            IconData icon;
+                            switch (t.category.toLowerCase()) {
+                              case 'food':
+                              case 'coffee':
+                                icon = Icons.local_cafe;
+                                break;
+                              case 'mileage':
+                                icon = Icons.directions_car;
+                                break;
+                              case 'utilities':
+                                icon = Icons.flash_on;
+                                break;
+                              default:
+                                icon = Icons.shopping_bag;
+                            }
 
-                      final amountText = (t.amount >= 0) ? '+\$${t.amount.toStringAsFixed(2)}' : '-\$${t.amount.abs().toStringAsFixed(2)}';
+                            final amountText = (t.amount >= 0) ? '+\$${t.amount.toStringAsFixed(2)}' : '-\$${t.amount.abs().toStringAsFixed(2)}';
 
-                      return LumiCard(
-                        opacity: index.isEven ? 0.70 : 0.85,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
+                            return LumiCard(
+                              opacity: index.isEven ? 0.70 : 0.85,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CircleAvatar(child: Icon(icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
-                                  const SizedBox(width: 12),
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    child: Row(
                                       children: [
-                                        Text(t.vendor, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
-                                        Text('${t.category} • ${t.date}', style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis),
+                                        CircleAvatar(child: Icon(icon, size: 20), radius: 20, backgroundColor: LumiColors.surfaceContainerHigh),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(t.vendor, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
+                                              Text('${t.category} • ${t.date}', style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
+                                  Text(amountText, style: const TextStyle(fontWeight: FontWeight.w600)),
                                 ],
                               ),
-                            ),
-                            Text(amountText, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
+                    ],
                   ),
-              ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
       bottomNavigationBar: Padding(

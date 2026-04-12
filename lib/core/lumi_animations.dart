@@ -9,6 +9,9 @@ class LumiAnimations {
   static const Duration driftDuration = Duration(milliseconds: 400);
   static const Curve driftCurve = Curves.easeOut;
 
+  // Dedicated fade duration used for app-level fade transitions (500ms per spec)
+  static const Duration fadeDuration = Duration(milliseconds: 500);
+
   static const Duration snapDuration = Duration(milliseconds: 150);
   static const Curve snapCurve = Curves.easeInOut;
 }

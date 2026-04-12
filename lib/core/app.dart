@@ -19,7 +19,8 @@ class _MyAppState extends ConsumerState<MyApp> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(vsync: this, duration: LumiAnimations.driftDuration);
+    // Use a dedicated fade duration per Phase 5 spec (500ms) to match the UX note.
+    _fadeController = AnimationController(vsync: this, duration: LumiAnimations.fadeDuration);
   }
 
   @override
@@ -44,13 +45,13 @@ class _MyAppState extends ConsumerState<MyApp> with SingleTickerProviderStateMix
       );
     }
 
-    // When models are ready, animate a 500ms fade into the real app (router).
+    // When models are ready, animate a fade into the real app (router).
     if (modelReadyAsync.asData?.value == true) {
       _fadeController.forward();
     }
 
     return FadeTransition(
-      opacity: _fadeController.drive(CurveTween(curve: Curves.easeOut)),
+      opacity: _fadeController.drive(CurveTween(curve: LumiAnimations.driftCurve)),
       child: MaterialApp.router(
         title: 'Lumi',
         theme: getLumiTheme(),
