@@ -30,14 +30,16 @@ Future<void> initializeApp() async {
   // Initialize on-device DB
   await LumiCoreBridge.dbInit(dbPath);
 
-  // Initialize local inference model (Phase 2)
-  try {
-    // Default to Sentinel model
-    await frbLoadModel(modelId: 'e2b');
-  } catch (e) {
-    // In dev, we might not have the model file yet; logging is handled in Rust.
-    stderr.writeln('Inference model load attempt finished: $e');
-  }
+  // Initialize local inference model (Phase 2) — start asynchronously so tests and UI won't block.
+  // Fire-and-forget: load model in background and log errors, but don't await here to avoid blocking initialization.
+  () async {
+    try {
+      await frbLoadModel(modelId: 'e2b');
+    } catch (e) {
+      // In dev, we might not have the model file yet; logging is handled in Rust.
+      stderr.writeln('Inference model load attempt finished: $e');
+    }
+  }();
 
   // Initialize AppwriteService for tests and local dev if dart-defines are provided.
   try {
