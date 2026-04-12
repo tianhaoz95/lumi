@@ -59,6 +59,53 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Widget _buildForm(bool isSubmitting) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          LumiTextField(
+            key: const Key('email_field'),
+            controller: _emailController,
+            hintText: 'Email',
+            keyboardType: TextInputType.emailAddress,
+            validator: _validateEmail,
+            enabled: !isSubmitting,
+          ),
+          const SizedBox(height: 12),
+          LumiTextField(
+            key: const Key('password_field'),
+            controller: _passwordController,
+            hintText: 'Password',
+            obscureText: true,
+            validator: _validatePassword,
+            enabled: !isSubmitting,
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              key: const Key('login_button'),
+              onPressed: isSubmitting ? null : _submit,
+              child: isSubmitting
+                  ? const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Sign in'),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: isSubmitting ? null : () => context.go('/signup'),
+            child: const Text("Don't have an account? Create one"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
@@ -67,69 +114,88 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: LumiColors.surface,
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text('Welcome back', style: Theme.of(context).textTheme.headlineLarge),
-                    const SizedBox(height: 12),
-                    Text('Sign in to continue to Lumi', style: Theme.of(context).textTheme.bodyLarge),
-                    const SizedBox(height: 24),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          LumiTextField(
-                            key: const Key('email_field'),
-                            controller: _emailController,
-                            hintText: 'Email',
-                            keyboardType: TextInputType.emailAddress,
-                            validator: _validateEmail,
-                            enabled: !isSubmitting,
-                          ),
-                          const SizedBox(height: 12),
-                          LumiTextField(
-                            key: const Key('password_field'),
-                            controller: _passwordController,
-                            hintText: 'Password',
-                            obscureText: true,
-                            validator: _validatePassword,
-                            enabled: !isSubmitting,
-                          ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              key: const Key('login_button'),
-                              onPressed: isSubmitting ? null : _submit,
-                              child: isSubmitting
-                                  ? const SizedBox(
-                                      height: 16,
-                                      width: 16,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    )
-                                  : const Text('Sign in'),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: isSubmitting ? null : () => context.go('/signup'),
-                            child: const Text("Don't have an account? Create one"),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final wide = constraints.maxWidth > 700;
+            return Stack(
+              children: [
+                // KitGhost background (subtle mascot)
+                Positioned(
+                  left: wide ? 20 : 40,
+                  top: wide ? 40 : 20,
+                  child: Opacity(
+                    opacity: 0.06,
+                    child: Icon(Icons.pets, size: wide ? 260 : 140, color: LumiColors.primary),
+                  ),
                 ),
-              ),
-            ),
-          ),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 920),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      child: SingleChildScrollView(
+                        child: wide
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Left hero area (intentional asymmetry)
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 48.0, top: 24.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Welcome back', style: Theme.of(context).textTheme.displayLarge),
+                                          const SizedBox(height: 18),
+                                          Text('Sign in to continue to Lumi', style: Theme.of(context).textTheme.bodyLarge),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Right form area - offset and narrower
+                                  Expanded(
+                                    flex: 2,
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeOut,
+                                      padding: const EdgeInsets.all(32.0),
+                                      decoration: BoxDecoration(
+                                        color: LumiColors.surfaceContainerHigh,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: _buildForm(isSubmitting),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text('Welcome back', style: Theme.of(context).textTheme.headlineLarge),
+                                  const SizedBox(height: 12),
+                                  Text('Sign in to continue to Lumi', style: Theme.of(context).textTheme.bodyLarge),
+                                  const SizedBox(height: 24),
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOut,
+                                    padding: const EdgeInsets.all(32.0),
+                                    decoration: BoxDecoration(
+                                      color: LumiColors.surfaceContainerHigh,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: _buildForm(isSubmitting),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
