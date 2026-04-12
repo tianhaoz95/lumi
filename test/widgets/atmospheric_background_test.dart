@@ -12,9 +12,9 @@ void main() {
       ),
     );
 
-    // Verify the widget tree contains CustomPaint (grain painter)
+    // Verify the widget tree contains the test key for atmospheric orbs
+    expect(find.byKey(const Key('atmospheric-orbs')), findsOneWidget);
+    // Also ensure a CustomPaint grain painter exists
     expect(find.byType(CustomPaint), findsWidgets);
-    // The orbs are Opacity widgets wrapping Container
-    expect(find.byType(Opacity), findsWidgets);
   });
 }

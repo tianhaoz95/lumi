@@ -100,7 +100,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   top: wide ? 36 : 20,
                   child: KitGhost(opacity: 0.06, size: wide ? 220.0 : 120.0),
                 ),
-                Center,
+                Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1000),
                     child: Padding(
