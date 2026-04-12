@@ -1,19 +1,23 @@
-# Worklog: Implement Golden Path - Login Step
+Task: Verify "Dashboard Load" in the Golden Path integration test
 
-Task: Implement the "Login" step in integration_test/golden_path_test.dart so the Golden Path E2E includes a working login using existing test credentials.
+Context:
+- Source task from midterm-polish-tasks.md: "Dashboard Load: Verify summary cards and recent activity appear." This is the first unchecked item in the Golden Path list.
 
-Planned steps:
-1. Inspect integration_test/golden_path_test.dart to find where the Login step should be inserted.
-2. Modify the test to perform a login with existing test credentials (email/password), using existing helper functions if present; add a small wait/assert that login succeeded and user is navigated to dashboard.
-3. Run quick static checks (grep the file to confirm the login step exists). Commit changes.
+Planned steps (step-by-step):
+1. Inspect integration_test/golden_path_test.dart to locate the Dashboard Load test stub and understand existing setup.
+2. Modify or add a test that can run without full Appwrite services by mocking the AppwriteService or the providers the Dashboard depends on.
+3. Ensure the Dashboard widget is rendered in a widget test harness (ProviderScope, MaterialApp, route scaffolding) and pump frames until settled.
+4. Add concrete assertions verifying summary cards and recent activity by locating keys/texts used by UI (or add Keys to widgets if needed).
+5. Run `flutter test integration_test/golden_path_test.dart` (or the specific test) and confirm it passes locally.
+6. Commit changes and update midterm-polish-tasks.md to mark the task done.
 
-Verifiable deliverables:
-- worklog.md file exists at project root and contains this content.
-- integration_test/golden_path_test.dart contains a clear "Login" test step (comments or code) that attempts to sign in with test credentials (e.g., test@lumi.com).
-- Git shows the modified integration_test/golden_path_test.dart in the working tree (git status/diff).
-- (Optional) Running `grep -n "Login" integration_test/golden_path_test.dart` prints the new login step line.
+Verifiable deliverables (concrete/testable):
+- worklog.md exists at repo root and lists the task, plan, and deliverables (this file).
+- integration_test/golden_path_test.dart contains a runnable widget test named "Dashboard Load" that does not require an external Appwrite server (uses mocks/providers).
+- The test asserts presence of at least two summary cards and one recent-activity list item (by Key or visible Text).
+- Running `flutter test integration_test/golden_path_test.dart` exits with code 0 (test passes).
+- midterm-polish-tasks.md is updated, changing the first unchecked item (Dashboard Load) to checked (- [x]).
 
 Notes:
-- Full integration test execution may require local Appwrite services; this change is limited to test code and should compile in CI if Appwrite is available.
-
-Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+- If UI keys are missing, use a scoped change to add Keys in the dashboard widget file so tests can target elements. Keep changes minimal and surgical.
+- The reviewer will run the integration test; ensure it is self-contained and fast.

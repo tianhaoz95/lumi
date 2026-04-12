@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/core/app.dart';
 import 'package:lumi/core/init.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
+import 'package:lumi/features/dashboard/dashboard.dart';
 
 // Golden Path integration test scaffold for Project Lumi.
 // These tests are scaffolded and skipped by default because they require
@@ -120,10 +121,37 @@ void main() {
     }, skip: false);
 
     testWidgets('Dashboard Load', (WidgetTester tester) async {
-      // Steps:
-      // 1. Ensure summary cards and recent activity widgets are present.
-      // 2. Assert that recent activity list is non-empty (or shows empty state appropriately).
-    }, skip: true);
+      // Lightweight init for test environments.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // ignore
+      }
+
+      // Use fake account to avoid network dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Pump the DashboardScreen directly so this test is self-contained and
+      // does not rely on full navigation or external services.
+      await tester.pumpWidget(const ProviderScope(child: MaterialApp(home: DashboardScreen())));
+
+      // Allow async shimbed fetches to complete.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
+
+      // Verify metric cards present
+      expect(find.byKey(const Key('metric_current_expenses')), findsOneWidget);
+      expect(find.byKey(const Key('metric_mileage')), findsOneWidget);
+
+      // Verify recent activity list present and contains at least one known item
+      final recentList = find.byKey(const Key('recent_activity_list'));
+      expect(recentList, findsOneWidget);
+
+      // Check for a known shimbed vendor name from transactions_bridge.dart
+      expect(find.text('Coffee House'), findsOneWidget);
+    }, skip: false);
 
     testWidgets('Chat Interaction', (WidgetTester tester) async {
       // Steps:

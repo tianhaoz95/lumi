@@ -8,7 +8,7 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
 - [x] **Create `integration_test/golden_path_test.dart`**:
     - [x] **Onboarding/SignUp**: User creates a new account.
     - [x] **Login**: User logs in with existing credentials.
-    - [ ] **Dashboard Load**: Verify summary cards and recent activity appear.
+    - [x] **Dashboard Load**: Verify summary cards and recent activity appear.
     - [ ] **Chat Interaction**: Send a message to Lumi and receive a non-echo response.
     - [ ] **Receipt Logging**: Use diagnostics or a mock to simulate a receipt extraction and verify it appears in the dashboard.
     - [ ] **Logout**: Ensure session is cleared and user returns to login.
