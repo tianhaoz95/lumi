@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
+import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/widgets/lumi_card.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../features/sentinel/known_locations.dart';
@@ -36,44 +37,35 @@ class SettingsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xB3FFFFFF),
-                          borderRadius: BorderRadius.circular(16.0),
+                    child: SizedBox(
+                      height: kToolbarHeight + 24.0,
+                      child: LumiTopAppBar(
+                        leading: IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () => context.pop(),
+                          tooltip: 'Back',
                         ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_back),
-                              onPressed: () => context.pop(),
-                              tooltip: 'Back',
-                            ),
-                            Expanded(
-                              child: Text('The Cabin', style: Theme.of(context).textTheme.titleLarge),
-                            ),
-                            const SizedBox(width: 12.0),
-                            // Circular gradient profile placeholder matching design
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: const LinearGradient(
-                                  colors: [LumiColors.primary, LumiColors.primaryContainer],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(color: const Color(0x14F5FAFC), blurRadius: 1.0, spreadRadius: 0),
-                                ],
+                        title: Text('The Cabin', style: Theme.of(context).textTheme.titleLarge),
+                        actions: [
+                          const SizedBox(width: 12.0),
+                          // Circular gradient profile placeholder matching design
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: const LinearGradient(
+                                colors: [LumiColors.primary, LumiColors.primaryContainer],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              child: const Icon(Icons.person, color: Colors.white, size: 20),
+                              boxShadow: [
+                                BoxShadow(color: const Color(0x14F5FAFC), blurRadius: 1.0, spreadRadius: 0),
+                              ],
                             ),
-                          ],
-                        ),
+                            child: const Icon(Icons.person, color: Colors.white, size: 20),
+                          ),
+                        ],
                       ),
                     ),
                   ),

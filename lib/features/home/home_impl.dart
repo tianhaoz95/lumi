@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'dart:convert';
 
 import '../../core/theme.dart';
+import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_card.dart';
@@ -167,21 +168,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                        decoration: BoxDecoration(
-                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7), // ignore: deprecated_member_use
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text('Lumi AI', style: Theme.of(context).textTheme.titleLarge)),
-                            IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-                            IconButton(icon: const Icon(Icons.settings), onPressed: () => context.push('/settings')),
-                          ],
-                        ),
+                    child: SizedBox(
+                      // preserve similar vertical padding to previous implementation
+                      height: kToolbarHeight + 24.0,
+                      child: LumiTopAppBar(
+                        title: Text('Lumi AI', style: Theme.of(context).textTheme.titleLarge),
+                        actions: [
+                          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+                          IconButton(icon: const Icon(Icons.settings), onPressed: () => context.push('/settings')),
+                        ],
                       ),
                     ),
                   ),
