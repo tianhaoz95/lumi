@@ -9,6 +9,7 @@ import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/widgets/atmospheric_background.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_card.dart';
+import '../../shared/widgets/glass_modal.dart';
 import '../../shared/widgets/tokens_overlay.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../widgets/floating_nav_bar.dart';
@@ -64,29 +65,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   // Shows the add bottom sheet with Camera / Photo Library options.
   void _showAddSheet() async {
-    final choice = await showModalBottomSheet<String>(
+    final choice = await showGlassModalBottomSheet<String>(
       context: context,
-      builder: (context) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
-              onTap: () => Navigator.of(context).pop('camera'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Photo Library'),
-              onTap: () => Navigator.of(context).pop('gallery'),
-            ),
-            const SizedBox(height: 8),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: const Text('Cancel'),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
+      builder: (context) => Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Camera'),
+            onTap: () => Navigator.of(context).pop('camera'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Photo Library'),
+            onTap: () => Navigator.of(context).pop('gallery'),
+          ),
+          const SizedBox(height: 8),
+          ListTile(
+            leading: const Icon(Icons.close),
+            title: const Text('Cancel'),
+            onTap: () => Navigator.of(context).pop(),
+          ),
+        ],
       ),
     );
 
