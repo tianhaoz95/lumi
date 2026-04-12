@@ -4,7 +4,6 @@ import '../../core/lumi_animations.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
 import '../../shared/widgets/lumi_buttons.dart';
-import '../../shared/widgets/atmospheric_background.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
 
 /// ForgotPasswordScreen

@@ -12,6 +12,9 @@ class LumiAnimations {
   // Dedicated fade duration used for app-level fade transitions (500ms per spec)
   static const Duration fadeDuration = Duration(milliseconds: 500);
 
+  // Centralized no-transition constant for explicit zero-duration routes
+  static const Duration noTransition = Duration.zero;
+
   static const Duration snapDuration = Duration(milliseconds: 150);
   static const Curve snapCurve = Curves.easeInOut;
 }

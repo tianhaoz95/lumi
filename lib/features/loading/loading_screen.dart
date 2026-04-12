@@ -40,8 +40,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
               // Fallback for tests and apps that didn't register a named route.
               Navigator.of(context).pushReplacement(PageRouteBuilder(
                 pageBuilder: (_, __, ___) => const Scaffold(body: Center(child: Text('Login'))),
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero,
+                transitionDuration: LumiAnimations.noTransition,
+                reverseTransitionDuration: LumiAnimations.noTransition,
               ));
             }
           }

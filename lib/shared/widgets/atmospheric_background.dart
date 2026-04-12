@@ -101,7 +101,7 @@ class _GrainPainter extends CustomPainter {
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    final paint = Paint()..color = LumiColors.onSurface.withOpacity(atmosphericGrainOpacity);
+    final paint = Paint()..color = LumiColors.onSurface.withAlpha((atmosphericGrainOpacity * 255).round());
     final rand = Random(_seed);
     final total = computeGrainTotal(size);
     for (int i = 0; i < total; i++) {
