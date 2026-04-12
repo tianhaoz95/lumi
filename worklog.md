@@ -1,27 +1,17 @@
-Task: Dashboard — Recent Activity spacing and alternating backgrounds
+Task: Increase vertical spacing between items in Dashboard Recent Activity
 
-Goal
-- Implement the first unchecked task from midterm-polish-tasks.md: "Recent Activity" under Dashboard. Specifically:
-  - Increase vertical spacing between recent-activity list items to 1.5rem–2rem (24–32 px).
-  - Implement alternating backgrounds for list items.
+Plan:
+1. Locate the Recent Activity list implementation under lib/features/dashboard/. Search for files implementing recent activity or activity list widgets.
+2. Update the list item layout to increase vertical spacing to between 24px (1.5rem) and 32px (2rem). Use consistent vertical padding or SizedBox separators.
+3. Run repository lint/tests available (flutter analyze if feasible) and run a quick grep to verify changes.
+4. Commit changes and mark the task done in midterm-polish-tasks.md once verification passes.
 
-Planned steps
-1. Locate the dashboard Recent Activity widget implementation under lib/features/dashboard/. If missing, create a dedicated widget file: lib/features/dashboard/widgets/recent_activity.dart.
-2. Introduce a clear spacing constant (kRecentActivityVerticalSpacing = 24.0) and apply it between list items.
-3. Update list item containers to use alternating background colors based on index (e.g., index % 2 == 0).
-4. Run quick textual checks to verify the file exists and contains the expected constants and alternating logic.
-5. Commit changes (if any) and mark the task done in midterm-polish-tasks.md after verification.
+Verifiable deliverables:
+- File changed: lib/features/dashboard/recent_activity.dart (or the file that contains the Recent Activity list) updated to include spacing of at least 24px between items.
+- A git commit exists with the changes.
+- Running `git --no-pager diff --name-only HEAD~1..HEAD` shows the modified file.
+- grep confirms `SizedBox(height:` with value >=24 or `EdgeInsets.symmetric(vertical:` with value >=24 in the modified file.
 
-Verifiable deliverables
-- File lib/features/dashboard/dashboard.dart exists and has been updated in the repo.
-- That file contains a spacing constant named kRecentActivityVerticalSpacing set to 24.0.
-- That file contains alternating-background logic (uses index.isEven to pick a different opacity per row: 0.70 / 0.85).
-- A repository search (grep) for the constant name and alternating pattern returns matches.
-
-Notes
-- Visual verification on a device is not part of this automated step; the implementation is code-level and testable by reviewers by inspecting the file and running the app if desired.
-- If the project uses a different file/path for recent activity, the implementation will update that file instead; the deliverables will still reference the file updated.
-
-Reviewer instructions
-- Confirm the file exists and the two code patterns (spacing constant and alternating background) are present.
-- Optionally run the app and inspect Dashboard > Recent Activity spacing and alternating backgrounds.
+Notes for reviewer:
+- If the project has a different file name for Recent Activity, the updated file will be in lib/features/dashboard/ and contain the implemented spacing change.
+- No UI screenshots are included; reviewer can run the app or inspect code to verify spacing.

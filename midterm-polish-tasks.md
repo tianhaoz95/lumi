@@ -44,7 +44,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
     - [x] Replace standard cards with Glassmorphism containers if floating.
     - [x] Ensure tonal shifts (`surface` vs `surface-container-low`) provide structure without borders.
 - [x] **Recent Activity**:
-    - [ ] Increase vertical spacing between items to 1.5rem–2rem.
+    - [x] Increase vertical spacing between items to 1.5rem–2rem.
     - [ ] Implement alternating backgrounds for list items.
 
 ### 3.3 Home / Chat (`lib/features/home/`)
