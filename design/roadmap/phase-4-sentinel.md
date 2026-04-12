@@ -78,8 +78,8 @@
 
 - [x] **2.1.1** Add `flutter_background_geolocation` to `pubspec.yaml`.
 - [x] **2.1.2** Configure Android permissions: `ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION`, `ACCESS_COARSE_LOCATION`.
-- [ ] **2.1.3** Configure iOS: add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationWhenInUseUsageDescription` to `Info.plist`.
-- [ ] **2.1.4** Create `GeofenceService` in `lib/features/sentinel/geofence_service.dart`:
+- [x] **2.1.3** Configure iOS: add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationWhenInUseUsageDescription` to `Info.plist`.
+- [x] **2.1.4** Create `GeofenceService` in `lib/features/sentinel/geofence_service.dart`: 
   - `initialize()` — configure the plugin (distanceFilter, desiredAccuracy, etc.).
   - `addFence(VendorFence fence)` — register a circular geofence.
   - `removeFence(String vendorId)` — deregister a geofence.
