@@ -94,7 +94,19 @@ pub async fn run_sentinel_scan() -> anyhow::Result<SentinelReport> {
             Ok(report)
         }
         Err(e) => {
-            // Bubble up timeout or scan errors as anyhow errors
+            // Log timeout or failure to sentinel_logs for auditing and to help OS background task debugging
+            eprintln!("run_sentinel_scan failed or timed out: {}", e);
+            // Attempt to persist a timeout/failure row (use -1 counts to indicate an incomplete scan)
+            let _ = sqlx::query("INSERT INTO sentinel_logs (ts, report_json, untagged_count, missing_days_count, incomplete_mileage_count) VALUES (?1, ?2, ?3, ?4, ?5)")
+                .bind(Utc::now().timestamp())
+                .bind(format!("{{\"error\": \"{}\"}}", e))
+                .bind(-1i64)
+                .bind(-1i64)
+                .bind(-1i64)
+                .execute(&pool)
+                .await;
+
+            // Bubble up the original error so callers can act on it (e.g., iOS background handler can complete)
             Err(e)
         }
     }
