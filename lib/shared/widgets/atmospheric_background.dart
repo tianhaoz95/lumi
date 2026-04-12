@@ -102,3 +102,16 @@ class _GrainPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+// Public helpers for testing and verification
+int computeGrainTotal(Size size) => (size.width * size.height / 2000).clamp(100, 600).toInt();
+
+const double atmosphericGrainOpacity = 0.02;
+const int atmosphericGrainSeed = 12345;
+
+/// Paints the grain overlay into the provided [canvas] with deterministic seed.
+void paintGrainToCanvas(Canvas canvas, Size size) {
+  // reuse the private painter implementation
+  const _GrainPainter painter = _GrainPainter();
+  painter.paint(canvas, size);
+}

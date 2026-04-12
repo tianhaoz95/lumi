@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/core/app.dart';
 import 'package:lumi/core/init.dart';
+import 'package:lumi/features/auth/appwrite_service.dart';
 import '../helpers/test_fixtures.dart';
 
 void main() {
@@ -25,6 +26,10 @@ void main() {
         // Ignore FRB/native library load failures in test environments
       }
 
+      // Inject a fake account to avoid Appwrite dependency
+      final fake = FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
       // Launch the app
       await tester.pumpWidget(const ProviderScope(child: MyApp()));
       await tester.pumpAndSettle();
@@ -45,6 +50,9 @@ void main() {
       // Assert Dashboard is displayed
       expect(find.text('The Tundra'), findsOneWidget);
       expect(find.text('Recent Activity'), findsOneWidget);
+
+      // Sanity: ensure fake recorded session
+      expect(fake.sessionCreated, isTrue);
     });
 
     testWidgets('invalid password → shows inline error, stays on LoginScreen', (WidgetTester tester) async {
@@ -53,6 +61,11 @@ void main() {
       } catch (_) {
         // Ignore FRB/native library load failures in test environments
       }
+
+      // Inject a fake account to avoid Appwrite dependency
+      final fake = FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
       await tester.pumpWidget(const ProviderScope(child: MyApp()));
       await tester.pumpAndSettle();
 

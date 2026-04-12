@@ -85,3 +85,27 @@ Future<void> clearTestSessions() async {
     // If we can't login, sessions are likely already clear or user doesn't exist yet
   }
 }
+
+class FakeAccount {
+  bool created = false;
+  bool sessionCreated = false;
+
+  Future<void> create({required String userId, required String email, required String password, required String name}) async {
+    created = true;
+  }
+
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
+    final expectedEmail = const String.fromEnvironment('TEST_USER_EMAIL', defaultValue: 'test@lumi.com');
+    final expectedPassword = const String.fromEnvironment('TEST_USER_PASSWORD', defaultValue: 'TestPass123!');
+    if (email == expectedEmail && password == expectedPassword) {
+      sessionCreated = true;
+    } else {
+      // mimic Appwrite behaviour for invalid credentials
+      throw Exception('Invalid credentials');
+    }
+  }
+
+  Future<void> deleteSession({required String sessionId}) async {}
+
+  Future<dynamic> get() async => {'id': 'fake'};
+}

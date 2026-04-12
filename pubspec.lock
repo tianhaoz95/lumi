@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.1"
+  background_fetch:
+    dependency: "direct main"
+    description:
+      name: background_fetch
+      sha256: f5f0a5774cbe5e71ce62a9daf7f01007d07b3ac0c1fea1ecb131a3c5a273ca38
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -972,6 +980,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.3"
+  workmanager:
+    dependency: "direct main"
+    description:
+      name: workmanager
+      sha256: aed967670c1f54ced04d1cd34fb9e7a94691d9278b20db8980c50da4da9d3401
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.1"
   xdg_directories:
     dependency: transitive
     description:

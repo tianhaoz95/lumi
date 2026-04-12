@@ -11,7 +11,7 @@
 ### 1.1 Platform Background Execution Setup
 
 - [x] **1.1.1** Add `flutter_background_fetch` (or `workmanager`) to `pubspec.yaml` for cross-platform background task scheduling.
-- [ ] **1.1.2** Configure Android:
+- [x] **1.1.2** Configure Android:
   - Register `BackgroundFetchHeadlessTask` in `AndroidManifest.xml`.
   - Request `RECEIVE_BOOT_COMPLETED` and `FOREGROUND_SERVICE` permissions.
   - Set minimum interval to 60 minutes (`BackgroundFetch.MINIMUM_FETCH_INTERVAL_15MIN` × 4).
