@@ -32,14 +32,14 @@ class SettingsScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(16.0),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                         decoration: BoxDecoration(
-                          color: LumiColors.surfaceContainerLowest.withOpacity(0.7), // ignore: deprecated_member_use
-                          borderRadius: BorderRadius.circular(12.0),
+                          color: LumiColors.surfaceContainerLowest.withOpacity(0.70),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         child: Row(
                           children: [
@@ -50,6 +50,22 @@ class SettingsScreen extends ConsumerWidget {
                             ),
                             Expanded(
                               child: Text('The Cabin', style: Theme.of(context).textTheme.titleLarge),
+                            ),
+                            const SizedBox(width: 12.0),
+                            // Circular gradient profile placeholder matching design
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: const LinearGradient(
+                                  colors: [LumiColors.primary, LumiColors.primaryContainer],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                border: Border.all(color: LumiColors.surface.withOpacity(0.08), width: 1.0),
+                              ),
+                              child: const Icon(Icons.person, color: Colors.white, size: 20),
                             ),
                           ],
                         ),

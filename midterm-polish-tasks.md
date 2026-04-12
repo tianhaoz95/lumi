@@ -56,7 +56,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
     - [x] Apply `DEFAULT` (16px) roundedness to all corners.
 
 ### 3.4 Settings (`lib/features/settings/`)
-- [ ] **"The Cabin" Header**:
+- [x] **"The Cabin" Header**:
     - [ ] Match the glassmorphism top bar from the design.
     - [ ] Use the circular gradient profile placeholder.
 - [ ] **List Items**:
