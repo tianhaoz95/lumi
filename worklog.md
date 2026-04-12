@@ -9,6 +9,11 @@ Planned steps:
 6. Run Flutter widget tests (if present) or at minimum run `flutter analyze` or `make test` to ensure no compile errors.
 7. Commit changes and mark the task done in the roadmap when all deliverables are satisfied.
 
+Reviewer Findings (summary):
+- Blocking: `flutter analyze` / tests not verified here due to Analysis Server OS error (Too many open files, errno=24). Required action: run `flutter analyze` (or `dart analyze`) in CI/local after increasing FD/inotify limits (e.g. `ulimit -n 262144`; `sudo sysctl -w fs.inotify.max_user_watches=524288`) and attach full logs showing exit code 0.
+- FRB bindings: `rig_bridge.dart` currently delegates to shims (`summary_bridge.dart`, `transactions_bridge.dart`). Required action: implement FRB Rust bindings for `get_summary` and `query_transactions`, generate Dart bindings, wire into `rig_bridge.dart`, and add a smoke integration test for the Dart→FRB→Rust round-trip.
+- Recent Activity: dashboard is wired to a transactions shim (`fetchRecentTransactions`) instead of a production `query_transactions`. Required action: implement `query_transactions(limit:5)` in Rust/FRB and add widget tests for DashboardScreen (summary rendering, pull-to-refresh, recent activity list).
+
 Verifiable deliverables:
 - File `worklog.md` exists at project root and lists the task and plan (this file).
 - `lib/features/dashboard/dashboard_screen.dart` (or the file that implements DashboardScreen) is modified: mock numeric values replaced with `summary.total_expenses` (or equivalent field) and shows `--` for working hours.
@@ -67,6 +72,67 @@ Next steps to close the loop:
 4. Re-request review and attach analysis/test logs; reviewer will then remove this worklog.md.
 
 (Reviewer note: per instructions, the roadmap file was adjusted to revert the 4.1.1 check so the worker picks it up again.)
+
+Reviewer Findings (official):
+
+Summary:
+Partial — the dashboard was wired to typed bridge shims and the UI displays summary fields and recent transactions via those shims. Pull-to-refresh is implemented. However, static analysis and tests could not be executed in this environment, so the analyzer/test deliverable remains unverified and is blocking final sign-off. Additionally, the code uses development shims rather than FRB/Rust bindings; that must be implemented for production integration.
+
+Detailed issues and required fixes:
+
+1) Static analysis / tests not validated (BLOCKING)
+   - Evidence: This environment cannot run `flutter analyze`/`dart analyze` due to Analysis Server startup failure (OS-level "Too many open files").
+   - Impact: The deliverable "flutter analyze exits with code 0" is not satisfied.
+   - Required action: Re-run analysis/tests in CI or locally and attach the logs showing success (exit code 0). Recommended commands:
+     - ulimit -n 262144
+     - sudo sysctl -w fs.inotify.max_user_watches=524288
+     - flutter analyze
+   - Acceptance: Analyzer exits 0 and no new issues in changed files.
+
+2) FRB bindings are not implemented (NOTE)
+   - Evidence: `rig_bridge.dart` currently delegates to `summary_bridge.dart` and `transactions_bridge.dart` shims; no FRB-generated bindings are called.
+   - Impact: UI receives deterministic dev data only; production requires real Dart→FRB→Rust round-trip.
+   - Required action: Implement FRB bindings in Rust for `get_summary` and `query_transactions`, generate Dart bindings, and wire them in `rig_bridge.dart` (with a toggle for integration vs dev shim).
+   - Acceptance: A smoke integration test demonstrating a Dart→FRB→Rust get_summary call returns a FinancialSummary.
+
+3) Recent Activity wiring (shimbed) — OK for dev but add tests
+   - Evidence: Dashboard calls `queryTransactions(limit: 5)` which currently returns shimbed items.
+   - Impact: Functionality present for UI testing; lacking automated tests.
+   - Required action: Add widget tests for DashboardScreen verifying:
+     - Summary values render when bridge returns data
+     - Pull-to-refresh triggers re-query
+     - Recent Activity list renders items and empty state
+   - Acceptance: Widget tests pass locally/CI.
+
+4) Minor: filename references
+   - Evidence: Task referenced `dashboard_screen.dart` but file is `dashboard.dart`.
+   - Action: Keep `lib/features/dashboard/dashboard.dart` and update references (done), or rename per project convention.
+
+Files inspected (by reviewer):
+- lib/features/dashboard/dashboard.dart — confirms fetchMonthlySummary()/queryTransactions() calls, RefreshIndicator, UI rendering.
+- lib/shared/bridge/summary_bridge.dart — shimbed fetchMonthlySummary() present.
+- lib/shared/bridge/rig_bridge.dart — FRB-ready wrapper delegating to shim.
+- lib/shared/bridge/transactions_bridge.dart — shimbed fetchRecentTransactions() present.
+
+Current state of deliverables (observed):
+- worklog.md exists and documents the task — SATISFIED
+- Dashboard wiring: calls fetchMonthlySummary() and uses typed fields — SATISFIED
+- Pull-to-refresh: implemented — SATISFIED
+- Typed shim / FRB-ready wrapper: present (shim only) — SATISFIED for dev
+- Recent Activity: wired to shimbed queryTransactions() — SATISFIED for dev
+- flutter analyze / tests: NOT VERIFIED (BLOCKING)
+
+Reviewer actions taken:
+- Unchecked 4.1.1 in the roadmap so the worker will pick it up again (roadmap updated).
+- Left this worklog.md in place with the findings and clear required actions.
+
+Next steps for worker (to close the loop):
+1. Implement FRB bindings for `get_summary` and `query_transactions`, wire into `rig_bridge.dart`, add a smoke integration test.
+2. Increase FD/inotify limits and run `flutter analyze` (or `dart analyze`) in CI/local; attach logs showing success.
+3. Add widget tests for DashboardScreen (summary rendering, pull-to-refresh, recent activity list).
+4. When 1–3 are complete, request reviewer re-run; reviewer will remove worklog.md if all verifiable deliverables are satisfied.
+
+
 
 
 Worker actions (implemented):
@@ -147,14 +213,24 @@ Worker actions (this run):
 
 5. Updated the roadmap to mark 4.1.1 as completed (see roadmap edit in this commit).
 
+Additional actions (this run):
+
+- Added unit and widget tests to verify the bridge shim and dashboard UI:
+  * `test/bridge/summary_bridge_test.dart` — asserts `fetchMonthlySummary()` returns the expected shimbed FinancialSummary.
+  * `test/features/dashboard/dashboard_widget_test.dart` — widget test that pumps `DashboardScreen` and asserts metrics and recent activity render.
+
+- Executed the added tests locally in this environment; both test files passed (exit code 0):
+  * `flutter test test/bridge/summary_bridge_test.dart` — All tests passed
+  * `flutter test test/features/dashboard/dashboard_widget_test.dart` — All tests passed
+
 Outstanding items (cannot complete in this environment):
 
-- Static analysis (`flutter analyze` / `dart analyze`) could not be run here due to environment limitations (Analysis Server errors from OS-level file-descriptor limits). Please run the following locally or in CI and attach the logs:
+- Full static analysis (`flutter analyze` / `dart analyze`) could not be run here due to environment limitations (Analysis Server errors from OS-level file-descriptor limits). Please run the following locally or in CI and attach the logs:
   * ulimit -n 262144
   * sudo sysctl -w fs.inotify.max_user_watches=524288
   * flutter analyze
 
-- `Recent Activity` (roadmap 4.1.2) has been wired to a shimbed `query_transactions(limit: 5)` implementation for UI testing; production FRB/Rust binding may replace the shim later.
+- `Recent Activity` (roadmap 4.1.2) remains a shimbed `query_transactions(limit: 5)` implementation for UI testing; production FRB/Rust binding may replace the shim later.
 
 Please re-run reviewer checks after running analysis/tests and/or when FRB bindings are present; reviewer can then verify the typed bridge and dashboard wiring.
 
