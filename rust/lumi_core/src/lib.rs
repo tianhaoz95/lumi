@@ -45,6 +45,9 @@ pub use embeddings::{embed_transaction, embed_transaction_from_summary, embed_te
 mod tools;
 pub use tools::{log_transaction, log_transaction_with_pool, get_summary, query_transactions_with_pool};
 
+mod sentinel;
+pub use sentinel::{run_sentinel_scan, SentinelReport};
+
 #[cfg(test)]
 mod tests {
     use super::*;

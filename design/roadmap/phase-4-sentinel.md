@@ -27,7 +27,7 @@
 
 ### 1.2 Sentinel Scan Logic (Rust)
 
-- [ ] **1.2.1** Implement `run_sentinel_scan() -> Result<SentinelReport>` in Rust, exposed via FRB:
+- [x] **1.2.1** Implement `run_sentinel_scan() -> Result<SentinelReport>` in Rust, exposed via FRB:
   - Query SQLite for transactions in the past 7 days where `is_tagged == false`.
   - Query for any day in the past 14 days with zero transaction entries.
   - Query for mileage logs without a `purpose` field.

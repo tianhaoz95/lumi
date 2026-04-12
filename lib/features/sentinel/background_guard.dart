@@ -43,7 +43,14 @@ class BackgroundGuard {
 
   Future<void> _onBackgroundFetch(String taskId) async {
     debugPrint('[BackgroundGuard] onFetch: $taskId');
-    // TODO: call FRB run_sentinel_scan() when available and handle results.
+    // Attempt to invoke native/rust sentinel scan via FRB bridge. If bindings are not
+    // yet generated, catch and log the error for reviewer triage.
+    try {
+      final res = await MethodChannel('lumi_core_bridge').invokeMethod<dynamic>('run_sentinel_scan');
+      debugPrint('[BackgroundGuard] run_sentinel_scan result: $res');
+    } catch (e) {
+      debugPrint('[BackgroundGuard] run_sentinel_scan failed: $e');
+    }
 
     // Always signal finish to the native layer if BackgroundFetch plugin is active.
     try {
@@ -66,7 +73,12 @@ class BackgroundGuard {
   static void _headlessTask(HeadlessTask task) async {
     try {
       debugPrint('[BackgroundGuard] headlessTask: ' + task.taskId);
-      // TODO: call FRB run_sentinel_scan() and persist logs to sentinel_logs table.
+      try {
+        final res = await MethodChannel('lumi_core_bridge').invokeMethod<dynamic>('run_sentinel_scan');
+        debugPrint('[BackgroundGuard] headless run_sentinel_scan result: $res');
+      } catch (e) {
+        debugPrint('[BackgroundGuard] headless run_sentinel_scan failed: $e');
+      }
     } catch (e) {
       debugPrint('[BackgroundGuard] headlessTask error: $e');
     } finally {

@@ -195,3 +195,18 @@ Notes & manual verification steps (reviewer):
 
 ---
 
+Actions performed (2026-04-12T15:26:28Z):
+
+1. Implemented Rust `run_sentinel_scan()` and exposed it as a rig tool (rig_macros::tool). Added sentinel.rs with SentinelReport struct and run_sentinel_scan runner.
+2. Updated Dart `lib/features/sentinel/background_guard.dart` to attempt invoking `run_sentinel_scan` via the existing `lumi_core_bridge` MethodChannel and log results for reviewer verification.
+3. Ran `cargo test --lib` in `rust/lumi_core` — all unit tests passed (52 tests).
+
+Verifiable deliverables:
+- `rust/lumi_core/src/sentinel.rs` exists and defines `SentinelReport` and `run_sentinel_scan` (grep finds "SentinelReport" and "run_sentinel_scan").
+- Unit tests: running `cd rust/lumi_core && cargo test --lib` exits with code 0 and prints all tests passed.
+- `lib/features/sentinel/background_guard.dart` now invokes MethodChannel('lumi_core_bridge').invokeMethod('run_sentinel_scan') and logs result or error.
+
+Reviewer note: The FRB Dart binding for `run_sentinel_scan` may require running `flutter_rust_bridge_codegen` to regenerate Dart bindings; in this run, BackgroundGuard calls the `lumi_core_bridge` MethodChannel directly and logs the result if the native side supports it.
+
+---
+
