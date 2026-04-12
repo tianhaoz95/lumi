@@ -280,3 +280,25 @@ Notes & remaining reviewer items:
 - Physical-device visual audit for AtmosphericBackground and Impeller quality remains outstanding and requires a reviewer with a connected Android device to run ./scripts/visual_audit_android.sh (already present) and inspect build/visual_audit/*.png.
 - The FRB Dart binding codegen (flutter_rust_bridge_codegen) may be needed when new Rust -> Dart tools are added; no new FRB bindings were required by this change.
 
+---
+
+Actions performed (2026-04-12T16:06:00Z):
+
+1. Implemented Phase 4 — Geofencing Android permissions (2.1.2):
+   - Updated android/app/src/main/AndroidManifest.xml to add the following permissions:
+     - android.permission.ACCESS_FINE_LOCATION
+     - android.permission.ACCESS_COARSE_LOCATION
+     - android.permission.ACCESS_BACKGROUND_LOCATION
+   - Left existing RECEIVE_BOOT_COMPLETED and FOREGROUND_SERVICE permissions in place.
+
+2. Verification steps executed:
+   - Ran `flutter analyze --no-pub` to validate no analyzer issues; result: "No issues found!" (exit code 0).
+   - Updated design/roadmap/phase-4-sentinel.md to mark 2.1.2 as completed (- [x]).
+
+Verifiable deliverables added/validated in this run:
+- android/app/src/main/AndroidManifest.xml contains uses-permission entries for ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, and ACCESS_BACKGROUND_LOCATION.
+- design/roadmap/phase-4-sentinel.md has 2.1.2 marked as done.
+- Running `flutter analyze --no-pub` exits with code 0 (no analyzer issues).
+
+Notes: Runtime permission requests (prompting the user at app runtime) are still required for ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION and for ACCESS_BACKGROUND_LOCATION on Android 10+. This change only adds the manifest entries required for geofence behavior. If desired, a follow-up task can implement an in-app permission request flow that explains background location usage and requests permissions at runtime (handling the Play Store policy flow for background location).
+
