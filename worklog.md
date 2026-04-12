@@ -1,24 +1,27 @@
-Task: Increase vertical spacing between items in Dashboard Recent Activity
+# Worklog: Convert Chat Input Bar to Floating Glass Pill
 
-Plan:
-1. Locate the Recent Activity list implementation under lib/features/dashboard/. Search for files implementing recent activity or activity list widgets.
-2. Update the list item layout to increase vertical spacing to between 24px (1.5rem) and 32px (2rem). Use consistent vertical padding or SizedBox separators.
-3. Run repository lint/tests available (flutter analyze if feasible) and run a quick grep to verify changes.
-4. Commit changes and mark the task done in midterm-polish-tasks.md once verification passes.
+Task: Home / Chat — Input Bar
 
-Verifiable deliverables:
-- File changed: lib/features/dashboard/dashboard.dart updated to include spacing constant `kRecentActivityVerticalSpacing = 28.0` and alternating opacity logic (`opacity: index.isEven ? 0.70 : 0.85`).
-- A git commit exists that modifies lib/features/dashboard/dashboard.dart and is present at HEAD.
-- Running `git --no-pager diff --name-only HEAD~1..HEAD` shows lib/features/dashboard/dashboard.dart.
-- grep confirms `kRecentActivityVerticalSpacing = 28.0` and `opacity: index.isEven ? 0.70 : 0.85` in the modified file.
+Goal
+- Convert the bottom chat input bar into a floating pill styled with glassmorphism. It should not span full width (leave horizontal margins), have a high border radius (pill), and include a subtle backdrop blur and translucent surface.
 
-Reviewer Findings:
-1. **Sub-bullets Status:** Although the vertical spacing is correctly increased to 28px (`kRecentActivityVerticalSpacing = 28.0`) and alternating backgrounds are implemented in the code (`opacity: index.isEven ? 0.70 : 0.85`), the sub-bullet "Implement alternating backgrounds for list items" in `midterm-polish-tasks.md` remains unchecked (`- [ ]`). Please update the task list to correctly reflect the completion of ALL sub-tasks before marking the parent "Recent Activity" as done.
-2. **Deliverable Verification:** The deliverable "Running `git --no-pager diff --name-only HEAD~1..HEAD` shows the modified file" is technically not satisfied because the most recent commit `0d10f4a` only contains `worklog.md`. The code changes are in `d35aea9`. While the reviewer found the changes by searching the history, ensure that the verification steps in the worklog are accurate and reachable by the reviewer.
+Planned steps
+1. Locate the chat input widget in lib/features/home/ (search for "chat", "input", "message", "composer").
+2. Edit the widget to wrap the input in a Container with:
+   - borderRadius: 9999 (pill)
+   - background color using theme token `surface` at ~70% opacity
+   - BackdropFilter with Gaussian blur (20px)
+   - Horizontal margin ("snow" on sides) and vertical padding to float above keyboard
+3. Ensure the widget is not full-width by applying constrained width or horizontal margin.
+4. Run analysis/tests: `flutter analyze` and `make test` (existing checks). Fix any compile issues.
+5. Commit changes.
 
-Resolution:
-- Updated `midterm-polish-tasks.md` to mark **Recent Activity** and its subtask **Implement alternating backgrounds for list items** as complete.
-- Ensured `lib/features/dashboard/dashboard.dart` is included in the latest commit (commit 788b956), so verification commands point to current HEAD.
-- Updated the Verifiable deliverables to reference the actual file and constants.
+Verifiable deliverables
+- worklog.md exists at project root and lists the task, steps, and deliverables (this file).
+- The repository contains an edited chat input widget file (e.g., lib/features/home/... ) where the input Container includes `BackdropFilter` and a BoxDecoration with borderRadius 9999 and translucent background.
+- The chat input Container applies horizontal margin (not full width) — reviewer can inspect code for EdgeInsets symmetric horizontal > 12.
+- `flutter analyze` exits with code 0 (static analysis passes) OR `make test` exits 0 if test suite exists and is runnable in this environment.
 
-Reviewer: please verify the deliverables using the commands listed under "Verifiable deliverables". If anything still fails, note it in this worklog and the next agent will address it.
+Notes
+- If any missing assets or packages are required, document them in this worklog and provide instructions to the reviewer.
+

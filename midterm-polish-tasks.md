@@ -48,9 +48,9 @@ Iterate through every screen to match the Nordic editorial aesthetic.
     - [x] Implement alternating backgrounds for list items.
 
 ### 3.3 Home / Chat (`lib/features/home/`)
-- [ ] **Input Bar**:
-    - [ ] Convert the bottom chat bar into a floating "pill" using Glassmorphism.
-    - [ ] Ensure it does not span full width (leave "snow" on the sides).
+- [x] **Input Bar**:
+    - [x] Convert the bottom chat bar into a floating "pill" using Glassmorphism.
+    - [x] Ensure it does not span full width (leave "snow" on the sides).
 - [ ] **Chat Bubbles**:
     - [ ] Use `surface-container-lowest` for Lumi and `surface-container-high` for User.
     - [ ] Apply `DEFAULT` (16px) roundedness to all corners.
