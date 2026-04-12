@@ -1,20 +1,86 @@
 import 'package:integration_test/integration_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:lumi/core/app.dart';
+import 'package:lumi/core/init.dart';
+import 'package:lumi/features/auth/appwrite_service.dart';
 
 // Golden Path integration test scaffold for Project Lumi.
 // These tests are scaffolded and skipped by default because they require
 // a running Appwrite instance and a real device/emulator with Flutter.
+
+class _FakeAccount {
+  bool created = false;
+  bool sessionCreated = false;
+
+  Future<void> create({required String userId, required String email, required String password, required String name}) async {
+    created = true;
+  }
+
+  Future<void> createEmailPasswordSession({required String email, required String password}) async {
+    sessionCreated = true;
+  }
+
+  Future<void> deleteSession({required String sessionId}) async {}
+
+  Future<dynamic> get() async => {'id': 'fake'};
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Golden Path', () {
     testWidgets('Onboarding/SignUp', (WidgetTester tester) async {
-      // Steps:
-      // 1. Launch the app (app.main()).
-      // 2. Navigate onboarding screens and create a new account with a test email.
-      // 3. Verify success and landing on the dashboard.
-    }, skip: true);
+      // Integration test: programmatically create a new account using a fake
+      // Appwrite Account implementation and assert the app navigates to Home.
+
+      // Perform lightweight app initialization for integration tests. Wrap in
+      // try/catch to avoid failing when native bridges are unavailable in CI.
+      try {
+        await initializeApp();
+      } catch (_) {
+        // Ignore init failures in test environments without FRB or models.
+      }
+
+      // Inject fake account to avoid real network/Appwrite dependency.
+      final fake = _FakeAccount();
+      AppwriteService.instance.setAccountForTest(fake);
+
+      // Launch the full app inside a ProviderScope so Riverpod providers work.
+      await tester.pumpWidget(const ProviderScope(child: MyApp()));
+      await tester.pumpAndSettle();
+
+      // On the Login screen, tap the "Create one" CTA to open Sign Up.
+      final signupNav = find.text("Don't have an account? Create one");
+      expect(signupNav, findsOneWidget);
+      await tester.tap(signupNav);
+      await tester.pumpAndSettle();
+
+      // Fill in sign up form fields and accept terms.
+      await tester.enterText(find.byKey(const Key('name_field')), 'Test User');
+      await tester.enterText(find.byKey(const Key('email_field')), 'test@lumi.test');
+      await tester.enterText(find.byKey(const Key('password_field')), 'Password123');
+      await tester.tap(find.byKey(const Key('terms_checkbox')));
+      await tester.pumpAndSettle();
+
+      // Submit sign up and wait for navigation to Home (chat input present).
+      final signupBtn = find.byKey(const Key('signup_button'));
+      expect(signupBtn, findsOneWidget);
+      await tester.tap(signupBtn);
+
+      // Allow async auth flows to complete.
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+
+      // Verify that Home screen is shown by checking for the chat input widget.
+      expect(find.byKey(const Key('chat_input')), findsOneWidget);
+
+      // Sanity: ensure fake account recorded operations.
+      expect(fake.created, isTrue);
+      expect(fake.sessionCreated, isTrue);
+    }, skip: false);
 
     testWidgets('Login', (WidgetTester tester) async {
       // Steps:
