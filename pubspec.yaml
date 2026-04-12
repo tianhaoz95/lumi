@@ -14,6 +14,7 @@ dependencies:
   flutter_riverpod: ^2.0.0
   google_fonts: ^3.0.1
   material_symbols_icons: ^4.2928.1
+  flutter_svg: ^1.1.1
   path_provider: ^2.1.0
   image_picker: ^0.8.7+4
   camera: ^0.10.0+3
@@ -26,6 +27,8 @@ dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - design/assets/grain.svg
   # Generated FRB bindings will live under lib/shared/bridge/
 
 dev_dependencies:
