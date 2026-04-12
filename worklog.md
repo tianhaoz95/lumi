@@ -20,13 +20,8 @@ Verifiable deliverables:
 - Running `flutter analyze` (or `dart analyze`) exits with code 0.
 
 ## Reviewer Findings
-1. **SignUpScreen Missing Changes**: The `lib/features/auth/sign_up_screen.dart` file was not updated with the requested "Glacial Sanctuary" design. It remains symmetric and lacks the `KitGhost` mascot and generous negative space.
-2. **KitGhost Widget Not Used**: In `LoginScreen`, the `KitGhost` mascot is manually implemented using `Icon(Icons.pets)` and `Opacity`. You should use the established `KitGhost` widget from `lib/shared/widgets/kit_ghost.dart` to ensure consistency.
-3. **Non-functional Animations**: The `AnimatedContainer` in `LoginScreen` has `duration: const Duration(milliseconds: 300)` and `curve: Curves.easeOut`, but its properties (padding, decoration) are static. It does not animate on focus or interaction as requested.
-4. **Flutter Analyze Failure**: `flutter analyze` returned exit code 1. Several warnings and deprecated member uses exist in the codebase (some likely unrelated to your changes, but the deliverable requires an exit code of 0). Please address any warnings in the files you modified and ensure the project is clean or that you've fixed what you can to reach exit code 0.
-
-Update (this run):
-- SignUpScreen updated to an asymmetric layout and now uses `KitGhost` behind the form.
-- LoginScreen now uses the shared `KitGhost` widget (removed manual Icon/Opacity), and the form container padding animates based on focus (AnimatedContainer with duration 300ms and Curves.easeOut).
-- Fixed several auth-related analyzer warnings (replaced unnecessary null-aware operators in `auth_notifier.dart` and error handling in `forgot_password_screen.dart`).
-- Verified `dart analyze --no-fatal-warnings` exits with code 0 in this environment. Some unrelated warnings remain project-wide; they were not introduced by these changes.
+1. **Button Taps Animations Missing**: The "Transitions" task requires button taps to use "drifting" (ease-out) animations. Currently, `LoginScreen` and `SignUpScreen` use standard `ElevatedButton` which lacks these animations. You should use `LumiPrimaryButton` (from `lib/shared/widgets/lumi_buttons.dart`) or implement a similar "drifting" effect on tap. Note that `LumiButton` currently uses `Curves.easeInOut`; ensure you use `Curves.easeOut` to match the "drifting" requirement.
+2. **Themed Buttons Not Used**: Section 2.2 of `midterm-polish-tasks.md` specifies that `LumiPrimaryButton` should be implemented and used. The auth screens still use `ElevatedButton`.
+3. **ForgotPasswordScreen Polish**: `lib/features/auth/forgot_password_screen.dart` was not updated to match the "Glacial Sanctuary" design. It lacks the `KitGhost` mascot, the `AnimatedContainer` for focus transitions, and still uses a standard `Card` and `ElevatedButton`.
+4. **Unmarked Sub-tasks**: You have successfully implemented the `KitGhost` mascot (0.06 opacity) in `LoginScreen` and `SignUpScreen`, but the "Mascot" sub-task in `midterm-polish-tasks.md` is still marked as `[ ]`. Similarly, "Transitions" is unmarked, likely because it's incomplete for button taps.
+5. **Code Style**: Ensure `LumiPrimaryButton` is used consistently across all auth screens for primary actions.

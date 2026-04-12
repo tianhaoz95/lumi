@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
+import '../../shared/widgets/lumi_buttons.dart';
 import 'auth_notifier.dart';
 
 /// LoginScreen
@@ -89,7 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: LumiPrimaryButton(
                 key: const Key('login_button'),
                 onPressed: isSubmitting ? null : _submit,
                 child: isSubmitting

@@ -26,8 +26,8 @@ class _LumiButtonState extends State<LumiButton> with SingleTickerProviderStateM
 
   double get _scale => _pressed ? 0.98 : (_hover ? 1.02 : 1.0);
 
-  static const Duration _animDuration = Duration(milliseconds: 150);
-  static const Curve _animCurve = Curves.easeInOut;
+  static const Duration _animDuration = Duration(milliseconds: 300);
+  static const Curve _animCurve = Curves.easeOut;
 
   @override
   Widget build(BuildContext context) {

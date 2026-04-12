@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
+import '../../shared/widgets/kit_ghost.dart';
+import '../../shared/widgets/lumi_buttons.dart';
 import 'package:lumi/features/auth/appwrite_service.dart';
 
 /// ForgotPasswordScreen
@@ -20,6 +22,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   bool _submitting = false;
   bool _sent = false;
+  bool _hasFocus = false;
 
   @override
   void dispose() {
@@ -78,12 +81,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         if (constraints.maxWidth < 600) return const SizedBox.shrink();
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.receipt_long, size: 120, color: Colors.grey),
-                            SizedBox(height: 12),
-                            Text('Recover access', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            SizedBox(height: 8),
-                            Text('We will send instructions to your email to reset your password.'),
+                          children: [
+                            KitGhost(opacity: 0.06, size: 100.0, color: LumiColors.primary),
+                            const SizedBox(height: 12),
+                            const Icon(Icons.receipt_long, size: 120, color: Colors.grey),
+                            const SizedBox(height: 12),
+                            const Text('Recover access', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            const Text('We will send instructions to your email to reset your password.'),
                           ],
                         );
                       },
@@ -107,9 +112,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ],
                           )
                         else
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.all(_hasFocus ? 40.0 : 32.0),
+                            decoration: BoxDecoration(
+                              color: LumiColors.surfaceContainerHigh,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Focus(
+                              onFocusChange: (f) => setState(() => _hasFocus = f),
                               child: Form(
                                 key: _formKey,
                                 child: Column(
@@ -128,7 +140,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     const SizedBox(height: 16),
                                     SizedBox(
                                       width: double.infinity,
-                                      child: ElevatedButton(
+                                      child: LumiPrimaryButton(
                                         key: const Key('send_reset_button'),
                                         onPressed: _submitting ? null : _submit,
                                         child: _submitting

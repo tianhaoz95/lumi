@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/lumi_text_field.dart';
 import '../../shared/widgets/kit_ghost.dart';
+import '../../shared/widgets/lumi_buttons.dart';
 import 'auth_notifier.dart';
 
 /// SignUpScreen
@@ -176,7 +177,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                               const SizedBox(height: 12),
                                               SizedBox(
                                                 width: double.infinity,
-                                                child: ElevatedButton(
+                                                child: LumiPrimaryButton(
                                                   key: const Key('signup_button'),
                                                   onPressed: (isSubmitting || !_canSubmit) ? null : _submit,
                                                   child: isSubmitting
@@ -262,7 +263,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                             const SizedBox(height: 12),
                                             SizedBox(
                                               width: double.infinity,
-                                              child: ElevatedButton(
+                                              child: LumiPrimaryButton(
                                                 key: const Key('signup_button'),
                                                 onPressed: (isSubmitting || !_canSubmit) ? null : _submit,
                                                 child: isSubmitting
