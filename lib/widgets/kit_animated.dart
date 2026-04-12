@@ -13,6 +13,7 @@ class KitAnimated extends StatefulWidget {
   // Backwards-compatible boolean used by older imports
   final bool? isProcessing;
   final double size;
+  final double opacity;
   final VoidCallback? onFoundComplete;
   final VoidCallback? onAlertComplete;
 
@@ -21,6 +22,7 @@ class KitAnimated extends StatefulWidget {
     this.state,
     this.isProcessing,
     this.size = 96.0,
+    this.opacity = 0.07,
     this.onFoundComplete,
     this.onAlertComplete,
   }) : super(key: key);
@@ -119,12 +121,12 @@ class _KitAnimatedState extends State<KitAnimated> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     // Build a simple fox-like circle placeholder with animated transforms.
-    return SizedBox(
+    return Opacity(opacity: widget.opacity, child: SizedBox(
       width: widget.size,
       height: widget.size,
       child: Stack(
         alignment: Alignment.center,
-        children: [
+        children: [ 
           // Idle breathing: subtle scale
           AnimatedBuilder(
             animation: _breathController,
@@ -193,7 +195,7 @@ class _KitAnimatedState extends State<KitAnimated> with TickerProviderStateMixin
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildFoxBase({double opacity = 1.0, Color? color}) {

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lumi/core/theme.dart';
 import 'package:lumi/features/home/home.dart';
-import 'package:lumi/shared/widgets/kit_animated.dart';
+import 'package:lumi/widgets/kit_animated.dart';
 import 'package:lumi/shared/chat/chat_service.dart';
 import 'package:lumi/shared/chat/chat_providers.dart';
 
