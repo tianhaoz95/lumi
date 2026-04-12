@@ -17,7 +17,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  static const double kRecentActivityVerticalSpacing = 24.0;
+  // Vertical spacing between recent activity list items (24-32px range per design)
+  static const double kRecentActivityVerticalSpacing = 28.0;
 
   FinancialSummary? _summary;
   bool _loading = false;
