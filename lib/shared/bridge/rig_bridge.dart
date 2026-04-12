@@ -32,18 +32,22 @@ Future<FinancialSummary> fetchMonthlySummary() async {
 /// Query recent transactions (typed). In production this should call into
 /// the Rust `query_transactions` tool via FRB. For now it delegates to the
 /// transactions shim so the UI can be tested end-to-end.
-Future<List<app_models.TransactionSummary>> queryTransactions({int limit = 5}) async {
+Future<List<app_models.TransactionSummary>> queryTransactions(
+    {int limit = 5}) async {
   try {
     // Try native FRB binding first
     final res = await frb.LumiCoreBridge.queryTransactions(limit: limit);
-    return res.map((e) => app_models.TransactionSummary(
-      id: e.id,
-      vendor: e.vendor ?? 'Unknown',
-      amount: e.amount,
-      category: e.category ?? 'uncategorized',
-      date: DateTime.fromMillisecondsSinceEpoch(e.timestamp * 1000).toIso8601String(),
-      isCredit: e.isTagged,
-    )).toList();
+    return res
+        .map((e) => app_models.TransactionSummary(
+              id: e.id,
+              vendor: e.vendor ?? 'Unknown',
+              amount: e.amount,
+              category: e.category ?? 'uncategorized',
+              date: DateTime.fromMillisecondsSinceEpoch(e.timestamp * 1000)
+                  .toIso8601String(),
+              isCredit: e.isTagged,
+            ))
+        .toList();
   } catch (e) {
     // FRB/native binding not available — fall back to shim for development and tests
     try {

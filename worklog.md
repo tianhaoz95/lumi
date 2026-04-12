@@ -450,7 +450,7 @@ Verifiable deliverables:
 - `flutter analyze --no-pub` exits with code 0 (no analyzer issues).
 
 Notes:
-- This adds the manifest-side intent filters; wiring the receive_sharing_intent plugin to route incoming shares to the app's Dart entry (and then to `process_receipt_image()` in Rust) is a follow-up (3.1.4) and depends on platform-specific share-handling code (Android file URIs and permissions).
+- This adds the manifest-side intent filters; wiring the receive_sharing_intent plugin to route incoming shares to the app's Dart entry has been implemented in `lib/features/sentinel/share_service.dart` and wired in `lib/core/init.dart`. Incoming shared images are routed to `LumiCoreBridge.processReceiptImage`, which delegates to Rust `process_receipt_image()`; basic Android/iOS URI handling and notification feedback are included.
 
 Actions performed (2026-04-12T17:00:00Z): Implemented iOS Share Extension skeleton (3.1.3)
 

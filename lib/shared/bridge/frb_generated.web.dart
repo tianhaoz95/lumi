@@ -20,9 +20,11 @@ import 'lib.dart';
 import 'model_registry.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 import 'receipt.dart';
+import 'sentinel.dart';
 import 'tools.dart';
 import 'validators.dart';
 import 'vector_db.dart';
+import 'vendor_fence.dart';
 
 
 
@@ -119,6 +121,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
 
+@protected Uint64List dco_decode_list_prim_u_64_strict(dynamic raw);
+
 @protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
@@ -128,6 +132,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 @protected List<(String,double)> dco_decode_list_record_string_f_64(dynamic raw);
 
 @protected List<TransactionSummary> dco_decode_list_transaction_summary(dynamic raw);
+
+@protected List<VendorFence> dco_decode_list_vendor_fence(dynamic raw);
 
 @protected LiteRtSession dco_decode_lite_rt_session(dynamic raw);
 
@@ -155,15 +161,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected (String,double) dco_decode_record_string_f_64(dynamic raw);
 
+@protected SentinelReport dco_decode_sentinel_report(dynamic raw);
+
 @protected TransactionSummary dco_decode_transaction_summary(dynamic raw);
 
 @protected int dco_decode_u_32(dynamic raw);
+
+@protected BigInt dco_decode_u_64(dynamic raw);
 
 @protected int dco_decode_u_8(dynamic raw);
 
 @protected void dco_decode_unit(dynamic raw);
 
 @protected BigInt dco_decode_usize(dynamic raw);
+
+@protected VendorFence dco_decode_vendor_fence(dynamic raw);
 
 @protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
@@ -237,6 +249,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer);
 
+@protected Uint64List sse_decode_list_prim_u_64_strict(SseDeserializer deserializer);
+
 @protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
 @protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
@@ -246,6 +260,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 @protected List<(String,double)> sse_decode_list_record_string_f_64(SseDeserializer deserializer);
 
 @protected List<TransactionSummary> sse_decode_list_transaction_summary(SseDeserializer deserializer);
+
+@protected List<VendorFence> sse_decode_list_vendor_fence(SseDeserializer deserializer);
 
 @protected LiteRtSession sse_decode_lite_rt_session(SseDeserializer deserializer);
 
@@ -273,15 +289,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected (String,double) sse_decode_record_string_f_64(SseDeserializer deserializer);
 
+@protected SentinelReport sse_decode_sentinel_report(SseDeserializer deserializer);
+
 @protected TransactionSummary sse_decode_transaction_summary(SseDeserializer deserializer);
 
 @protected int sse_decode_u_32(SseDeserializer deserializer);
+
+@protected BigInt sse_decode_u_64(SseDeserializer deserializer);
 
 @protected int sse_decode_u_8(SseDeserializer deserializer);
 
 @protected void sse_decode_unit(SseDeserializer deserializer);
 
 @protected BigInt sse_decode_usize(SseDeserializer deserializer);
+
+@protected VendorFence sse_decode_vendor_fence(SseDeserializer deserializer);
 
 @protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
 
@@ -355,6 +377,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
+@protected void sse_encode_list_prim_u_64_strict(Uint64List self, SseSerializer serializer);
+
 @protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
@@ -364,6 +388,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 @protected void sse_encode_list_record_string_f_64(List<(String,double)> self, SseSerializer serializer);
 
 @protected void sse_encode_list_transaction_summary(List<TransactionSummary> self, SseSerializer serializer);
+
+@protected void sse_encode_list_vendor_fence(List<VendorFence> self, SseSerializer serializer);
 
 @protected void sse_encode_lite_rt_session(LiteRtSession self, SseSerializer serializer);
 
@@ -391,15 +417,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_StrPtr => wire.rus
 
 @protected void sse_encode_record_string_f_64((String,double) self, SseSerializer serializer);
 
+@protected void sse_encode_sentinel_report(SentinelReport self, SseSerializer serializer);
+
 @protected void sse_encode_transaction_summary(TransactionSummary self, SseSerializer serializer);
 
 @protected void sse_encode_u_32(int self, SseSerializer serializer);
+
+@protected void sse_encode_u_64(BigInt self, SseSerializer serializer);
 
 @protected void sse_encode_u_8(int self, SseSerializer serializer);
 
 @protected void sse_encode_unit(void self, SseSerializer serializer);
 
 @protected void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+@protected void sse_encode_vendor_fence(VendorFence self, SseSerializer serializer);
                 }
                 
 

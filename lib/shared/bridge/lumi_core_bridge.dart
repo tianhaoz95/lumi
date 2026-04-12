@@ -11,15 +11,18 @@ extension ReceiptDataJson on ReceiptData {
   static ReceiptData fromJson(Map<String, dynamic> json) {
     return ReceiptData(
       vendorName: json['vendorName'] ?? json['vendor_name'] ?? '',
-      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? (json['total_amount'] as num?)?.toDouble() ?? 0.0,
+      totalAmount: (json['totalAmount'] as num?)?.toDouble() ??
+          (json['total_amount'] as num?)?.toDouble() ??
+          0.0,
       currency: json['currency'] ?? '',
       date: json['date'] ?? '',
-      lineItems: (json['lineItems'] as List? ?? json['line_items'] as List? ?? [])
-          .map((item) => LineItem(
-                description: item['description'] ?? '',
-                amount: (item['amount'] as num?)?.toDouble() ?? 0.0,
-              ))
-          .toList(),
+      lineItems:
+          (json['lineItems'] as List? ?? json['line_items'] as List? ?? [])
+              .map((item) => LineItem(
+                    description: item['description'] ?? '',
+                    amount: (item['amount'] as num?)?.toDouble() ?? 0.0,
+                  ))
+              .toList(),
     );
   }
 }
@@ -130,9 +133,11 @@ class LumiCoreBridge {
   }
 
   /// Add a vendor fence via native bridge. Returns the inserted fence ID.
-  static Future<String> addVendorFence(String name, double lat, double lng) async {
+  static Future<String> addVendorFence(
+      String name, double lat, double lng) async {
     try {
-      final res = await _channel.invokeMethod<dynamic>('add_vendor_fence', <String, dynamic>{'name': name, 'lat': lat, 'lng': lng});
+      final res = await _channel.invokeMethod<dynamic>('add_vendor_fence',
+          <String, dynamic>{'name': name, 'lat': lat, 'lng': lng});
       if (res is String) return res;
       if (res is Map && res['id'] != null) return res['id'] as String;
       return res.toString();
@@ -144,7 +149,8 @@ class LumiCoreBridge {
   /// Increment the visit count for a vendor fence via native bridge.
   static Future<void> incrementVisit(String fenceId) async {
     try {
-      await _channel.invokeMethod<dynamic>('increment_visit', <String, dynamic>{'id': fenceId});
+      await _channel.invokeMethod<dynamic>(
+          'increment_visit', <String, dynamic>{'id': fenceId});
     } catch (e) {
       // Propagate to caller for visibility; callers may choose to ignore failures.
       rethrow;

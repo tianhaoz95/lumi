@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import '../features/sentinel/geofence_service.dart';
+import '../features/sentinel/share_service.dart';
 import '../shared/bridge/lumi_core_bridge.dart';
 import '../shared/bridge/frb_generated.dart';
 import '../shared/bridge/inference.dart';
@@ -50,6 +51,13 @@ Future<void> initializeApp() async {
 
     // Initialize on-device DB
     await LumiCoreBridge.dbInit(dbPath);
+
+    // Initialize OS Share receiver so shared images route into the Rust receipt pipeline.
+    try {
+      await ShareService().initialize();
+    } catch (e) {
+      stderr.writeln('ShareService initialization failed (non-fatal): $e');
+    }
 
     // Load and register vendor fences from the native DB so geofences are active at app start.
     try {

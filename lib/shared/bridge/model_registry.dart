@@ -20,7 +20,14 @@ Future<bool> checkModelReady(
     RustLib.instance.api.crateModelRegistryCheckModelReady(
         baseDir: baseDir, modelId: modelId, expectedSha256: expectedSha256);
 
-/// Stubbed progress: real download implementation updates progress via shared state or a file.
+/// Start a non-blocking background "download" stub that updates progress over duration_ms milliseconds.
+/// Returns true immediately and spawns a background thread that writes a dummy model file on completion.
+Future<bool> startBackgroundDownload(
+        {required String modelId, required BigInt durationMs}) =>
+    RustLib.instance.api.crateModelRegistryStartBackgroundDownload(
+        modelId: modelId, durationMs: durationMs);
+
+/// Read progress from shared in-memory progress map. Returns 0.0 if unknown.
 Future<double> getDownloadProgress({required String modelId}) =>
     RustLib.instance.api
         .crateModelRegistryGetDownloadProgress(modelId: modelId);
@@ -32,10 +39,16 @@ Future<bool> frbCheckModelReady(
     RustLib.instance.api.crateModelRegistryFrbCheckModelReady(
         modelId: modelId, expectedSha256: expectedSha256);
 
-/// FRB-friendly wrapper for download progress. Currently stubbed to 0.0.
+/// FRB-friendly wrapper for download progress. Reads in-memory progress map.
 Future<double> frbGetDownloadProgress({required String modelId}) =>
     RustLib.instance.api
         .crateModelRegistryFrbGetDownloadProgress(modelId: modelId);
+
+/// FRB wrapper to start a background download stub. Duration in ms.
+Future<bool> frbStartBackgroundDownload(
+        {required String modelId, required BigInt durationMs}) =>
+    RustLib.instance.api.crateModelRegistryFrbStartBackgroundDownload(
+        modelId: modelId, durationMs: durationMs);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ModelRegistry>>
 abstract class ModelRegistry implements RustOpaqueInterface {

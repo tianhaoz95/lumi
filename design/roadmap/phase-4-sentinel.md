@@ -142,7 +142,7 @@
 - [x] **3.2.1** Implement `detect_subscription(text: String) -> Result<Option<SubscriptionInfo>>` in Rust:
   - Parse shared text for recurring charge patterns (keywords: "monthly", "annual", "subscription", "renews", "billed every").
   - If detected, return a `SubscriptionInfo` with `service_name`, `amount`, `frequency`.
-- [ ] **3.2.2** If a subscription is detected, show a notification: *"Recurring charge detected from {service_name}. Tap to review and categorize."*
+- [x] **3.2.2** If a subscription is detected, show a notification: *"Recurring charge detected from {service_name}. Tap to review and categorize."*
 
 **Tests:**
 - Rust unit test: `detect_subscription("Your Netflix subscription renews for $15.99 monthly")` returns `Some(SubscriptionInfo { service_name: "Netflix", amount: 15.99, frequency: "monthly" })`.
