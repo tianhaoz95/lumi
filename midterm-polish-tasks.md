@@ -65,7 +65,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 ## 4. UI Components & Polish
 - [ ] **`LumiCard`**: Refine glassmorphism parameters (70% opacity, 20px-40px blur).
 - [ ] **`AtmosphericBackground`**: Add a faint grain/snow texture (2% opacity) to give a paper-like quality.
-- [ ] **`KitGhost`**: Standardize the mascot's presence in empty states.
+- [x] **`KitGhost`**: Standardize the mascot's presence in empty states.
 
 ## 5. Verification
 - [ ] Run `make test-integration DEVICE=linux` and ensure the Golden Path passes.
