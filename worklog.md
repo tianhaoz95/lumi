@@ -26,3 +26,14 @@ Reviewer Findings:
 3. **Ghost Border Color:** The "No-Line" rule specifically mentions using `outline-variant` for the Ghost Border. While `lib/core/theme.dart` was updated, the actual primary input field (`LumiTextField`) is not using it.
 
 Please update these components to remove the explicit 1px borders and ensure `LumiTextField` follows the Ghost Border specification (outline-variant at 40% opacity).
+
+Update (2026-04-12): Implemented fixes:
+- `lib/shared/widgets/lumi_text_field.dart`: focusedBorder now uses `LumiColors.outlineVariant.withOpacity(0.4)`.
+- `lib/widgets/floating_nav_bar.dart`: removed explicit 1px `Border.all` from BoxDecoration.
+- `lib/shared/widgets/lumi_buttons.dart`: removed explicit `Border.all` from `LumiSecondaryButton` decoration.
+- `lib/features/settings/settings.dart`: replaced `OutlinedButton.styleFrom(... side: BorderSide(...))` with `side: BorderSide.none` for logout/delete actions.
+
+Verification:
+- `dart format` ran successfully on edited files (files formatted). `dart analyze` attempted but failed due to OS file-watch limits; targeted formatting and commits completed.
+
+Next: reviewer should run full `dart analyze` / `flutter analyze` and run visual checks on an Android device to confirm the visual intent.
