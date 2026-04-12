@@ -369,6 +369,89 @@ pub async fn semantic_search(
 
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SubscriptionInfo {
+    pub service_name: String,
+    pub amount: f64,
+    pub frequency: String,
+}
+
+/// Detect a subscription from arbitrary shared text.
+/// Returns Ok(Some(SubscriptionInfo)) if a subscription-like pattern is found, otherwise Ok(None).
+#[rig_macros::tool(description = "Detect subscription information from shared text")]
+pub async fn detect_subscription(text: String) -> anyhow::Result<Option<SubscriptionInfo>> {
+    use regex::Regex;
+
+    let lower = text.to_lowercase();
+    // Quick heuristic: look for subscription-related keywords
+    let keywords = ["subscription", "monthly", "annual", "annually", "renews", "renew", "billed every", "recurring", "auto-renew", "auto renew"];
+    if !keywords.iter().any(|k| lower.contains(k)) {
+        return Ok(None);
+    }
+
+    // Attempt to extract an amount like $15.99 or 15.99
+    let amt_re = Regex::new(r"\$?(\d{1,3}(?:[.,]\d{2})?)").unwrap();
+    let mut amount: Option<f64> = None;
+    if let Some(cap) = amt_re.captures(&text) {
+        if let Some(m) = cap.get(1) {
+            let mut s = m.as_str().replace(',', ".");
+            if let Ok(v) = s.parse::<f64>() {
+                amount = Some(v);
+            }
+        }
+    }
+
+    // Frequency detection
+    let frequency = if lower.contains("monthly") || lower.contains("per month") {
+        "monthly"
+    } else if lower.contains("annual") || lower.contains("per year") || lower.contains("annually") || lower.contains("yearly") {
+        "annual"
+    } else if lower.contains("weekly") || lower.contains("per week") {
+        "weekly"
+    } else if lower.contains("daily") {
+        "daily"
+    } else {
+        // try to capture 'billed every X' patterns
+        let billed_re = Regex::new(r"billed every\s+(\w+)").unwrap();
+        if let Some(cap) = billed_re.captures(&lower) {
+            cap.get(1).map(|m| m.as_str()).unwrap_or("unknown")
+        } else {
+            "unknown"
+        }
+    };
+
+    // Service name extraction: look for a capitalized name before keywords like 'subscription' or 'renews'
+    let service_re = Regex::new(r"([A-Z][A-Za-z0-9&\- ]{1,40})\s+(?:subscription|renew|renews|billed|recurring|auto-renew)").unwrap();
+    let mut service_name = None;
+    if let Some(cap) = service_re.captures(&text) {
+        if let Some(m) = cap.get(1) {
+            service_name = Some(m.as_str().trim().to_string());
+        }
+    }
+
+    // Fallback: look for a capitalized word sequence near start
+    if service_name.is_none() {
+        let cap_name_re = Regex::new(r"([A-Z][a-zA-Z0-9&]{1,30}(?:\s+[A-Z][a-zA-Z0-9&]{1,30}){0,2})").unwrap();
+        if let Some(cap) = cap_name_re.captures(&text) {
+            if let Some(m) = cap.get(1) {
+                service_name = Some(m.as_str().trim().to_string());
+            }
+        }
+    }
+
+    let svc = service_name.unwrap_or_else(|| "Unknown".to_string());
+    let amt_val = amount.unwrap_or(0.0);
+
+    // If no clear subscription indication beyond an amount, be conservative and return None
+    if freq_is_unknown(frequency) && amt_val == 0.0 && svc == "Unknown" {
+        return Ok(None);
+    }
+
+    Ok(Some(SubscriptionInfo { service_name: svc, amount: amt_val, frequency: frequency.to_string() }))
+}
+
+fn freq_is_unknown(s: &str) -> bool { s == "unknown" }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FinancialSummary {
     pub period: String,
     pub total_expenses: f64,
@@ -832,6 +915,26 @@ mod tests {
 
         let _ = fs::remove_file(&tmp_db);
         std::env::remove_var("LUMI_DB_URL");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detect_subscription_recognizes_netflix_monthly() -> Result<(), Box<dyn std::error::Error>> {
+        let text = "Your Netflix subscription renews for $15.99 monthly".to_string();
+        let res = detect_subscription(text).await?;
+        assert!(res.is_some());
+        let info = res.unwrap();
+        assert!(info.service_name.to_lowercase().contains("netflix"));
+        assert!((info.amount - 15.99).abs() < 1e-6);
+        assert_eq!(info.frequency, "monthly");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn detect_subscription_ignores_one_time() -> Result<(), Box<dyn std::error::Error>> {
+        let text = "Thank you for your one-time purchase".to_string();
+        let res = detect_subscription(text).await?;
+        assert!(res.is_none());
         Ok(())
     }
 }

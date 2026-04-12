@@ -135,11 +135,11 @@
 - [x] **3.1.1** Add `receive_sharing_intent` package (or native share extension implementation).
 - [x] **3.1.2** Configure Android: add intent filter for `ACTION_SEND` with `image/*` and `text/plain` MIME types in `AndroidManifest.xml`.
 - [x] **3.1.3** Configure iOS: create a Share Extension target in Xcode; use App Groups to pass the shared content to the main app.
-- [ ] **3.1.4** On receiving a shared image or screenshot, route to `process_receipt_image()` in Rust (Phase 2 pipeline).
+- [x] **3.1.4** On receiving a shared image or screenshot, route to `process_receipt_image()` in Rust (Phase 2 pipeline).
 
 ### 3.2 Subscription Detection
 
-- [ ] **3.2.1** Implement `detect_subscription(text: String) -> Result<Option<SubscriptionInfo>>` in Rust:
+- [x] **3.2.1** Implement `detect_subscription(text: String) -> Result<Option<SubscriptionInfo>>` in Rust:
   - Parse shared text for recurring charge patterns (keywords: "monthly", "annual", "subscription", "renews", "billed every").
   - If detected, return a `SubscriptionInfo` with `service_name`, `amount`, `frequency`.
 - [ ] **3.2.2** If a subscription is detected, show a notification: *"Recurring charge detected from {service_name}. Tap to review and categorize."*
