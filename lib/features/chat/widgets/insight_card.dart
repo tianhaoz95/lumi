@@ -77,8 +77,8 @@ class InsightCard extends StatelessWidget {
                       category: t.category,
                       date: t.date,
                       amount: t.amount,
-                      isTagged: t.isCredit,
-                      onConfirm: null,
+                      isTagged: false,
+                      onConfirm: () {},
                     ),
                   ))
               .toList(),
