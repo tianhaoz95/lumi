@@ -178,4 +178,20 @@ Notes & Next steps:
 
 ---
 
+Actions performed (2026-04-12T15:19:24Z):
+
+1. Implemented native -> Dart bridge for Sentinel heartbeat:
+   - Updated `lib/features/sentinel/background_guard.dart` to register a MethodChannel `com.lumi/sentinel` and handle `onHeartbeat` calls by invoking the existing `_onBackgroundFetch` handler.
+   - Updated `ios/Runner/AppDelegate.swift` to start a background `FlutterEngine` at launch and to invoke the Dart `onHeartbeat` method via `FlutterMethodChannel` from both `BGAppRefreshTask` and `BGProcessingTask` handlers. Calls block up to 25s (refresh) / 60s (processing) waiting for a Dart response before completing the BGTask to respect OS budgets.
+
+Verifiable deliverables for reviewer:
+- `lib/features/sentinel/background_guard.dart` contains a MethodChannel registration for `com.lumi/sentinel` and a handler for `onHeartbeat` (grep finds "com.lumi/sentinel" and "onHeartbeat").
+- `ios/Runner/AppDelegate.swift` contains a `FlutterEngine` instantiation and `FlutterMethodChannel` calls to `onHeartbeat` for BGAppRefreshTask and BGProcessingTask (grep finds "com.lumi/sentinel" and method invocations).
+- Running `git grep -n "com.lumi/sentinel"` shows matches in both files.
+
+Notes & manual verification steps (reviewer):
+- On a macOS machine with Xcode and iOS device/simulator, enable Background Fetch/Processing in the Runner target, build and install the app, then trigger a BGTask (via `bgdispatch` or Xcode background task debugging) and confirm the Dart `BackgroundGuard._onBackgroundFetch` runs (observe logs).
+- Alternatively, add a debug print or persist to `sentinel_logs` from `_onBackgroundFetch` to confirm invocation.
+
+---
 

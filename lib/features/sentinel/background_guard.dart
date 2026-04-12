@@ -1,10 +1,13 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 class BackgroundGuard {
   static final BackgroundGuard _instance = BackgroundGuard._();
   BackgroundGuard._();
   factory BackgroundGuard() => _instance;
+
+  static const MethodChannel _channel = MethodChannel('com.lumi/sentinel');
 
   /// Initialize BackgroundFetch for Android/iOS with a 60-minute interval.
   Future<void> initialize() async {
@@ -23,20 +26,40 @@ class BackgroundGuard {
     // Register the headless task for post-termination execution.
     BackgroundFetch.registerHeadlessTask(_headlessTask);
 
+    // Wire native -> Dart bridge for iOS BGTask and other native triggers.
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'onHeartbeat') {
+        final args = call.arguments as Map<dynamic, dynamic>?;
+        final taskId = args != null && args['taskId'] != null ? '${args['taskId']}' : 'native_bg';
+        // Reuse the same handler to perform work and signal completion.
+        _onBackgroundFetch(taskId);
+        return true;
+      }
+      return null;
+    });
+
     debugPrint('[BackgroundGuard] initialized (minInterval=60)');
   }
 
-  void _onBackgroundFetch(String taskId) async {
+  Future<void> _onBackgroundFetch(String taskId) async {
     debugPrint('[BackgroundGuard] onFetch: $taskId');
     // TODO: call FRB run_sentinel_scan() when available and handle results.
 
-    // Always signal finish to the native layer.
-    BackgroundFetch.finish(taskId);
+    // Always signal finish to the native layer if BackgroundFetch plugin is active.
+    try {
+      BackgroundFetch.finish(taskId);
+    } catch (e) {
+      debugPrint('[BackgroundGuard] finish failed: $e');
+    }
   }
 
   void _onBackgroundFetchTimeout(String taskId) {
     debugPrint('[BackgroundGuard] onTimeout: $taskId');
-    BackgroundFetch.finish(taskId);
+    try {
+      BackgroundFetch.finish(taskId);
+    } catch (e) {
+      debugPrint('[BackgroundGuard] finish timeout failed: $e');
+    }
   }
 
   // Headless tasks receive a HeadlessTask instance in recent plugin versions.
@@ -47,7 +70,11 @@ class BackgroundGuard {
     } catch (e) {
       debugPrint('[BackgroundGuard] headlessTask error: $e');
     } finally {
-      BackgroundFetch.finish(task.taskId);
+      try {
+        BackgroundFetch.finish(task.taskId);
+      } catch (e) {
+        debugPrint('[BackgroundGuard] headless finish failed: $e');
+      }
     }
   }
 }

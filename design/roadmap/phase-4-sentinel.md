@@ -19,7 +19,7 @@
   - Enable **Background Fetch** and **Background Processing** capabilities in Xcode.
   - Register BGAppRefreshTask identifier `com.lumi.app.heartbeat`.
   - Schedule BGProcessingTask for longer Sentinel scans when device is charging.
-- [ ] **1.1.4** Create `BackgroundGuard` class in `lib/features/sentinel/background_guard.dart`:
+- [x] **1.1.4** Create `BackgroundGuard` class in `lib/features/sentinel/background_guard.dart`:
   - `initialize()` — registers the background task on app start.
   - `onHeartbeat()` — called by the platform when the task fires.
 

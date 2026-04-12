@@ -4,10 +4,19 @@ import BackgroundTasks
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  var flutterEngine: FlutterEngine?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // Start a background FlutterEngine for native -> Dart callbacks (used by BGTask handlers).
+    flutterEngine = FlutterEngine(name: "background")
+    flutterEngine?.run()
+    if let engine = flutterEngine {
+      GeneratedPluginRegistrant.register(with: engine)
+    }
+
     if #available(iOS 13.0, *) {
       // Register background task handlers
       BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.lumi.app.heartbeat", using: nil) { task in
@@ -37,15 +46,32 @@ import BackgroundTasks
     let queue = OperationQueue()
     queue.maxConcurrentOperationCount = 1
     let op = BlockOperation {
-      // TODO: invoke Flutter/Dart BackgroundGuard.onHeartbeat via MethodChannel or FRB bridge
-      // Placeholder: simple print and complete task
-      print("[BackgroundGuard] BGAppRefreshTask running (placeholder)")
+      print("[BackgroundGuard] BGAppRefreshTask running — invoking Dart onHeartbeat")
+
+      guard let engine = self.flutterEngine else {
+        print("[BackgroundGuard] FlutterEngine not available")
+        return
+      }
+
+      let channel = FlutterMethodChannel(name: "com.lumi/sentinel", binaryMessenger: engine.binaryMessenger)
+
+      // Use a semaphore to bound wait time so the BGTask can finish within system limits.
+      let sem = DispatchSemaphore(value: 0)
+
+      channel.invokeMethod("onHeartbeat", arguments: ["taskId": task.identifier ?? "bg_app_refresh"]) { (result) in
+        print("[BackgroundGuard] onHeartbeat result: \(String(describing: result))")
+        sem.signal()
+      }
+
+      // Wait up to 25 seconds for Dart handler to respond; then continue and allow expiration handler to enforce limits.
+      _ = sem.wait(timeout: .now() + 25)
     }
 
     task.expirationHandler = {
       queue.cancelAllOperations()
     }
 
+    // Ensure the BGTask is marked completed after the operation finishes or is cancelled.
     op.completionBlock = {
       task.setTaskCompleted(success: !op.isCancelled)
     }
@@ -61,8 +87,23 @@ import BackgroundTasks
     let queue = OperationQueue()
     queue.maxConcurrentOperationCount = 1
     let op = BlockOperation {
-      // TODO: perform longer Sentinel scan when device is charging.
-      print("[BackgroundGuard] BGProcessingTask running (placeholder)")
+      print("[BackgroundGuard] BGProcessingTask running — invoking Dart onHeartbeat (processing)")
+
+      guard let engine = self.flutterEngine else {
+        print("[BackgroundGuard] FlutterEngine not available")
+        return
+      }
+
+      let channel = FlutterMethodChannel(name: "com.lumi/sentinel", binaryMessenger: engine.binaryMessenger)
+      let sem = DispatchSemaphore(value: 0)
+
+      channel.invokeMethod("onHeartbeat", arguments: ["taskId": task.identifier ?? "bg_processing"]) { (result) in
+        print("[BackgroundGuard] onHeartbeat (processing) result: \(String(describing: result))")
+        sem.signal()
+      }
+
+      // Wait up to 60 seconds for longer processing, but avoid indefinite blocking.
+      _ = sem.wait(timeout: .now() + 60)
     }
 
     task.expirationHandler = {
