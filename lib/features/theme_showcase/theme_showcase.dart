@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme.dart';
+import '../../core/widgets/lumi_top_app_bar.dart';
 
 class ThemeShowcase extends StatelessWidget {
   const ThemeShowcase({super.key});
@@ -9,7 +10,7 @@ class ThemeShowcase extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Theme Showcase')),
+      appBar: LumiTopAppBar(title: const Text('Theme Showcase')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

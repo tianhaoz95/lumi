@@ -30,7 +30,7 @@
 
 ### 1.2 Glassmorphism Completeness
 
-- [ ] **1.2.1** Confirm `TopAppBar` on all screens uses `BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20))` with `surface-container-lowest` at 70% opacity.
+- [x] **1.2.1** Confirm `TopAppBar` on all screens uses `BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20))` with `surface-container-lowest` at 70% opacity.
 - [ ] **1.2.2** Confirm `FloatingNavBar` is a pill shape, does not span full width, and uses glassmorphism.
 - [ ] **1.2.3** Confirm all modals and bottom sheets use the glassmorphism card template.
 

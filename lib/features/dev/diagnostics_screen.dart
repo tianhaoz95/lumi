@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../shared/bridge/bridge.dart' as bridge;
+import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/bridge/lumi_core_bridge.dart' as lumi_bridge;
 import '../../shared/bridge/receipt.dart';
 import '../transactions/widgets/transaction_card.dart';
@@ -76,7 +77,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Diagnostics')),
+      appBar: LumiTopAppBar(title: const Text('Diagnostics')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

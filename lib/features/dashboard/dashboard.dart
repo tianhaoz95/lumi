@@ -4,6 +4,7 @@ import '../../core/theme.dart';
 import '../../shared/widgets/lumi_card.dart';
 import 'widgets/lumi_glass_card.dart';
 import '../../widgets/floating_nav_bar.dart';
+import '../../core/widgets/lumi_top_app_bar.dart';
 import '../../shared/bridge/rig_bridge.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/models/financial_summary.dart';
@@ -58,11 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('The Tundra'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: LumiTopAppBar(title: const Text('The Tundra')),
       backgroundColor: LumiColors.surface,
       body: RefreshIndicator(
         onRefresh: _onRefresh,

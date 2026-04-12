@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../shared/bridge/lumi_core_bridge.dart';
+import '../../core/widgets/lumi_top_app_bar.dart';
 
 class KnownLocationsScreen extends StatefulWidget {
   const KnownLocationsScreen({Key? key}) : super(key: key);
@@ -46,7 +47,7 @@ class _KnownLocationsScreenState extends State<KnownLocationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Known Locations')),
+      appBar: LumiTopAppBar(title: const Text('Known Locations')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
