@@ -40,7 +40,7 @@
       pub incomplete_mileage: Vec<u64>, // mileage_log IDs
   }
   ```
-- [ ] **1.2.3** `BackgroundGuard.onHeartbeat()` in Dart:
+- [x] **1.2.3** `BackgroundGuard.onHeartbeat()` in Dart:
   1. Call `run_sentinel_scan()` via FRB.
   2. If report is non-empty, trigger a local notification (§1.3).
   3. Log the scan result and timestamp to `sentinel_logs` SQLite table.

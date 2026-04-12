@@ -210,3 +210,19 @@ Reviewer note: The FRB Dart binding for `run_sentinel_scan` may require running 
 
 ---
 
+Actions performed (2026-04-12T15:35:00Z):
+
+1. Added `sentinel_logs` table creation to `rust/lumi_core/src/db.rs` and persist scan summaries in `rust/lumi_core/src/sentinel.rs`.
+2. Implemented `NotificationService` at `lib/features/sentinel/notification_service.dart` and added `flutter_local_notifications` to `pubspec.yaml`.
+3. Updated `BackgroundGuard.onHeartbeat()` (`lib/features/sentinel/background_guard.dart`) to parse the `run_sentinel_scan` result, trigger `NotificationService.showSentinelAlert(...)` when issues are found, and lazily initialize the notification plugin.
+4. Ran `cd rust/lumi_core && cargo test --lib` (exit code 0) and `flutter pub get` + `flutter analyze` (exit code 0).
+
+Verifiable deliverables added/updated in this run:
+- File `lib/features/sentinel/notification_service.dart` exists and exposes `NotificationService` with `initialize()` and `showSentinelAlert(Map)`.
+- `pubspec.yaml` includes `flutter_local_notifications: ^18.0.1` in dependencies.
+- `rust/lumi_core/src/db.rs` creates `sentinel_logs` table.
+- `rust/lumi_core/src/sentinel.rs` inserts a `sentinel_logs` row (ts, report_json, counts) on each scan.
+- `flutter analyze --no-pub` returned "No issues found!".
+- `cd rust/lumi_core && cargo test --lib` returned all tests passed.
+
+

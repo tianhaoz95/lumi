@@ -66,6 +66,22 @@ pub async fn db_init_with_pool(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await?;
 
+    // sentinel_logs table: records sentinel scans for auditing and battery monitoring
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS sentinel_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts INTEGER NOT NULL,
+            report_json TEXT NOT NULL,
+            untagged_count INTEGER,
+            missing_days_count INTEGER,
+            incomplete_mileage_count INTEGER
+        );
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     Ok(())
 }
 

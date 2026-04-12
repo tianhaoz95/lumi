@@ -19,6 +19,7 @@ dependencies:
   camera: ^0.10.0+3
   workmanager: ^0.4.1
   background_fetch: ^1.0.0
+  flutter_local_notifications: ^18.0.1
 
 flutter:
   uses-material-design: true

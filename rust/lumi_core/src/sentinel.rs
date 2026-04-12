@@ -71,5 +71,24 @@ pub async fn run_sentinel_scan() -> anyhow::Result<SentinelReport> {
     crate::db::db_init_with_pool(&pool).await.map_err(|e| anyhow::anyhow!(format!("db_init failed: {}", e)))?;
 
     let report = run_sentinel_scan_with_pool(&pool).await.map_err(|e| anyhow::anyhow!(format!("scan failed: {}", e)))?;
+
+    // Persist a lightweight record of the scan to sentinel_logs for auditing and battery monitoring
+    match serde_json::to_string(&report) {
+        Ok(report_json) => {
+            // Insert a row summarizing counts and the full JSON blob
+            let _ = sqlx::query("INSERT INTO sentinel_logs (ts, report_json, untagged_count, missing_days_count, incomplete_mileage_count) VALUES (?1, ?2, ?3, ?4, ?5)")
+                .bind(Utc::now().timestamp())
+                .bind(report_json)
+                .bind(report.untagged_count as i64)
+                .bind(report.missing_days.len() as i64)
+                .bind(report.incomplete_mileage.len() as i64)
+                .execute(&pool)
+                .await;
+        }
+        Err(e) => {
+            eprintln!("failed to serialize sentinel report for logging: {}", e);
+        }
+    }
+
     Ok(report)
 }

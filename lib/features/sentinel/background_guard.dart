@@ -1,6 +1,8 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:lumi/features/sentinel/notification_service.dart';
 
 class BackgroundGuard {
   static final BackgroundGuard _instance = BackgroundGuard._();
@@ -48,6 +50,42 @@ class BackgroundGuard {
     try {
       final res = await MethodChannel('lumi_core_bridge').invokeMethod<dynamic>('run_sentinel_scan');
       debugPrint('[BackgroundGuard] run_sentinel_scan result: $res');
+
+      // If the native side returned a report, attempt to parse and trigger a notification.
+      try {
+        Map<String, dynamic>? report;
+        if (res == null) {
+          report = null;
+        } else if (res is String) {
+          // Some bridges return JSON strings; attempt to parse
+          try {
+            report = Map<String, dynamic>.from(jsonDecode(res) as Map<String, dynamic>);
+          } catch (e) {
+            debugPrint('[BackgroundGuard] failed to decode JSON string report: $e');
+            report = null;
+          }
+        } else if (res is Map) {
+          report = Map<String, dynamic>.from(res);
+        }
+
+        if (report != null) {
+          final int untagged = (report['untagged_count'] is int) ? report['untagged_count'] as int : (report['untagged_count'] is num ? (report['untagged_count'] as num).toInt() : 0);
+          final List<dynamic> missing = report['missing_days'] is List ? report['missing_days'] as List<dynamic> : <dynamic>[];
+          final List<dynamic> incomplete = report['incomplete_mileage'] is List ? report['incomplete_mileage'] as List<dynamic> : <dynamic>[];
+
+          if (untagged > 0 || missing.isNotEmpty || incomplete.isNotEmpty) {
+            try {
+              // Lazy initialize notification service and show alert
+              final ns = await _ensureNotificationServiceInitialized();
+              await ns.showSentinelAlert(report);
+            } catch (e) {
+              debugPrint('[BackgroundGuard] notification failed: $e');
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('[BackgroundGuard] parsing sentinel report failed: $e');
+      }
     } catch (e) {
       debugPrint('[BackgroundGuard] run_sentinel_scan failed: $e');
     }
@@ -57,6 +95,18 @@ class BackgroundGuard {
       BackgroundFetch.finish(taskId);
     } catch (e) {
       debugPrint('[BackgroundGuard] finish failed: $e');
+    }
+  }
+
+  Future<NotificationService> _ensureNotificationServiceInitialized() async {
+    // Lazy init to avoid pulling notification plugin into tests unnecessarily.
+    try {
+      final ns = NotificationService();
+      await ns.initialize();
+      return ns;
+    } catch (e) {
+      debugPrint('[BackgroundGuard] failed to init NotificationService: $e');
+      rethrow;
     }
   }
 
