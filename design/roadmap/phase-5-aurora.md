@@ -22,7 +22,7 @@
   ```
 - [x] **1.1.3** Apply the **No-Line Rule** globally: find all `Divider()`, `Container(border: Border(...))`, and explicit `1px` borders and replace with tonal shifts or negative space.
 - [x] **1.1.4** Apply the **No-Sharp-Corner Rule**: audit all `BorderRadius` values and ensure minimum `Radius.circular(16)`.
-- [ ] **1.1.5** Apply the **No-Pure-Black Rule**: find all `Colors.black` and replace with `LumiColors.onSurface` (`#171C1E`).
+- [x] **1.1.5** Apply the **No-Pure-Black Rule**: find all `Colors.black` and replace with `LumiColors.onSurface` (`#171C1E`).
 
 **Tests:**
 - Golden tests for all 6 screens: render with the Glacial Sanctuary theme and diff against approved PNGs in `design/ui_design/*/screen.png`.

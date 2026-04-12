@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumi/core/colors.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumi/features/transactions/widgets/transaction_card.dart';
 
@@ -8,7 +9,7 @@ void main() {
 
     final widget = MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.light(primary: Colors.green, onSurface: Colors.black),
+        colorScheme: ColorScheme.light(primary: Colors.green, onSurface: LumiColors.onSurface),
       ),
       home: Scaffold(
         body: TransactionCard(
@@ -40,6 +41,6 @@ void main() {
 
     // Verify amount color uses onSurface for negative value
     final amountText = tester.widget<Text>(find.text('-\$5.50'));
-    expect(amountText.style?.color, equals(Colors.black));
+    expect(amountText.style?.color, equals(LumiColors.onSurface));
   });
 }

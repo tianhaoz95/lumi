@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:lumi/core/colors.dart';
 
 /// AtmosphericBackground
 /// - fixed positioned blurred orbs
@@ -87,7 +88,7 @@ class _GrainPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.black.withOpacity(0.02); // ignore: deprecated_member_use
+    final paint = Paint()..color = LumiColors.onSurface.withOpacity(atmosphericGrainOpacity); // ignore: deprecated_member_use
     final rand = Random(_seed);
     // Number of grains scaled by area, clamped for performance
     final total = (size.width * size.height / 2000).clamp(100, 600).toInt();
