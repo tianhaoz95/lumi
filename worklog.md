@@ -434,3 +434,20 @@ Verifiable deliverables added:
 - `test/notification_service_test.dart` updated and passes (`flutter test` exit code 0 for that file).
 
 Timestamp: 2026-04-12T16:40:00Z
+
+---
+
+Actions performed (2026-04-12T16:57:00Z): Implemented 3.1.2 — Android intent-filter for OS Share
+
+1. Updated android/app/src/main/AndroidManifest.xml to add two intent-filters on MainActivity to handle ACTION_SEND for image/* and text/plain MIME types.
+2. Ran `flutter analyze --no-pub` to verify no analyzer issues (exit code 0).
+3. Verified manifest contains ACTION_SEND entries via grep.
+4. Marked roadmap task 3.1.2 as complete in design/roadmap/phase-4-sentinel.md.
+
+Verifiable deliverables:
+- android/app/src/main/AndroidManifest.xml contains intent-filter entries for ACTION_SEND with image/* and text/plain.
+- design/roadmap/phase-4-sentinel.md shows 3.1.2 as checked (- [x]).
+- `flutter analyze --no-pub` exits with code 0 (no analyzer issues).
+
+Notes:
+- This adds the manifest-side intent filters; wiring the receive_sharing_intent plugin to route incoming shares to the app's Dart entry (and then to `process_receipt_image()` in Rust) is a follow-up (3.1.4) and depends on platform-specific share-handling code (Android file URIs and permissions).
