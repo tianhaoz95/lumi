@@ -1,0 +1,26 @@
+name: Kit Animated Widget Tests
+
+on:
+  push:
+    paths:
+      - 'test/widgets/kit_animated_test.dart'
+      - 'lib/widgets/**'
+      - '.github/workflows/kit-widget-tests.yml'
+  pull_request:
+    paths:
+      - 'test/widgets/kit_animated_test.dart'
+      - 'lib/widgets/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+      - name: Flutter pub get
+        run: flutter pub get
+      - name: Run widget test
+        run: flutter test test/widgets/kit_animated_test.dart --machine --reporter=expanded
