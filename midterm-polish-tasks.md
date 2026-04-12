@@ -29,7 +29,7 @@ Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
     - [x] Implement `LumiSecondaryButton` with Glassmorphism (40% opacity white + 12px backdrop blur).
 - [x] **The "No-Line" Rule**:
     - [x] Audit `InputDecorationTheme` to ensure focused borders use the 40% opacity "Ghost Border."
-    - [ ] Remove any remaining 1px solid dividers globally.
+    - [x] Remove any remaining 1px solid dividers globally.
 
 ## 3. Screen-by-Screen Polish
 Iterate through every screen to match the Nordic editorial aesthetic.
