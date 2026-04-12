@@ -1,15 +1,13 @@
-Task: Implement intentional asymmetry and generous negative space on the Login & Sign Up screen
+Task: Add KitGhost mascot to Login & Sign Up screens
 
-Plan:
-1. Inspect existing login UI code at lib/features/auth/login_screen.dart.
-2. Increase layout asymmetry and negative space for wide and narrow layouts: widen max container, increase left hero padding, increase overall page horizontal padding, and add subtle spacing tweaks when form fields are focused.
-3. Run a quick format/check (git diff) and commit changes.
+Planned steps:
+1. Locate the login/sign_up screens under lib/features/auth/ and identify appropriate insertion point.
+2. Create a reusable KitGhost widget at lib/features/auth/widgets/kit_ghost.dart that displays an asset or lightweight vector at 5–10% opacity and supports placement (header/background).
+3. Add the KitGhost widget to login and sign up page layouts, ensuring it is non-interactive and positioned behind primary content.
+4. Run analysis and basic build/test steps to ensure no regressions.
 
 Verifiable deliverables:
-- File lib/features/auth/login_screen.dart contains asymmetry (left hero flex 3 / right form flex 2) and updated spacing (maxWidth 1000, horizontal padding 32, increased right gap on hero to 64).
-- worklog.md exists at repository root and lists the plan and deliverables (this file).
-- Git commit present with message containing "Implement login asymmetry and spacing".
-
-Notes for reviewer:
-- Visual verification: open the login screen on wide layout and confirm the left hero area is significantly larger and the form is narrower with generous space.
-- Code checks: search for "maxWidth: 1000" and "padding: const EdgeInsets.symmetric(horizontal: 32.0" in lib/features/auth/login_screen.dart.
+- File lib/features/auth/widgets/kit_ghost.dart exists and declares a KitGhost widget.
+- lib/features/auth/login_page.dart or equivalent imports and uses KitGhost (grep finds "KitGhost").
+- Grep output shows KitGhost referenced in both login and signup screens.
+- Running `flutter analyze` exits with code 0 (no analyzer errors).
