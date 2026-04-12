@@ -190,7 +190,7 @@
   - **Working Hours**: future placeholder (not yet tracked; show `--`)
   - **Mileage Tracking**: `FinancialSummary.total_miles` + `estimated_deduction`
 - [x] **4.1.2** Replace mock **Recent Activity** list with a live query: `query_transactions(limit: 5)`.
-- [ ] **4.1.3** Add a pull-to-refresh gesture that re-queries the Rust core.
+- [x] **4.1.3** Add a pull-to-refresh gesture that re-queries the Rust core.
 
 **Tests:**
 - Widget test: `DashboardScreen` renders live data from a mock FRB service.
