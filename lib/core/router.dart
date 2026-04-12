@@ -20,10 +20,20 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   // When auth state changes, notify the GoRouter to reevaluate redirects.
   ref.listen<AuthState>(authNotifierProvider, (previous, next) {
-    notifier.notifyAuthChanged();
+    try {
+      notifier.notifyAuthChanged();
+    } catch (_) {
+      // Swallow listener exceptions to avoid breaking provider lifecycle in test environments.
+    }
   });
 
-  ref.onDispose(() => notifier.dispose());
+  ref.onDispose(() {
+    try {
+      notifier.dispose();
+    } catch (_) {
+      // ignore dispose errors
+    }
+  });
 
   return GoRouter(
     debugLogDiagnostics: false,

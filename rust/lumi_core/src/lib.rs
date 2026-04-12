@@ -22,7 +22,7 @@ pub use db::{db_init, db_init_with_pool};
 pub use vector_db::{vector_db_init, upsert_embedding, get_embedding};
 
 mod model_registry;
-pub use model_registry::{check_model_ready, compute_sha256, get_download_progress, frb_check_model_ready, frb_get_download_progress};
+pub use model_registry::{check_model_ready, compute_sha256, get_download_progress, frb_check_model_ready, frb_get_download_progress, frb_start_background_download};
 
 // Inference module (LiteRT-LM bindings)
 mod inference;
@@ -168,20 +168,69 @@ mod tests {
         std::fs::create_dir_all(&tmp).unwrap();
         // Point the FRB wrapper to the temp dir
         env::set_var("LUMI_MODEL_DIR", &tmp);
-        let path = tmp.join("e2b.bin");
+
+        // Use a unique model id per test to avoid shared-state interference
+        let model_id = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            format!("frb_{}_{}", std::process::id(), nanos)
+        };
+
+        let path = tmp.join(format!("{}.bin", &model_id));
         let mut f = std::fs::File::create(&path).unwrap();
         f.write_all(b"dummy-model-content").unwrap();
 
         // frb_check_model_ready should observe the file existence and return true
-        assert_eq!(frb_check_model_ready("e2b".to_string(), None), true);
+        assert_eq!(frb_check_model_ready(model_id.clone(), None), true);
 
-        // progress is stubbed to 0.0
-        let prog = frb_get_download_progress("e2b".to_string());
+        // progress is stubbed to 0.0 for unused model ids
+        let prog = frb_get_download_progress(model_id.clone());
         assert_eq!(prog, 0.0f32);
 
         // Clean up
         let _ = std::fs::remove_dir_all(&tmp);
         // Unset env var to avoid affecting other tests
+        env::remove_var("LUMI_MODEL_DIR");
+    }
+
+    #[test]
+    fn background_download_non_blocking() {
+        use std::env;
+        use std::time::Duration;
+        use std::thread;
+
+        let tmp = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            env::temp_dir().join(format!("lumi_models_bg_test_{}_{}", std::process::id(), nanos))
+        };
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        env::set_var("LUMI_MODEL_DIR", &tmp);
+
+        // Use a unique model id per test to avoid shared-state interference
+        let model_id = {
+            use std::time::{SystemTime, UNIX_EPOCH};
+            let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
+            format!("bg_{}_{}", std::process::id(), nanos)
+        };
+
+        // Start a short background download (100ms). Should return immediately.
+        assert!(crate::model_registry::start_background_download(&model_id, 100));
+
+        // Immediately check progress (should be present and between 0.0 and 1.0)
+        let prog0 = crate::model_registry::frb_get_download_progress(model_id.clone());
+        assert!(prog0 >= 0.0 && prog0 <= 1.0, "initial progress in range");
+
+        // Wait for completion
+        thread::sleep(Duration::from_millis(300));
+        let prog1 = crate::model_registry::frb_get_download_progress(model_id.clone());
+        assert!(prog1 >= 0.9999_f32, "progress reached near 1.0");
+
+        // Check model file exists and ready
+        assert!(crate::model_registry::frb_check_model_ready(model_id.clone(), None));
+
+        let _ = std::fs::remove_dir_all(&tmp);
         env::remove_var("LUMI_MODEL_DIR");
     }
 }

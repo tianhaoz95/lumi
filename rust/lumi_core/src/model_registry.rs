@@ -9,7 +9,16 @@ use sha2::{Digest, Sha256};
 /// Provides:
 /// - compute_sha256(path) -> String
 /// - check_model_ready(base_dir, model_id, Option<expected_sha256>) -> bool
-/// - get_download_progress(model_id) -> f32  (stub)
+/// - start_background_download(model_id, duration_ms) -> bool (non-blocking stub)
+/// - get_download_progress(model_id) -> f32
+
+use once_cell::sync::Lazy;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
+
+static DOWNLOAD_PROGRESS: Lazy<Arc<Mutex<HashMap<String, f32>>>> = Lazy::new(|| Arc::new(Mutex::new(HashMap::new())));
 
 pub struct ModelRegistry {
     pub base_dir: PathBuf,
@@ -50,9 +59,37 @@ pub fn check_model_ready(base_dir: &Path, model_id: &str, expected_sha256: Optio
     }
 }
 
-/// Stubbed progress: real download implementation updates progress via shared state or a file.
-pub fn get_download_progress(_model_id: &str) -> f32 {
-    0.0
+/// Start a non-blocking background "download" stub that updates progress over duration_ms milliseconds.
+/// Returns true immediately and spawns a background thread that writes a dummy model file on completion.
+pub fn start_background_download(model_id: &str, duration_ms: u64) -> bool {
+    let id = model_id.to_string();
+    let progress_map = DOWNLOAD_PROGRESS.clone();
+    {
+        let mut m = progress_map.lock().unwrap();
+        m.insert(id.clone(), 0.0);
+    }
+    // Spawn a thread that updates progress periodically and writes a dummy file at the end.
+    thread::spawn(move || {
+        let steps = 10u64;
+        let sleep_per_step = if duration_ms == 0 { 10 } else { duration_ms / steps };
+        for i in 1..=steps {
+            thread::sleep(Duration::from_millis(sleep_per_step));
+            let mut m = progress_map.lock().unwrap();
+            m.insert(id.clone(), (i as f32) / (steps as f32));
+        }
+        // create dummy file in models_base_dir
+        let base = models_base_dir();
+        let path = base.join(format!("{}.bin", id));
+        let _ = std::fs::create_dir_all(&base);
+        let _ = std::fs::write(path, b"dummy-model-content");
+    });
+    true
+}
+
+/// Read progress from shared in-memory progress map. Returns 0.0 if unknown.
+pub fn get_download_progress(model_id: &str) -> f32 {
+    let m = DOWNLOAD_PROGRESS.lock().unwrap();
+    m.get(model_id).copied().unwrap_or(0.0)
 }
 
 use directories::ProjectDirs;
@@ -78,9 +115,12 @@ pub fn frb_check_model_ready(model_id: String, expected_sha256: Option<String>) 
     }
 }
 
-/// FRB-friendly wrapper for download progress. Currently stubbed to 0.0.
+/// FRB-friendly wrapper for download progress. Reads in-memory progress map.
 pub fn frb_get_download_progress(model_id: String) -> f32 {
-    // In a real implementation this would read progress from a shared state, file, or IPC.
-    let _ = model_id;
     get_download_progress(&model_id)
+}
+
+/// FRB wrapper to start a background download stub. Duration in ms.
+pub fn frb_start_background_download(model_id: String, duration_ms: u64) -> bool {
+    start_background_download(&model_id, duration_ms)
 }

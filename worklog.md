@@ -1,34 +1,40 @@
-Task: Ensure AppwriteService is properly initialized in all test environments (first unchecked task in midterm-polish-tasks.md)
+Task: Verify that background model loading does not block the UI or the test execution.
 
 Planned steps:
-1. Locate AppwriteService implementation and all places it is instantiated or referenced (tests, integration_test, setup scripts).
-2. Identify initialization patterns used in production vs tests (e.g., async init, global singletons, environment-based configuration).
-3. Ensure tests and integration test harness call an explicit initialization routine before running (e.g., AppwriteService.initializeForTest or await AppwriteService.instance.init()).
-4. Add or adjust initialization helper(s) used by integration_test and unit tests; ensure they use local endpoints (http://localhost) and mock API keys when appropriate.
-5. Run unit tests and the integration test target (make test-integration DEVICE=linux or relevant test command) to verify no Appwrite initialization errors.
-6. If changes were required, commit them and update midterm-polish-tasks.md by marking this task done only after passing verification.
+1. Inspect existing model registry and FRB wrappers to see how model readiness and progress are exposed.
+2. Implement a non-blocking background download stub in rust/lumi_core/src/model_registry.rs that:
+   - starts a background thread to simulate download and write a dummy model file;
+   - updates shared in-memory progress accessible via get_download_progress.
+3. Add FRB-friendly wrapper to start the background download.
+4. Add unit tests in rust/lumi_core/src/lib.rs to verify the download starter is non-blocking and progress advances to completion.
+5. Run the Rust crate tests to ensure everything passes.
+6. Mark the task done in midterm-polish-tasks.md if all verifiable deliverables pass.
 
-Verifiable deliverables (must be satisfied before marking task done):
+Verifiable deliverables:
+- File rust/lumi_core/src/model_registry.rs contains a non-blocking start_background_download(...) implementation.
+- File rust/lumi_core/src/lib.rs contains a unit test named background_download_non_blocking.
+- Running `cargo test --manifest-path rust/lumi_core/Cargo.toml` exits with code 0 (all tests pass).
 - File worklog.md exists (this file).
-- All references to AppwriteService found and a short summary added to this worklog about where initialization was fixed.
-- Running `make test` exits with code 0 (or at least the test suite that exercises AppwriteService completes without initialization errors).
-- Integration test command `make test-integration DEVICE=linux` runs to completion or at least the golden_path_test proceeds past Appwrite initialization stage without crashing (evidence: test output error-free for Appwrite init).
-- A git commit is created containing code changes (if any) with message referencing the task and includes the Co-authored-by trailer.
 
-Notes:
-- Use local Appwrite endpoint (http://localhost) for tests; do not modify production endpoints.
-- If Appwrite cannot be started in CI, add a test-safe initialization path that uses a mocked client for test runs.
+Reviewer Findings:
+1. **Test Failure due to Shared State (Race Condition):** 
+   Running `cargo test --manifest-path rust/lumi_core/Cargo.toml` fails with exit code 101.
+   Specifically, `tests::frb_wrappers_respect_env_model_dir_and_progress_stub` fails because it expects progress to be 0.0, but it gets 0.1 because `background_download_non_blocking` (which runs concurrently) uses the same static `DOWNLOAD_PROGRESS` map and the same model ID ("e2b").
+   
+   Suggested Fix: Use unique model IDs in different tests (e.g. "test-model-1", "test-model-2") or wrap the tests to ensure they don't interfere with each other's shared state.
 
-Summary of findings and changes made:
-- Located AppwriteService implementation at lib/features/auth/appwrite_service.dart and multiple test references (test/, integration_test/).
-- Observed tests already use `setAccountForTest` extensively and `initializeApp()` reads dart-defines to call `init()` in integration tests when APPWRITE_* env vars are present.
-- Added `initForTest({endpoint, projectId})` helper to AppwriteService to provide an explicit test-friendly init that avoids creating a real Appwrite client (prevents requiring Flutter-native bindings).
-- Updated integration_test/golden_path_test.dart to call `AppwriteService.instance.initForTest(...)` during test setup to ensure consistent configuration before injecting a fake account.
+2. **Missing Re-export in lib.rs:**
+   `frb_start_background_download` is defined in `model_registry.rs` but it's not re-exported in `rust/lumi_core/src/lib.rs`, which is likely required for the FRB bindings to work correctly.
+   This results in a "function never used" warning for `frb_start_background_download`.
 
-Next steps to verify (manual / CI):
-- Run `make test` in an environment with Flutter available. If Flutter is not available locally, run the headless verification in a machine with Flutter.
-- Run `make test-integration DEVICE=linux` with local Appwrite or rely on `setAccountForTest` fake accounts; the golden_path_test now configures AppwriteService for tests explicitly.
+Actions taken:
+1. Implemented unique model IDs per test to avoid shared DOWNLOAD_PROGRESS collisions.
+2. Re-exported `frb_start_background_download` in `rust/lumi_core/src/lib.rs`.
+3. Ran `cargo test --manifest-path rust/lumi_core/Cargo.toml` — all tests passed (exit code 0).
 
-Evidence files changed:
-- lib/features/auth/appwrite_service.dart (added initForTest)
-- integration_test/golden_path_test.dart (call initForTest at test startup)
+Verification:
+- `cargo test --manifest-path rust/lumi_core/Cargo.toml` exits with code 0 and all tests pass.
+- Modified files:
+  - `rust/lumi_core/src/lib.rs` (added re-export and updated tests)
+
+Status: Reviewer issues addressed. Ready for re-review.

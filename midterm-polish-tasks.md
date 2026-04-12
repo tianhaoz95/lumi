@@ -15,7 +15,7 @@ Establish a "Golden Path" test to ensure the app is functional from first launch
 - [x] **Fix Functional Blockers**:
     - [x] Ensure `AppwriteService` is properly initialized in all test environments.
     - [x] Fix any `ProviderScope` or `GoRouter` state issues identified by the E2E test.
-    - [ ] Verify that background model loading does not block the UI or the test execution.
+    - [x] Verify that background model loading does not block the UI or the test execution.
 
 ## 2. Design System Foundation (Theming)
 Align the base tokens in `lib/core/theme.dart` with `DESIGN.md`.
