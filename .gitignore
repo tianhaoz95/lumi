@@ -50,8 +50,15 @@ build/
 # Environment files
 .env
 .env.test
+.env.test.bak
 # Local dev overrides (not committed)
 lib/core/env.dart
+
+# Database files
+*.db
+# Vector DB sentinel and directories
+lance_db_init
+transaction_embeddings/
 
 # IDE files
 .vscode/
