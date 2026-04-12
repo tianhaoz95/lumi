@@ -100,9 +100,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 ),
                 Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 920),
+                    constraints: const BoxConstraints(maxWidth: 1000),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 32.0),
                       child: SingleChildScrollView(
                         child: wide
                             ? Row(
@@ -111,7 +111,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                   Expanded(
                                     flex: 3,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(right: 48.0, top: 24.0),
+                                      padding: const EdgeInsets.only(right: 64.0, top: 24.0),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
