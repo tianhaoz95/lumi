@@ -64,7 +64,7 @@ Iterate through every screen to match the Nordic editorial aesthetic.
 
 ## 4. UI Components & Polish
 - [x] **`LumiCard`**: Refine glassmorphism parameters (70% opacity, 20px-40px blur).
-- [ ] **`AtmosphericBackground`**: Add a faint grain/snow texture (2% opacity) to give a paper-like quality.
+- [x] **`AtmosphericBackground`**: Add a faint grain/snow texture (2% opacity) to give a paper-like quality.
 - [x] **`KitGhost`**: Standardize the mascot's presence in empty states.
 
 ## 5. Verification

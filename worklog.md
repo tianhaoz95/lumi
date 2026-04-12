@@ -42,3 +42,20 @@ Verifiable deliverables (verified):
 - worklog.md updated to record completion (timestamp: 2026-04-12T10:47:20.179Z).
 
 Notes: Implementation already existed in lib/features/settings/settings.dart; verified values and analyzer run. No code changes were required for this task beyond documentation of completion.
+
+## Current Task: AtmosphericBackground — Add grain/snow texture
+
+Status: In progress
+
+Planned steps:
+1. Create lib/shared/widgets/atmospheric_background.dart implementing AtmosphericBackground widget that paints a faint grain texture (2% opacity) using a CustomPainter with deterministic random seed.
+2. Add the widget to the shared widgets directory for reuse across screens; integration into specific screens (login, dashboard, shell) will be done by reviewers or subsequent tasks to avoid large surface changes in this pass.
+3. Run `flutter analyze` and a basic build to ensure no analyzer or compilation errors.
+
+Verifiable deliverables:
+- File lib/shared/widgets/atmospheric_background.dart exists and declares AtmosphericBackground widget.
+- The widget paints a grain overlay with opacity approx 2% (alpha ~0.02).
+- Running `flutter analyze` exits with code 0 (no analyzer errors).
+
+Reviewer: please verify the widget file exists and that a visual overlay appears when wrapping a scaffold with AtmosphericBackground.
+
