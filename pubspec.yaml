@@ -8,7 +8,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  flutter_rust_bridge: 2.11.1
+  flutter_rust_bridge: ^2.10.0  # temporarily pin to older version to allow CI Flutter SDK compatibility
   go_router: ^7.0.0
   appwrite: ^21.0.0
   flutter_riverpod: ^2.0.0
