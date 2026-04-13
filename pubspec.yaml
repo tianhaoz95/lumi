@@ -8,7 +8,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  flutter_rust_bridge: ^2.10.0  # temporarily pin to older version to allow CI Flutter SDK compatibility
+  # flutter_rust_bridge: ^2.10.0  # temporarily removed to allow widget tests in CI (restore after)
   go_router: ^7.0.0
   appwrite: ^21.0.0
   flutter_riverpod: ^2.0.0
@@ -22,7 +22,7 @@ dependencies:
   background_fetch: ^1.0.0
   flutter_background_geolocation: ^4.8.0
   battery_plus: ^3.0.4
-  flutter_local_notifications: ^18.0.1
+  # flutter_local_notifications: ^18.0.1  # commented out for CI widget test run
   receive_sharing_intent: ^1.4.5
 
 flutter:
