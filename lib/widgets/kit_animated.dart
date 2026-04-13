@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // kit animated placeholder for CI trigger
 
 /// A lightweight, asset-free Kit animation widget implementing four states:
 /// Idle, Thinking, Found (one-shot), Alert (one-shot).
